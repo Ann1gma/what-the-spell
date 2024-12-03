@@ -1,17 +1,20 @@
 import { useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { getSpellsByClass, getSpellsByLevel } from "./services/DnD5e_API";
-import { SpellsByLevelOverview, SpellsByClassOverview } from "./types/DnD5e_API.types";
+import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { getSpellDetails, getSpellsByClass, getSpellsByLevel } from "./services/DnD5e_API";
+import { SpellsByLevelOverview, SpellsByClassOverview, SpellDetails } from "./types/DnD5e_API.types";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
 	const [spellData, setSpellData] = useState<null | SpellsByLevelOverview[]>(null);
 	const [classSpellData, setClassSpellData] = useState<null | SpellsByClassOverview[]>(null);
+	const [spellDetails, setSpellDetails] = useState<null | SpellDetails>(null);
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 
 	const getAllSpellsByLevel = async () => {
 		setIsLoading(true);
 		setClassSpellData(null);
+		setSpellDetails(null);
 		try {
 			const data = await getSpellsByLevel("NAME", "ASCENDING", 0);
 			setSpellData(data);
@@ -25,9 +28,25 @@ export default function Index() {
 	const getAllSpellsByClass = async () => {
 		setIsLoading(true);
 		setSpellData(null);
+		setSpellDetails(null);
 		try {
 			const data = await getSpellsByClass("druid");
 			setClassSpellData(data);
+		} catch (err) {
+			setError((err as Error).message);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const getSingleSpellDetails = async () => {
+		setIsLoading(true);
+		setClassSpellData(null);
+		setSpellData(null);
+
+		try {
+			const data = await getSpellDetails("aid");
+			setSpellDetails(data);
 		} catch (err) {
 			setError((err as Error).message);
 		} finally {
@@ -43,9 +62,13 @@ export default function Index() {
 		getAllSpellsByClass();
 	};
 
+	const handleGetSpellDetails = () => {
+		getSingleSpellDetails();
+	};
+
 	return (
 		<View style={styles.container}>
-			{!spellData && !classSpellData && (
+			{!spellData && !classSpellData && !spellDetails && (
 				<View>
 					<Text>No spells to show right now. Try pressing the button!</Text>
 				</View>
@@ -57,6 +80,14 @@ export default function Index() {
 				</Pressable>
 				<Pressable onPress={handleGetSpellsByClass} style={({ pressed }) => [styles.getButton, { opacity: pressed ? 0.5 : 1 }]}>
 					<Text style={styles.getButtonText}>Get DRUID spells</Text>
+				</Pressable>
+			</View>
+			<View>
+				<Pressable
+					onPress={handleGetSpellDetails}
+					style={({ pressed }) => [styles.getButton, { marginVertical: 0, marginBottom: 5, opacity: pressed ? 0.5 : 1 }]}
+				>
+					<Text style={styles.getButtonText}>Get details of a single spell</Text>
 				</Pressable>
 			</View>
 
@@ -130,6 +161,108 @@ export default function Index() {
 				/>
 			)}
 
+			{spellDetails && (
+				<SafeAreaProvider>
+					<SafeAreaView style={styles.container} edges={["top"]}>
+						<ScrollView>
+							<View style={styles.spellContainer}>
+								<Text style={styles.spellDetailTitle}>{spellDetails.name}</Text>
+								<View style={styles.containerMargin}>
+									<Text>Level: {spellDetails.level}</Text>
+									<Text>Concentration: {spellDetails.concentration}</Text>
+									<Text>Ritual: {spellDetails.ritual}</Text>
+									<Text>Casting time: {spellDetails.casting_time}</Text>
+									<Text>Duration: {spellDetails.duration}</Text>
+									{spellDetails.material && <Text>Material: {spellDetails.material}</Text>}
+									<Text>Range: {spellDetails.range}</Text>
+								</View>
+								<View style={styles.containerMargin}>
+									<Text style={styles.spellTitle}>Description: </Text>
+									<View style={styles.columnContainer}>
+										{spellDetails.desc.map((item) => (
+											<Text key={item}>{item}</Text>
+										))}
+									</View>
+								</View>
+								<View style={styles.containerAllInOneRow}>
+									<Text style={styles.spellTitle}>Components</Text>
+									<View>
+										{spellDetails.components.map((item) => (
+											<Text key={item}>{item},</Text>
+										))}
+									</View>
+								</View>
+								<View style={styles.containerAllInOneRow}>
+									<Text style={styles.spellTitle}>Classes</Text>
+									<View>
+										{spellDetails.classes.map((item) => (
+											<Text key={item.index}>{item.name},</Text>
+										))}
+									</View>
+								</View>
+								{spellDetails.area_of_effect && (
+									<View style={styles.containerAllInOneRow}>
+										<Text style={styles.spellTitle}>Area of Effect</Text>
+										<View style={styles.containerAllInOneRow}>
+											<Text>Type: {spellDetails.area_of_effect.type}</Text>
+											<Text>Size: {spellDetails.area_of_effect.size} feet</Text>
+										</View>
+									</View>
+								)}
+								{spellDetails.heal_at_slot_level && (
+									<View style={styles.SpellDetailsContainer}>
+										<Text style={styles.spellTitle}>Healing</Text>
+										<View>
+											{spellDetails.heal_at_slot_level.map((item, index) => (
+												<View key={index} style={styles.containerAllInOneRow}>
+													<Text style={{ marginHorizontal: 5 }}>Level: {item.level}</Text>
+													<Text style={{ marginHorizontal: 5 }}>=</Text>
+													<Text style={{ marginHorizontal: 5 }}>Healing: {item.healing}</Text>
+												</View>
+											))}
+										</View>
+									</View>
+								)}
+								{spellDetails.damage && (
+									<View style={styles.SpellDetailsContainer}>
+										<Text style={styles.spellTitle}>Damage</Text>
+										<Text>Damage type: {spellDetails.damage.damage_type.name}</Text>
+										<Text>{spellDetails.damage.damage_type.desc}</Text>
+										<View>
+											{spellDetails.damage.damage_at_slot_level.map((item, index) => (
+												<View key={index} style={styles.containerAllInOneRow}>
+													<Text style={{ marginHorizontal: 5 }}>Level: {item.level}</Text>
+													<Text style={{ marginHorizontal: 5 }}>=</Text>
+													<Text style={{ marginHorizontal: 5 }}>Damage: {item.damage}</Text>
+												</View>
+											))}
+										</View>
+									</View>
+								)}
+								{spellDetails.higher_level && (
+									<View style={styles.SpellDetailsContainer}>
+										<Text style={styles.spellTitle}>At higher levels:</Text>
+										{spellDetails.higher_level.map((item, index) => (
+											<Text key={index}>{item}</Text>
+										))}
+									</View>
+								)}
+								{spellDetails.dc && (
+									<View style={styles.SpellDetailsContainer}>
+										<Text style={styles.spellTitle}>SpellDC:</Text>
+										{spellDetails.dc.success && spellDetails.dc.success !== "NONE" && (
+											<Text>Success: {spellDetails.dc.success}</Text>
+										)}
+										{spellDetails.dc.desc && <Text>{spellDetails.dc.desc}</Text>}
+										{spellDetails.dc.type && <Text>Type: {spellDetails.dc.type.full_name}</Text>}
+									</View>
+								)}
+							</View>
+						</ScrollView>
+					</SafeAreaView>
+				</SafeAreaProvider>
+			)}
+
 			{isLoading && <ActivityIndicator size="large" />}
 			{error && <Text>{error}</Text>}
 		</View>
@@ -138,10 +271,13 @@ export default function Index() {
 
 const styles = StyleSheet.create({
 	container: {
-		width: "100%",
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+		marginVertical: 20,
+	},
+	SpellDetailsContainer: {
+		flex: 1,
 		marginVertical: 20,
 	},
 	getButton: {
@@ -157,9 +293,8 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	spellContainer: {
-		padding: 5,
-		marginTop: 5,
-		marginBottom: 5,
+		padding: 10,
+		margin: 5,
 		borderWidth: 1,
 		borderRadius: 10,
 		borderColor: "red",
@@ -168,7 +303,20 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		marginRight: 10,
 	},
+	spellDetailTitle: {
+		textAlign: "center",
+		fontWeight: "bold",
+		fontSize: 26,
+		marginBottom: 10,
+	},
 	containerAllInOneRow: {
 		flexDirection: "row",
+		maxWidth: "100%",
+	},
+	columnContainer: {
+		maxWidth: "100%",
+	},
+	containerMargin: {
+		marginBottom: 10,
 	},
 });
