@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SpellsOverview } from "../types/DnD5e_API.types";
+import { SpellsByClassOverview, SpellsByLevelOverview } from "../types/DnD5e_API.types";
 
 const instance = axios.create({
 	baseURL: "https://www.dnd5eapi.co/graphql",
@@ -10,13 +10,17 @@ const instance = axios.create({
 	},
 });
 
-interface GetSpellsResponse {
+interface GetSpellsByLevelResponse {
 	data: {
-		spells: SpellsOverview[];
+		spells: SpellsByLevelOverview[];
 	};
 }
 
-const getSpells = async (by: "NAME" | "LEVEL", direction: "ASCENDING" | "DESCENDING", level: number): Promise<SpellsOverview[]> => {
+export const getSpellsByLevel = async (
+	by: "NAME" | "LEVEL",
+	direction: "ASCENDING" | "DESCENDING",
+	level: number
+): Promise<SpellsByLevelOverview[]> => {
 	const query = `
     query Spells {
       spells(order: { by: ${by}, direction: ${direction} }, level: ${level}) {
@@ -41,10 +45,57 @@ const getSpells = async (by: "NAME" | "LEVEL", direction: "ASCENDING" | "DESCEND
     }
   `;
 
-	const response = await instance.post<GetSpellsResponse>("", {
+	const response = await instance.post<GetSpellsByLevelResponse>("", {
 		query,
 	});
 	return response.data.data.spells;
 };
 
-export default getSpells;
+interface GetSpellsByClassResponse {
+	data: {
+		spells: SpellsByClassOverview[];
+	};
+}
+
+type ClassNames = "barbarian" | "bard" | "cleric" | "druid" | "fighter" | "monk" | "paladin" | "ranger" | "rogue" | "sorcerer" | "warlock" | "wizard";
+
+export const getSpellsByClass = async (className: ClassNames): Promise<SpellsByClassOverview[]> => {
+	const query = `
+    query Spells {
+    spells(
+        class: "${className}"
+        order: {
+            by: LEVEL
+            direction: ASCENDING
+            then_by: { by: NAME, direction: ASCENDING }
+        }
+    ) {
+        index
+        attack_type
+        concentration
+        level
+        name
+        ritual
+        damage {
+            damage_type {
+                name
+            }
+        }
+        heal_at_slot_level {
+            healing
+        }
+        school {
+            name
+        }
+        classes {
+            name
+        }
+    }
+}
+  `;
+
+	const response = await instance.post<GetSpellsByClassResponse>("", {
+		query,
+	});
+	return response.data.data.spells;
+};
