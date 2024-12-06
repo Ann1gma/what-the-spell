@@ -13,8 +13,6 @@ const useGetCharacters = (uid = "Kc4xQUGxNmOMijR1jSeEvIL2qhR2") => {
 		const characterQuery = query(characterCol, where("uid", "==", uid));
 
 		const unsubscribe = onSnapshot(characterQuery, (snapshot) => {
-			console.log("📸 Got a snapshot!");
-
 			const data = snapshot.docs.map((doc) => {
 				return {
 					...doc.data(),
