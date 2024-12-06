@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { getSpellDetails, getSpellsByClass, getSpellsByLevel } from "./services/DnD5e_API";
-import { SpellsByLevelOverview, SpellsByClassOverview, SpellDetails } from "./types/DnD5e_API.types";
+import { getSpellDetails, getSpellsByClass, getSpellsByLevel } from "./../services/DnD5e_API";
+import { SpellsByLevelOverview, SpellsByClassOverview, SpellDetails } from "./../types/DnD5e_API.types";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import useGetCharacters from "./hooks/useGetCharacters";
-import useGetCharacter from "./hooks/useGetCharacter";
+import useGetCharacters from "../hooks/useGetCharacters";
+import useGetCharacter from "../hooks/useGetCharacter";
 
 export default function Index() {
 	const [spellData, setSpellData] = useState<null | SpellsByLevelOverview[]>(null);
