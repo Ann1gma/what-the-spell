@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { CollectionReference, DocumentData, collection, getFirestore } from "firebase/firestore";
+import { Character } from "../types/Character.types";
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,3 +23,6 @@ export const auth = getAuth(app);
 
 // Get Firestore Instance
 export const db = getFirestore(app);
+
+// Collection reference
+export const characterCol = collection(db, "characters") as CollectionReference<Character>;

@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, V
 import { getSpellDetails, getSpellsByClass, getSpellsByLevel } from "./services/DnD5e_API";
 import { SpellsByLevelOverview, SpellsByClassOverview, SpellDetails } from "./types/DnD5e_API.types";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import useGetCharacters from "./hooks/useGetCharacters";
 
 export default function Index() {
 	const [spellData, setSpellData] = useState<null | SpellsByLevelOverview[]>(null);
@@ -10,6 +11,13 @@ export default function Index() {
 	const [spellDetails, setSpellDetails] = useState<null | SpellDetails>(null);
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	const { data, loading } = useGetCharacters();
+
+	console.log("Data hämtad 😊 : ", data);
+	if (data) {
+		console.log("Spellslots 🪄 : ", data[0].spellslots);
+		console.log("Known spells 🧙‍♂️ : ", data[0].known_spells);
+	}
 
 	const getAllSpellsByLevel = async () => {
 		setIsLoading(true);
