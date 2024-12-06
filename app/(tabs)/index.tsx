@@ -184,7 +184,7 @@ export default function Index() {
 									<Text style={styles.spellTitle}>Description: </Text>
 									<View style={styles.columnContainer}>
 										{spellDetails.desc.map((item) => (
-											<Text key={item}>{item}</Text>
+											<Text>{item}</Text>
 										))}
 									</View>
 								</View>
