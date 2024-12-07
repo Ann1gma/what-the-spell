@@ -4,9 +4,10 @@ const Pergament = require("../../assets/images/background-image.jpg");
 const Characters = () => {
 	return (
 		<View style={styles.container}>
-			<ImageBackground source={Pergament} resizeMode="cover" style={styles.image}>
-				<Text style={styles.text}>Characters</Text>
-			</ImageBackground>
+			<View style={styles.titleContainer}>
+				<Text style={styles.title}>Characters</Text>
+			</View>
+			<ImageBackground source={Pergament} resizeMode="cover" style={styles.image}></ImageBackground>
 		</View>
 	);
 };
@@ -25,8 +26,13 @@ const styles = StyleSheet.create({
 		resizeMode: "cover",
 		justifyContent: "center",
 	},
-	text: {
-		fontSize: 36,
+	titleContainer: {
+		backgroundColor: "#F0E4D1",
+		height: 50,
+		justifyContent: "center",
+	},
+	title: {
+		fontSize: 32,
 		fontFamily: "CinzelBlack",
 		color: "#990000",
 		textAlign: "center",
