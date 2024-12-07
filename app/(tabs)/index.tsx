@@ -183,16 +183,16 @@ export default function Index() {
 								<View style={styles.containerMargin}>
 									<Text style={styles.spellTitle}>Description: </Text>
 									<View style={styles.columnContainer}>
-										{spellDetails.desc.map((item) => (
-											<Text>{item}</Text>
+										{spellDetails.desc.map((item, index) => (
+											<Text key={index}>{item}</Text>
 										))}
 									</View>
 								</View>
 								<View style={styles.containerAllInOneRow}>
 									<Text style={styles.spellTitle}>Components</Text>
 									<View>
-										{spellDetails.components.map((item) => (
-											<Text key={item}>{item},</Text>
+										{spellDetails.components.map((item, index) => (
+											<Text key={index}>{item},</Text>
 										))}
 									</View>
 								</View>
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
 		marginVertical: 20,
 	},
 	getButton: {
-		backgroundColor: "black",
+		backgroundColor: "#C20000",
 		color: "white",
 		borderRadius: 5,
 		padding: 10,
