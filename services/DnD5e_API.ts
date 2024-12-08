@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SpellsByClassOverview, SpellsByLevelOverview, SpellDetails, SpellDetailsClassObject } from "../types/DnD5e_API.types";
+import { SpellsOverview, SpellDetails, ClassObject } from "../types/DnD5e_API.types";
 
 const instance = axios.create({
 	baseURL: "https://www.dnd5eapi.co/graphql",
@@ -19,15 +19,11 @@ const instance = axios.create({
  */
 interface GetSpellsByLevelResponse {
 	data: {
-		spells: SpellsByLevelOverview[];
+		spells: SpellsOverview[];
 	};
 }
 
-export const getSpellsByLevel = async (
-	by: "NAME" | "LEVEL",
-	direction: "ASCENDING" | "DESCENDING",
-	level: number
-): Promise<SpellsByLevelOverview[]> => {
+export const getSpellsByLevel = async (by: "NAME" | "LEVEL", direction: "ASCENDING" | "DESCENDING", level: number): Promise<SpellsOverview[]> => {
 	const query = `
 		query Spells {
 		spells(order: { by: ${by}, direction: ${direction} }, level: ${level}) {
@@ -48,6 +44,9 @@ export const getSpellsByLevel = async (
 			healing
 			}
 			attack_type
+			classes {
+				name
+			}
 		}
     }`;
 
@@ -63,13 +62,11 @@ export const getSpellsByLevel = async (
  */
 interface GetSpellsByClassResponse {
 	data: {
-		spells: SpellsByClassOverview[];
+		spells: SpellsOverview[];
 	};
 }
 
-type ClassNames = "barbarian" | "bard" | "cleric" | "druid" | "fighter" | "monk" | "paladin" | "ranger" | "rogue" | "sorcerer" | "warlock" | "wizard";
-
-export const getSpellsByClass = async (className: ClassNames): Promise<SpellsByClassOverview[]> => {
+export const getSpellsByClass = async (className: string): Promise<SpellsOverview[]> => {
 	const query = `
 		query Spells {
 		spells(
@@ -180,11 +177,11 @@ export const getSpellDetails = async (spellIndex: string): Promise<SpellDetails>
  */
 interface GetAllClassesResponse {
 	data: {
-		classes: SpellDetailsClassObject[];
+		classes: ClassObject[];
 	};
 }
 
-export const getAllClasses = async (by = "NAME", direction = "ASCENDING"): Promise<SpellDetailsClassObject[]> => {
+export const getAllClasses = async (by = "NAME", direction = "ASCENDING"): Promise<ClassObject[]> => {
 	const query = `
 		query Classes{
 			classes(order: { by: ${by}, direction: ${direction} }) {

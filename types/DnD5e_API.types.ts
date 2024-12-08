@@ -31,17 +31,13 @@ interface HealAtSlotLevelObject {
 	healing: string;
 }
 
-interface ClassObject {
+export interface ClassObject {
+	index: string;
 	name: string;
 }
 
 interface TypeObject {
 	full_name: string;
-	name: string;
-}
-
-export interface SpellDetailsClassObject {
-	index: string;
 	name: string;
 }
 
@@ -56,33 +52,19 @@ interface DcObject {
 	type: TypeObject;
 }
 
-export interface SpellsByLevelOverview {
+export interface SpellsOverview {
 	index: string;
 	name: string;
 	level: number;
 	ritual: boolean;
 	concentration: boolean;
 	school: {
-		name: "Abjuration" | "Conjuration" | "Divination" | "Enchantment" | "Evocation" | "Illusion" | "Necromancy" | "Transmutation";
+		name: string;
 	};
 	damage: DamageTypeObject | null;
 	heal_at_slot_level: HealingObject[] | null;
 	attack_type: "MELEE" | "RANGED" | null;
-}
-
-export interface SpellsByClassOverview {
-	index: string;
-	name: string;
-	level: number;
-	ritual: boolean;
-	concentration: boolean;
-	school: {
-		name: "Abjuration" | "Conjuration" | "Divination" | "Enchantment" | "Evocation" | "Illusion" | "Necromancy" | "Transmutation";
-	};
-	damage: DamageTypeObject | null;
-	heal_at_slot_level: HealingObject[] | null;
-	attack_type: "MELEE" | "RANGED" | null;
-	classes: ClassObject[];
+	classes: ClassObject[] | null;
 }
 
 export interface SpellDetails {
@@ -100,7 +82,7 @@ export interface SpellDetails {
 	range: string;
 	ritual: boolean;
 	area_of_effect: AreaOfEffect | null;
-	classes: SpellDetailsClassObject[];
+	classes: ClassObject[];
 	damage: DamageObject | null;
 	dc: DcObject | null;
 	heal_at_slot_level: HealAtSlotLevelObject[] | null;

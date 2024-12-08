@@ -1,18 +1,18 @@
 import { getSpellsByLevel } from "@/services/DnD5e_API";
-import { SpellsByLevelOverview } from "@/types/DnD5e_API.types";
+import { SpellsOverview } from "@/types/DnD5e_API.types";
 import { useEffect, useState } from "react";
 
 const useGetSpellsByLevel = () => {
-	const [cantripsData, setCantripsData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlOneData, setLvlOneData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlTwoData, setLvlTwoData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlThreeData, setLvlThreeData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlFourData, setLvlFourData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlFiveData, setLvlFiveData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlSixData, setLvlSixData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlSevenData, setLvlSevenData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlEightData, setLvlEightData] = useState<SpellsByLevelOverview[] | null>(null);
-	const [lvlNineData, setLvlNineData] = useState<SpellsByLevelOverview[] | null>(null);
+	const [cantripsData, setCantripsData] = useState<SpellsOverview[] | null>(null);
+	const [lvlOneData, setLvlOneData] = useState<SpellsOverview[] | null>(null);
+	const [lvlTwoData, setLvlTwoData] = useState<SpellsOverview[] | null>(null);
+	const [lvlThreeData, setLvlThreeData] = useState<SpellsOverview[] | null>(null);
+	const [lvlFourData, setLvlFourData] = useState<SpellsOverview[] | null>(null);
+	const [lvlFiveData, setLvlFiveData] = useState<SpellsOverview[] | null>(null);
+	const [lvlSixData, setLvlSixData] = useState<SpellsOverview[] | null>(null);
+	const [lvlSevenData, setLvlSevenData] = useState<SpellsOverview[] | null>(null);
+	const [lvlEightData, setLvlEightData] = useState<SpellsOverview[] | null>(null);
+	const [lvlNineData, setLvlNineData] = useState<SpellsOverview[] | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [isError, setIsError] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);

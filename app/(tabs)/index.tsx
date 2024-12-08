@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Accordion from "@/components/Accordion";
 import useGetSpellsByLevel from "@/hooks/useGetSpellsByLevel";
 import { Link } from "expo-router";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 export default function Index() {
-	const [subTitle, setSubtitle] = useState("All spells");
+	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
+	const [subTitle, setSubtitle] = useState(filtrationOption);
 	const {
 		cantripsData,
 		lvlOneData,
@@ -23,6 +26,10 @@ export default function Index() {
 		isError,
 		isLoading,
 	} = useGetSpellsByLevel();
+
+	useEffect(() => {
+		setSubtitle(filtrationOption);
+	}, [filtrationOption]);
 
 	if (isLoading) {
 		return (
@@ -47,7 +54,7 @@ export default function Index() {
 				<View style={styles.titleContainer}>
 					<View>
 						<Text style={styles.title}>Spellbook</Text>
-						<Text style={styles.subTitle}>{subTitle}</Text>
+						<Text style={styles.subTitle}>{subTitle.index === "none" ? subTitle.name : `Class: ${subTitle.name}`}</Text>
 					</View>
 					<View style={styles.slidersContainer}>
 						<Link href="/FilterSpellbook" asChild>

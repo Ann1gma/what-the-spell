@@ -1,4 +1,4 @@
-import { SpellDetailsClassObject } from "@/types/DnD5e_API.types";
+import { ClassObject } from "@/types/DnD5e_API.types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -9,7 +9,7 @@ export const filterSlice = createSlice({
 	name: "selection",
 	initialState,
 	reducers: {
-		changeFilter: (state, action: PayloadAction<SpellDetailsClassObject>) => {
+		changeFilter: (state, action: PayloadAction<ClassObject>) => {
 			state.selection = action.payload;
 		},
 	},

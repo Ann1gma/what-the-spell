@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import DropdownComponent from "@/components/DropdownComponent";
-import { SpellDetailsClassObject } from "@/types/DnD5e_API.types";
+import { ClassObject } from "@/types/DnD5e_API.types";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
@@ -12,10 +12,7 @@ const FilterSpellbook = () => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 
-	console.log("Global state filtration option: ", filtrationOption);
-
-	const onFiltration = (item: SpellDetailsClassObject) => {
-		console.log("selected item: ", item);
+	const onFiltration = (item: ClassObject) => {
 		dispatch(changeFilter(item));
 	};
 

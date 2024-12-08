@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Pressable, FlatList, SafeAreaView } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useState } from "react";
-import { SpellsByLevelOverview } from "@/types/DnD5e_API.types";
+import { SpellsOverview } from "@/types/DnD5e_API.types";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -9,7 +9,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 interface AccordionProps {
 	title: string;
-	data: SpellsByLevelOverview[];
+	data: SpellsOverview[];
 }
 
 const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
@@ -37,6 +37,16 @@ const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
 									<Text style={styles.itemText}>{item.level === 0 ? `- cantrip` : `- level ${item.level}`}</Text>
 								</View>
 								<Text style={styles.itemText}>{item.school.name}</Text>
+								{item.classes && item.classes.length > 0 && (
+									<View style={{ flexDirection: "row" }}>
+										<Text style={styles.itemText}>Classes:</Text>
+										{item.classes.map((classItem) => (
+											<Text key={classItem.name} style={[styles.itemText, { marginLeft: 5 }]}>
+												{classItem.name},
+											</Text>
+										))}
+									</View>
+								)}
 							</View>
 							<View style={styles.iconContainer}>
 								{!item.heal_at_slot_level && !item.damage && !item.attack_type && (
