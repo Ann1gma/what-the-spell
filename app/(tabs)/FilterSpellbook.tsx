@@ -3,12 +3,20 @@ import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native
 import Feather from "@expo/vector-icons/Feather";
 import DropdownComponent from "@/components/DropdownComponent";
 import { SpellDetailsClassObject } from "@/types/DnD5e_API.types";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store";
+import { changeFilter } from "@/features/filtration/filtrationSlice";
 
 const FilterSpellbook = () => {
+	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
+	const dispatch = useDispatch();
 	const router = useRouter();
+
+	console.log("Global state filtration option: ", filtrationOption);
 
 	const onFiltration = (item: SpellDetailsClassObject) => {
 		console.log("selected item: ", item);
+		dispatch(changeFilter(item));
 	};
 
 	return (
