@@ -30,6 +30,14 @@ export default function TabLayout() {
 					tabBarIcon: ({ color }) => <FontAwesome5 name="dice-d20" size={28} style={[{ marginBottom: -3, color: color }]} />,
 				}}
 			/>
+
+			<Tabs.Screen
+				name="FilterSpellbook"
+				options={{
+					headerShown: false,
+					href: null,
+				}}
+			/>
 		</Tabs>
 	);
 }

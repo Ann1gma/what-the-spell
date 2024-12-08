@@ -1,10 +1,9 @@
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
-const Pergament = require("../../assets/images/background-image.jpg");
 
 const Characters = () => {
 	return (
 		<View style={styles.container}>
-			<ImageBackground source={Pergament} resizeMode="cover" style={styles.image}>
+			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>Characters</Text>
 				</View>

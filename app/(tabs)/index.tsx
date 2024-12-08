@@ -1,15 +1,10 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { getSpellDetails, getSpellsByClass, getSpellsByLevel } from "../../services/DnD5e_API";
-import { SpellsByLevelOverview, SpellsByClassOverview, SpellDetails } from "../../types/DnD5e_API.types";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import useGetCharacters from "../../hooks/useGetCharacters";
-import useGetCharacter from "../../hooks/useGetCharacter";
+import { useState } from "react";
+import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Accordion from "@/components/Accordion";
 import useGetSpellsByLevel from "@/hooks/useGetSpellsByLevel";
-
-const Pergament = require("../../assets/images/background-image.jpg");
+import { Link } from "expo-router";
 
 export default function Index() {
 	const [subTitle, setSubtitle] = useState("All spells");
@@ -48,16 +43,18 @@ export default function Index() {
 
 	return (
 		<View style={styles.container}>
-			<ImageBackground source={Pergament} resizeMode="cover" style={styles.image}>
+			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				<View style={styles.titleContainer}>
 					<View>
 						<Text style={styles.title}>Spellbook</Text>
 						<Text style={styles.subTitle}>{subTitle}</Text>
 					</View>
 					<View style={styles.slidersContainer}>
-						<Pressable>
-							<FontAwesome6 name="sliders" size={24} color="#2b2b2b" />
-						</Pressable>
+						<Link href="/FilterSpellbook" asChild>
+							<Pressable>
+								<FontAwesome6 name="sliders" size={24} color="#2b2b2b" />
+							</Pressable>
+						</Link>
 					</View>
 				</View>
 				<SafeAreaView style={styles.scrollContainer}>
