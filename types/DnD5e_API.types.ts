@@ -40,7 +40,7 @@ interface TypeObject {
 	name: string;
 }
 
-interface SpellDetailsClassObject {
+export interface SpellDetailsClassObject {
 	index: string;
 	name: string;
 }

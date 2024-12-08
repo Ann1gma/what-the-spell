@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SpellsByClassOverview, SpellsByLevelOverview, SpellDetails } from "../types/DnD5e_API.types";
+import { SpellsByClassOverview, SpellsByLevelOverview, SpellDetails, SpellDetailsClassObject } from "../types/DnD5e_API.types";
 
 const instance = axios.create({
 	baseURL: "https://www.dnd5eapi.co/graphql",
@@ -173,4 +173,28 @@ export const getSpellDetails = async (spellIndex: string): Promise<SpellDetails>
 		query,
 	});
 	return response.data.data.spell;
+};
+
+/**
+ * Get all classes.
+ */
+interface GetAllClassesResponse {
+	data: {
+		classes: SpellDetailsClassObject[];
+	};
+}
+
+export const getAllClasses = async (by = "NAME", direction = "ASCENDING"): Promise<SpellDetailsClassObject[]> => {
+	const query = `
+		query Classes{
+			classes(order: { by: ${by}, direction: ${direction} }) {
+    			index
+    			name
+			}
+		}`;
+
+	const response = await instance.post<GetAllClassesResponse>("", {
+		query,
+	});
+	return response.data.data.classes;
 };
