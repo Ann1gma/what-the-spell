@@ -38,6 +38,13 @@ export default function TabLayout() {
 					href: null,
 				}}
 			/>
+			<Tabs.Screen
+				name="spells/[id]"
+				options={{
+					headerShown: false,
+					href: null,
+				}}
+			/>
 		</Tabs>
 	);
 }

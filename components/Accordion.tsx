@@ -6,6 +6,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 
 interface AccordionProps {
 	title: string;
@@ -14,15 +15,23 @@ interface AccordionProps {
 
 const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
 	const [open, setOpen] = useState(false);
+	const router = useRouter();
 
-	const handlePress = () => {
+	const handleOpen = () => {
 		setOpen(!open);
+	};
+
+	const handlePress = (id: string) => {
+		router.push({
+			pathname: "/(tabs)/spells/[id]",
+			params: { id },
+		});
 	};
 
 	return (
 		<>
 			<View>
-				<Pressable style={styles.headerContainer} onPress={handlePress}>
+				<Pressable style={styles.headerContainer} onPress={handleOpen}>
 					<Text style={styles.header}>{title}</Text>
 					<Entypo name={!open ? "chevron-down" : "chevron-up"} size={24} color={!open ? "#990000" : "#2b2b2b"} />
 				</Pressable>
@@ -30,7 +39,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
 			{open && (
 				<SafeAreaView>
 					{data.map((item) => (
-						<Pressable style={styles.itemContainer} key={item.index}>
+						<Pressable style={styles.itemContainer} key={item.index} onPress={() => handlePress(item.index)}>
 							<View>
 								<View style={styles.titleContainer}>
 									<Text style={styles.itemTitle}>{item.name}</Text>
