@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { store } from "./store";
+import store from "./store";
 import { Provider } from "react-redux";
 
 SplashScreen.preventAutoHideAsync();
