@@ -1,18 +1,18 @@
 import { getAllClasses } from "@/services/DnD5e_API";
-import { SpellDetailsClassObject } from "@/types/DnD5e_API.types";
+import { ClassObject } from "@/types/DnD5e_API.types";
 import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 interface DropdownComponentProps {
-	onChange: (item: SpellDetailsClassObject) => void;
+	onChange: (item: ClassObject) => void;
 	placeholder: string;
 }
 
 const DropdownComponent: React.FC<DropdownComponentProps> = ({ onChange, placeholder }) => {
 	const [expanded, setExpanded] = useState(false);
 	const [value, setValue] = useState<string>(placeholder);
-	const [options, setOptions] = useState<SpellDetailsClassObject[]>([{ index: "none", name: "All spells" }]);
+	const [options, setOptions] = useState<ClassObject[]>([{ index: "none", name: "All spells" }]);
 	const [error, setError] = useState<string | null>(null);
 	const [isError, setIsError] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +31,7 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({ onChange, placeho
 		}
 	};
 
-	const onSelect = (item: SpellDetailsClassObject) => {
+	const onSelect = (item: ClassObject) => {
 		onChange(item);
 		setValue(item.name);
 		setExpanded(false);
@@ -110,10 +110,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 8,
 	},
 	label: {
-		/* position: "absolute",
-		left: 22,
-		top: 8,
-		zIndex: 999, */
 		paddingHorizontal: 8,
 		fontSize: 18,
 		color: "#2b2b2b",

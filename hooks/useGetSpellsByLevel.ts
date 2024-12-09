@@ -77,6 +77,48 @@ const useGetSpellsByLevel = () => {
 		}
 	};
 
+	/* ev. combine to one hook instead of two
+	 const getAllSpellsByClass = async (classIndex: string) => {
+		setIsLoading(true);
+		setIsError(false);
+		setError(null);
+		try {
+			const data = await getSpellsByClass(classIndex);
+
+			data.map((spell) => {
+				if (spell.level === 0) {
+					setCantripsData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 1) {
+					setLvlOneData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 2) {
+					setLvlTwoData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 3) {
+					setLvlThreeData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 4) {
+					setLvlFourData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 5) {
+					setLvlFiveData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 6) {
+					setLvlSixData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 7) {
+					setLvlSevenData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 8) {
+					setLvlEightData((previousState) => [...(previousState || []), spell]);
+				} else if (spell.level === 9) {
+					setLvlNineData((previousState) => [...(previousState || []), spell]);
+				} else {
+					setIsError(true);
+					setError("Invalid level");
+				}
+			});
+		} catch (err) {
+			setIsError(true);
+			setError("Failed to fetch all spells.");
+		} finally {
+			setIsLoading(false);
+		}
+	}; */
+
 	useEffect(() => {
 		fetchAllSpells();
 	}, []);

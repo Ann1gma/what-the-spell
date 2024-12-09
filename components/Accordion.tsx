@@ -38,7 +38,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
 								</View>
 								<Text style={styles.itemText}>{item.school.name}</Text>
 								{item.classes && item.classes.length > 0 && (
-									<View style={{ flexDirection: "row" }}>
+									<View style={styles.classContainer}>
 										<Text style={styles.itemText}>Classes:</Text>
 										{item.classes.map((classItem) => (
 											<Text key={classItem.name} style={[styles.itemText, { marginLeft: 5 }]}>
@@ -155,5 +155,10 @@ const styles = StyleSheet.create({
 		fontFamily: "NunitoRegular",
 		fontSize: 8,
 		color: "#2b2b2b",
+	},
+	classContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		marginBottom: 3,
 	},
 });
