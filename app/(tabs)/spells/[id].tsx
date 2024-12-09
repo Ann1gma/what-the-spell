@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { useEffect, useState } from "react";
 import { SpellDetails } from "@/types/DnD5e_API.types";
@@ -69,9 +69,124 @@ export default function SpellDetailScreen() {
 						</Pressable>
 					</View>
 				</View>
-				<View>
-					<Text>Spell Index: {id}</Text>
-				</View>
+				{spellData && (
+					<SafeAreaView style={styles.scrollContainer}>
+						<ScrollView>
+							<View style={styles.contentWrapper}>
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>Level:</Text>
+									<Text style={styles.text}>{spellData.level}</Text>
+								</View>
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>Casting time:</Text>
+									<Text style={styles.text}>{spellData.casting_time}</Text>
+								</View>
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>Duration:</Text>
+									<Text style={styles.text}>{spellData.duration}</Text>
+								</View>
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>Components:</Text>
+									{spellData.components.map((component, index) => (
+										<Text style={styles.text} key={index}>
+											{component}
+											{spellData.components.length > 1 && index != spellData.components.length - 1 && ","}
+										</Text>
+									))}
+								</View>
+								{spellData.material && (
+									<View style={styles.infoContainer}>
+										<Text style={styles.boldText}>Material:</Text>
+										<Text style={styles.text}>{spellData.material}</Text>
+									</View>
+								)}
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>Ritual:</Text>
+									<Text style={styles.text}>{spellData.ritual ? "Yes" : "No"}</Text>
+								</View>
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>Concentration:</Text>
+									<Text style={styles.text}>{spellData.concentration ? "Yes" : "No"}</Text>
+								</View>
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>Range:</Text>
+									<Text style={styles.text}>{spellData.range}</Text>
+								</View>
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>School of magic:</Text>
+									<Text style={styles.text}>{spellData.school.name}</Text>
+								</View>
+								<View style={styles.infoContainer}>
+									<Text style={styles.boldText}>Classes:</Text>
+									{spellData.classes.map((className, index) => (
+										<Text style={styles.text} key={className.index}>
+											{className.name}
+											{spellData.classes.length > 1 && index != spellData.classes.length - 1 && ","}
+										</Text>
+									))}
+								</View>
+								{spellData.damage && (
+									<>
+										<View style={styles.infoContainer}>
+											<Text style={styles.boldText}>Damage type:</Text>
+											<Text style={styles.text}>{spellData.damage.damage_type.name}</Text>
+										</View>
+										{spellData.damage.damage_at_slot_level && (
+											<>
+												<Text style={[styles.boldText, { marginTop: 10 }]}>Damage at slot level:</Text>
+
+												{spellData.damage.damage_at_slot_level.map((lvl, index) => (
+													<View style={[styles.infoContainer, { marginLeft: "10%", marginTop: 3 }]} key={index}>
+														<Text style={styles.text}>Level {lvl.level} :</Text>
+														<Text style={styles.text}>{lvl.damage}</Text>
+													</View>
+												))}
+											</>
+										)}
+									</>
+								)}
+								{spellData.heal_at_slot_level && (
+									<>
+										<Text style={[styles.boldText, { marginTop: 10 }]}>Heal at slot level:</Text>
+
+										{spellData.heal_at_slot_level.map((lvl, index) => (
+											<View style={[styles.infoContainer, { marginLeft: "10%", marginTop: 3 }]} key={index}>
+												<Text style={styles.text}>Level {lvl.level} :</Text>
+												<Text style={styles.text}>{lvl.healing}</Text>
+											</View>
+										))}
+									</>
+								)}
+							</View>
+
+							<View style={styles.contentWrapper}>
+								<Text style={styles.boldText}>Description:</Text>
+								{spellData.desc.map((paragraph, index) => (
+									<View style={[styles.infoContainer, { marginBottom: 20 }]} key={index}>
+										<Text style={styles.text}>{paragraph}</Text>
+									</View>
+								))}
+							</View>
+
+							{spellData.higher_level && (
+								<View style={styles.contentWrapper}>
+									<Text style={styles.boldText}>At higher levels:</Text>
+									{spellData.higher_level.map((paragraph, index) => (
+										<View style={[styles.infoContainer, { marginBottom: 20 }]} key={index}>
+											<Text style={styles.text}>{paragraph}</Text>
+										</View>
+									))}
+								</View>
+							)}
+							{!spellData.higher_level && (
+								<View style={styles.contentWrapper}>
+									<Text style={styles.boldText}>At higher levels:</Text>
+									<Text style={styles.text}>Nothing happens at higher levels.</Text>
+								</View>
+							)}
+						</ScrollView>
+					</SafeAreaView>
+				)}
 			</ImageBackground>
 		</View>
 	);
@@ -80,6 +195,15 @@ export default function SpellDetailScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+	},
+	scrollContainer: {
+		flex: 1,
+		marginTop: 10,
+		marginHorizontal: 15,
+		padding: 20,
+		backgroundColor: "rgba(240, 228, 209, 0.4)",
+		borderTopRightRadius: 10,
+		borderTopLeftRadius: 10,
 	},
 	image: {
 		width: "100%",
@@ -104,5 +228,25 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		left: "3%",
 		zIndex: 1,
+	},
+	contentWrapper: {
+		marginVertical: 10,
+	},
+	infoContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		alignItems: "center",
+	},
+	descriptionContainer: {},
+	higerLvlContainer: {},
+	text: {
+		fontFamily: "NunitoRegular",
+		fontSize: 16,
+		marginRight: 5,
+	},
+	boldText: {
+		fontFamily: "NunitoBlack",
+		fontSize: 16,
+		marginRight: 5,
 	},
 });

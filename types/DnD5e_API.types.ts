@@ -75,7 +75,7 @@ export interface SpellDetails {
 	concentration: boolean;
 	desc: string[];
 	duration: string;
-	higher_level: string[];
+	higher_level: string[] | null;
 	level: number;
 	material: string | null;
 	name: string;
@@ -86,4 +86,7 @@ export interface SpellDetails {
 	damage: DamageObject | null;
 	dc: DcObject | null;
 	heal_at_slot_level: HealAtSlotLevelObject[] | null;
+	school: {
+		name: string;
+	};
 }

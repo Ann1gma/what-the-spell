@@ -163,6 +163,9 @@ export const getSpellDetails = async (spellIndex: string): Promise<SpellDetails>
 				level
 				healing
 			}
+			school {
+      			name
+    		}
 		}
 	}`;
 

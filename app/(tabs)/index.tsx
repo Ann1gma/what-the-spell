@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
 	},
 	scrollContainer: {
 		flex: 1,
-		marginTop: 30,
 	},
 	image: {
 		width: "100%",
