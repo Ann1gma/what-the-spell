@@ -23,7 +23,7 @@ interface GetSpellsByLevelResponse {
 	};
 }
 
-export const getSpellsByLevel = async (by: "NAME" | "LEVEL", direction: "ASCENDING" | "DESCENDING", level: number): Promise<SpellsOverview[]> => {
+export const getSpellsByLevel = async (level: number, by = "NAME", direction = "ASCENDING"): Promise<SpellsOverview[]> => {
 	const query = `
 		query Spells {
 		spells(order: { by: ${by}, direction: ${direction} }, level: ${level}) {
@@ -66,16 +66,12 @@ interface GetSpellsByClassResponse {
 	};
 }
 
-export const getSpellsByClass = async (className: string): Promise<SpellsOverview[]> => {
+export const getSpellsByClass = async (className: string, by = "NAME", direction = "ASCENDING"): Promise<SpellsOverview[]> => {
 	const query = `
 		query Spells {
 		spells(
 			class: "${className}"
-			order: {
-				by: LEVEL
-				direction: ASCENDING
-				then_by: { by: NAME, direction: ASCENDING }
-			}
+			order: { by: ${by}, direction: ${direction} }
 		) {
 			index
 			attack_type

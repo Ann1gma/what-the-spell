@@ -23,7 +23,12 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({ onChange, placeho
 		setIsLoading(true);
 		try {
 			const data = await getAllClasses();
-			setOptions((prevOptions) => [...prevOptions, ...data]);
+
+			const filterdList = data.filter(
+				(item) => item.index !== "barbarian" && item.index !== "fighter" && item.index !== "monk" && item.index !== "rogue"
+			);
+
+			setOptions((prevOptions) => [...prevOptions, ...filterdList]);
 		} catch (err) {
 			setError((err as Error).message);
 		} finally {

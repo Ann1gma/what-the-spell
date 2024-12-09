@@ -19,7 +19,7 @@ const useGetSpellsByLevel = () => {
 
 	const getAllSpellsByLevel = async (level: number) => {
 		try {
-			const data = await getSpellsByLevel("NAME", "ASCENDING", level);
+			const data = await getSpellsByLevel(level);
 			switch (level) {
 				case 0:
 					setCantripsData(data);

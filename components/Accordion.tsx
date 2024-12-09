@@ -45,10 +45,14 @@ const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
 									<Text style={styles.itemTitle}>{item.name}</Text>
 									<Text style={styles.itemText}>{item.level === 0 ? `- cantrip` : `- level ${item.level}`}</Text>
 								</View>
-								<Text style={styles.itemText}>{item.school.name}</Text>
+								<View style={{ flexDirection: "row" }}>
+									<Text style={styles.itemTextBold}>School of magic:</Text>
+									<Text style={[styles.itemText, { marginLeft: 5 }]}> {item.school.name}</Text>
+								</View>
+
 								{item.classes && item.classes.length > 0 && (
 									<View style={styles.classContainer}>
-										<Text style={styles.itemText}>Classes:</Text>
+										<Text style={styles.itemTextBold}>Classes:</Text>
 										{item.classes.map((classItem) => (
 											<Text key={classItem.name} style={[styles.itemText, { marginLeft: 5 }]}>
 												{classItem.name},
@@ -143,9 +147,15 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		color: "#2b2b2b",
 		marginRight: 5,
+		marginBottom: 5,
 	},
 	itemText: {
 		fontFamily: "NunitoRegular",
+		fontSize: 16,
+		color: "#2b2b2b",
+	},
+	itemTextBold: {
+		fontFamily: "NunitoBold",
 		fontSize: 16,
 		color: "#2b2b2b",
 	},
@@ -168,6 +178,6 @@ const styles = StyleSheet.create({
 	classContainer: {
 		flexDirection: "row",
 		flexWrap: "wrap",
-		marginBottom: 3,
+		marginBottom: 5,
 	},
 });

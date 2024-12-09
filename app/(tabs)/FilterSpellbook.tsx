@@ -8,12 +8,12 @@ import { RootState } from "../store";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
 
 const FilterSpellbook = () => {
-	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
 	const dispatch = useDispatch();
 	const router = useRouter();
 
 	const onFiltration = (item: ClassObject) => {
 		dispatch(changeFilter(item));
+		router.back();
 	};
 
 	return (

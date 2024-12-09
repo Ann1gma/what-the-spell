@@ -59,7 +59,7 @@ export default function SpellDetailScreen() {
 			<ImageBackground source={require("../../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				<View style={styles.titleContainer}>
 					{spellData && (
-						<View>
+						<View style={styles.titleWrapper}>
 							<Text style={styles.title}>{spellData.name}</Text>
 						</View>
 					)}
@@ -214,15 +214,23 @@ const styles = StyleSheet.create({
 	titleContainer: {
 		flexWrap: "wrap",
 		backgroundColor: "#F0E4D1",
-		height: 60,
+		minHeight: 60,
 		justifyContent: "center",
-		alignContent: "space-between",
+		alignContent: "center",
+		alignItems: "center",
 	},
 	title: {
 		fontSize: 24,
 		fontFamily: "CinzelBlack",
 		color: "#990000",
 		textAlign: "center",
+		paddingVertical: 8,
+	},
+	titleWrapper: {
+		flexWrap: "wrap",
+		width: "80%",
+		alignContent: "center",
+		alignItems: "center",
 	},
 	iconContainer: {
 		position: "absolute",
@@ -242,11 +250,13 @@ const styles = StyleSheet.create({
 	text: {
 		fontFamily: "NunitoRegular",
 		fontSize: 16,
+		color: "#2b2b2b",
 		marginRight: 5,
 	},
 	boldText: {
 		fontFamily: "NunitoBlack",
 		fontSize: 16,
+		color: "#2b2b2b",
 		marginRight: 5,
 	},
 });
