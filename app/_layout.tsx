@@ -17,10 +17,6 @@ export default function RootLayout() {
 		NunitoSemiBold: require("../assets/fonts/Nunito-SemiBold.ttf"),
 		NunitoBold: require("../assets/fonts/Nunito-Bold.ttf"),
 		NunitoBlack: require("../assets/fonts/Nunito-Black.ttf"),
-		InterSmallBold: require("../assets/fonts/Inter_18pt-Bold.ttf"),
-		InterSmallRegular: require("../assets/fonts/Inter_18pt-Regular.ttf"),
-		InterBigMedium: require("../assets/fonts/Inter_24pt-Medium.ttf"),
-		InterBigBold: require("../assets/fonts/Inter_24pt-Bold.ttf"),
 	});
 
 	useEffect(() => {
