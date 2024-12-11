@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { CollectionReference, DocumentData, collection, getFirestore } from "firebase/firestore";
+import { getReactNativePersistence, initializeAuth } from "firebase/auth";
+import { CollectionReference, collection, getFirestore } from "firebase/firestore";
 import { Character } from "../types/Character.types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,7 +20,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Get Auth Instance
-export const auth = getAuth(app);
+export const auth = initializeAuth(app, {
+	persistence: getReactNativePersistence(AsyncStorage),
+});
 
 // Get Firestore Instance
 export const db = getFirestore(app);

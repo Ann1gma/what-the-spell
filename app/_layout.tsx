@@ -4,6 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import store from "./store";
 import { Provider } from "react-redux";
+import AuthContextProvider from "@/context/AuthContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,9 +31,11 @@ export default function RootLayout() {
 	}
 	return (
 		<Provider store={store}>
-			<Stack screenOptions={{ headerShadowVisible: false }}>
-				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-			</Stack>
+			<AuthContextProvider>
+				<Stack screenOptions={{ headerShadowVisible: false }}>
+					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+				</Stack>
+			</AuthContextProvider>
 		</Provider>
 	);
 }
