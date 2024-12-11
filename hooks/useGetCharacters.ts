@@ -3,7 +3,7 @@ import { characterCol } from "../services/firebaseConfig";
 import { useEffect, useState } from "react";
 import { Character } from "../types/Character.types";
 
-const useGetCharacters = (uid = "Kc4xQUGxNmOMijR1jSeEvIL2qhR2") => {
+const useGetCharacters = (uid = "") => {
 	const [loading, setLoading] = useState(true);
 	const [data, setData] = useState<Character[] | null>(null);
 
