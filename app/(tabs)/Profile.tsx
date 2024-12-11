@@ -14,6 +14,7 @@ const Profile = () => {
 		control,
 		handleSubmit,
 		formState: { errors },
+		reset,
 	} = useForm<LoginData>();
 
 	const onLogin: SubmitHandler<LoginData> = async (data) => {
@@ -21,6 +22,7 @@ const Profile = () => {
 		setError(null);
 		try {
 			await login(data.email, data.password);
+			reset();
 		} catch (err) {
 			setError("Failed to login. Please check your credentials.");
 		}
@@ -31,6 +33,7 @@ const Profile = () => {
 		setSubmitting(true);
 		try {
 			await logout();
+			reset();
 		} catch (err) {
 			setError("Failed to logout.");
 		}
@@ -92,6 +95,7 @@ const Profile = () => {
 									onBlur={onBlur}
 									onChangeText={onChange}
 									value={value}
+									keyboardType="email-address"
 									inputMode="email"
 								/>
 							)}
@@ -124,7 +128,7 @@ const Profile = () => {
 						<View style={{ marginTop: 30 }}>
 							<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Don't have an account?</Text>
 							<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Sign up! - It's Free</Text>
-							<Link href="/Signup" asChild>
+							<Link href="./Signup" asChild>
 								<Pressable>
 									<Text style={styles.linkText}>Sign up</Text>
 								</Pressable>
@@ -162,16 +166,18 @@ const styles = StyleSheet.create({
 		marginHorizontal: 20,
 	},
 	profileWrapper: {
-		marginTop: 30,
+		marginTop: 20,
 		marginHorizontal: 20,
 		padding: 20,
 	},
 	formWrapper: {
 		justifyContent: "center",
-		padding: 20,
+		paddingHorizontal: 20,
+		paddingTop: 50,
+		paddingBottom: 20,
 		backgroundColor: "rgba(240, 228, 209, 0.5)",
 		marginHorizontal: 20,
-		marginTop: 50,
+		marginTop: 20,
 		borderRadius: 10,
 	},
 	text: {
