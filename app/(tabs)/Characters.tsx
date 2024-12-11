@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Characters = () => {
