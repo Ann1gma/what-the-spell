@@ -5,8 +5,6 @@ import DropdownComponent from "@/components/DropdownComponent";
 import { ClassObject } from "@/types/DnD5e_API.types";
 import { useDispatch } from "react-redux";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
-import { useEffect, useState } from "react";
-import { getAllClasses } from "@/services/DnD5e_API";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
 
 const FilterSpellbook = () => {
