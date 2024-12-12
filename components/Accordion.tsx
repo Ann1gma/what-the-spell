@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, FlatList, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, Pressable, SafeAreaView } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useState } from "react";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
@@ -29,7 +29,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
 	};
 
 	return (
-		<>
+		<View>
 			<View>
 				<Pressable style={styles.headerContainer} onPress={handleOpen}>
 					<Text style={styles.header}>{title}</Text>
@@ -109,7 +109,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
 					))}
 				</SafeAreaView>
 			)}
-		</>
+		</View>
 	);
 };
 

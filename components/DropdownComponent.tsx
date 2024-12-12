@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
 		padding: 16,
 		width: "80%",
 		marginHorizontal: "auto",
-		marginTop: 20,
+		marginTop: 10,
 		borderRadius: 5,
 		backgroundColor: "#F0E4D1",
 	},
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 		marginHorizontal: "auto",
 		borderRadius: 5,
 		backgroundColor: "rgba(240, 228, 209, 0.4)",
-		maxHeight: "70%",
+		maxHeight: "80%",
 		overflow: "scroll",
 	},
 	optionItem: {

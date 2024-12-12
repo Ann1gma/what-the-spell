@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { SignupData } from "@/types/User.types";

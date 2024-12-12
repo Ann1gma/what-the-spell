@@ -3,8 +3,7 @@ import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native
 import Feather from "@expo/vector-icons/Feather";
 import DropdownComponent from "@/components/DropdownComponent";
 import { ClassObject } from "@/types/DnD5e_API.types";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store";
+import { useDispatch } from "react-redux";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
 
 const FilterSpellbook = () => {
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		color: "#2b2b2b",
 		textAlign: "center",
-		marginTop: 30,
+		marginTop: 20,
 	},
 	iconContainer: {
 		position: "absolute",
