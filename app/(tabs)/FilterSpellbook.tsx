@@ -7,42 +7,17 @@ import { useDispatch } from "react-redux";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
 import { useEffect, useState } from "react";
 import { getAllClasses } from "@/services/DnD5e_API";
+import useGetAllClasses from "@/hooks/useGetAllClasses";
 
 const FilterSpellbook = () => {
-	const [options, setOptions] = useState<ClassObject[]>([{ index: "none", name: "All spells" }]);
-	const [error, setError] = useState<string | null>(null);
-	const [isError, setIsError] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
 	const router = useRouter();
-
-	const getClasses = async () => {
-		setError(null);
-		setIsError(false);
-		setIsLoading(true);
-		try {
-			const data = await getAllClasses();
-
-			const filteredList = data.filter(
-				(item) => item.index !== "barbarian" && item.index !== "fighter" && item.index !== "monk" && item.index !== "rogue"
-			);
-
-			setOptions((prevOptions) => [...prevOptions, ...filteredList]);
-		} catch (err) {
-			setError((err as Error).message);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	const { options, isError, isLoading, error } = useGetAllClasses([{ index: "none", name: "All spells" }]);
 
 	const onFiltration = (item: ClassObject) => {
 		dispatch(changeFilter(item));
 		router.back();
 	};
-
-	useEffect(() => {
-		getClasses();
-	}, []);
 
 	if (isLoading) {
 		return (

@@ -6,16 +6,14 @@ import { NewCharacter } from "@/types/Character.types";
 import { ClassObject } from "@/types/DnD5e_API.types";
 import { getAllClasses } from "@/services/DnD5e_API";
 import DropdownComponent from "@/components/DropdownComponent";
+import useGetAllClasses from "@/hooks/useGetAllClasses";
 
 const AddCharacter = () => {
 	const { currentUser } = useAuth();
-	const [options, setOptions] = useState<ClassObject[]>([]);
 	const [className, setClassName] = useState<ClassObject | null>(null);
 	const [submitting, setSubmitting] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [getError, setGetError] = useState<string | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
-
+	const [submitError, setSubmitError] = useState<string | null>(null);
+	const { error, isError, isLoading, options } = useGetAllClasses([]);
 	const {
 		control,
 		handleSubmit,
@@ -23,41 +21,20 @@ const AddCharacter = () => {
 		reset,
 	} = useForm<NewCharacter>();
 
-	const getClasses = async () => {
-		setGetError(null);
-		setIsLoading(true);
-		try {
-			const data = await getAllClasses();
-
-			const filterdList = data.filter(
-				(item) => item.index !== "barbarian" && item.index !== "fighter" && item.index !== "monk" && item.index !== "rogue"
-			);
-			setOptions((prevOptions) => [...prevOptions, ...filterdList]);
-		} catch (err) {
-			setGetError((err as Error).message);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
 	const onFiltration = (item: ClassObject) => {
 		setClassName(item);
 	};
 
 	const onCreateCharacter: SubmitHandler<NewCharacter> = async (data) => {
 		setSubmitting(true);
-		setError(null);
+		setSubmitError(null);
 		try {
 			await reset();
 		} catch (err) {
-			setError("Failed to login. Please check your credentials.");
+			setSubmitError("Failed to login. Please check your credentials.");
 		}
 		setSubmitting(false);
 	};
-
-	useEffect(() => {
-		getClasses();
-	}, []);
 
 	if (isLoading) {
 		return (
@@ -67,10 +44,10 @@ const AddCharacter = () => {
 		);
 	}
 
-	if (getError) {
+	if (isError) {
 		return (
 			<View>
-				<Text>{getError}</Text>
+				<Text>{error}</Text>
 			</View>
 		);
 	}
@@ -98,7 +75,7 @@ const AddCharacter = () => {
 				</View>
 
 				<View style={styles.formWrapper}>
-					{error && <Text style={styles.error}>{error}</Text>}
+					{submitError && <Text style={styles.error}>{submitError}</Text>}
 
 					<Text style={styles.text}>Character name*</Text>
 					<Controller
