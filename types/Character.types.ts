@@ -25,9 +25,19 @@ export interface Character {
 	spell_save_dc: number | null;
 	show_prepared_spells: boolean;
 	show_spellslots: boolean;
-	spellslots: Spellslot[];
+	spellslots: Spellslot[] | null;
 	known_spells: CharacterSpell[] | null;
 	prepared_spells: CharacterSpell[] | null;
 }
 
-export type NewCharacter = Omit<Character, "_id">;
+export interface NewCharacter {
+	uid: string;
+	character_level: number;
+	character_name: string;
+	class_name: string;
+	spell_attack_modifier: number | null;
+	spell_save_dc: number | null;
+	show_prepared_spells: boolean;
+	show_spellslots: boolean;
+	spellslots: Spellslot[] | null;
+}

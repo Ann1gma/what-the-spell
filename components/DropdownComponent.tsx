@@ -1,66 +1,23 @@
-import { getAllClasses } from "@/services/DnD5e_API";
 import { ClassObject } from "@/types/DnD5e_API.types";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 interface DropdownComponentProps {
 	onChange: (item: ClassObject) => void;
 	placeholder: string;
+	options: ClassObject[];
 }
 
-const DropdownComponent: React.FC<DropdownComponentProps> = ({ onChange, placeholder }) => {
+const DropdownComponent: React.FC<DropdownComponentProps> = ({ onChange, placeholder, options }) => {
 	const [expanded, setExpanded] = useState(false);
 	const [value, setValue] = useState<string>(placeholder);
-	const [options, setOptions] = useState<ClassObject[]>([{ index: "none", name: "All spells" }]);
-	const [error, setError] = useState<string | null>(null);
-	const [isError, setIsError] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-
-	const getClasses = async () => {
-		setError(null);
-		setIsError(false);
-		setIsLoading(true);
-		try {
-			const data = await getAllClasses();
-
-			const filterdList = data.filter(
-				(item) => item.index !== "barbarian" && item.index !== "fighter" && item.index !== "monk" && item.index !== "rogue"
-			);
-
-			setOptions((prevOptions) => [...prevOptions, ...filterdList]);
-		} catch (err) {
-			setError((err as Error).message);
-		} finally {
-			setIsLoading(false);
-		}
-	};
 
 	const onSelect = (item: ClassObject) => {
 		onChange(item);
 		setValue(item.name);
 		setExpanded(false);
 	};
-
-	useEffect(() => {
-		getClasses();
-	}, []);
-
-	if (isLoading) {
-		return (
-			<View>
-				<Text>Loading...</Text>
-			</View>
-		);
-	}
-
-	if (isError) {
-		return (
-			<View>
-				<Text>{error}</Text>
-			</View>
-		);
-	}
 
 	return (
 		<SafeAreaView>
@@ -96,10 +53,10 @@ export default DropdownComponent;
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 16,
-		width: "80%",
+		padding: 10,
+		width: "100%",
 		marginHorizontal: "auto",
-		marginTop: 10,
+		marginTop: 5,
 		borderRadius: 5,
 		backgroundColor: "#F0E4D1",
 	},
@@ -120,7 +77,7 @@ const styles = StyleSheet.create({
 		color: "#2b2b2b",
 	},
 	labelPlaceholder: {
-		fontSize: 18,
+		fontSize: 16,
 		fontWeight: "bold",
 		color: "#2b2b2b",
 	},
@@ -131,7 +88,6 @@ const styles = StyleSheet.create({
 	},
 	optionsContainer: {
 		padding: 16,
-		width: "80%",
 		marginHorizontal: "auto",
 		borderRadius: 5,
 		backgroundColor: "rgba(240, 228, 209, 0.4)",

@@ -5,15 +5,60 @@ import DropdownComponent from "@/components/DropdownComponent";
 import { ClassObject } from "@/types/DnD5e_API.types";
 import { useDispatch } from "react-redux";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
+import { useEffect, useState } from "react";
+import { getAllClasses } from "@/services/DnD5e_API";
 
 const FilterSpellbook = () => {
+	const [options, setOptions] = useState<ClassObject[]>([{ index: "none", name: "All spells" }]);
+	const [error, setError] = useState<string | null>(null);
+	const [isError, setIsError] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
 	const router = useRouter();
+
+	const getClasses = async () => {
+		setError(null);
+		setIsError(false);
+		setIsLoading(true);
+		try {
+			const data = await getAllClasses();
+
+			const filteredList = data.filter(
+				(item) => item.index !== "barbarian" && item.index !== "fighter" && item.index !== "monk" && item.index !== "rogue"
+			);
+
+			setOptions((prevOptions) => [...prevOptions, ...filteredList]);
+		} catch (err) {
+			setError((err as Error).message);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	const onFiltration = (item: ClassObject) => {
 		dispatch(changeFilter(item));
 		router.back();
 	};
+
+	useEffect(() => {
+		getClasses();
+	}, []);
+
+	if (isLoading) {
+		return (
+			<View>
+				<Text>Loading...</Text>
+			</View>
+		);
+	}
+
+	if (isError) {
+		return (
+			<View>
+				<Text>{error}</Text>
+			</View>
+		);
+	}
 
 	return (
 		<View style={styles.container}>
@@ -28,8 +73,10 @@ const FilterSpellbook = () => {
 						</Pressable>
 					</View>
 				</View>
-				<Text style={styles.text}>Filter spells by class</Text>
-				<DropdownComponent onChange={(e) => onFiltration(e)} placeholder="All spells" />
+				<View style={styles.formWrapper}>
+					<Text style={styles.text}>Filter spells by class</Text>
+					<DropdownComponent options={options} onChange={(e) => onFiltration(e)} placeholder="All spells" />
+				</View>
 			</ImageBackground>
 		</View>
 	);
@@ -69,11 +116,22 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		color: "#2b2b2b",
 		textAlign: "center",
-		marginTop: 20,
+		marginTop: 10,
+		marginBottom: 10,
 	},
 	iconContainer: {
 		position: "absolute",
 		left: "3%",
 		zIndex: 1,
+	},
+	formWrapper: {
+		justifyContent: "center",
+		paddingHorizontal: 20,
+		paddingTop: 10,
+		paddingBottom: 20,
+		backgroundColor: "rgba(240, 228, 209, 0.5)",
+		marginHorizontal: 20,
+		marginTop: 20,
+		borderRadius: 10,
 	},
 });

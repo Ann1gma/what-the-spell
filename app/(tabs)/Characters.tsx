@@ -69,9 +69,9 @@ const Characters = () => {
 								keyExtractor={(item) => item._id}
 								data={data}
 								style={{ flexGrow: 0 }}
-								renderItem={({ item }) => (
+								renderItem={({ item, index }) => (
 									<TouchableOpacity activeOpacity={0.8} onPress={() => handlePress(item._id)}>
-										<View style={styles.characterContainer}>
+										<View style={index === 0 ? styles.firstCharacterContainer : styles.characterContainer}>
 											<View style={{ flexDirection: "row" }}>
 												<View style={styles.logoContainer}>
 													<Image
@@ -159,8 +159,24 @@ const styles = StyleSheet.create({
 		paddingBottom: 20,
 		flexDirection: "column",
 		justifyContent: "space-between",
+		borderRadius: 10,
 	},
 	charactersContainer: {},
+	firstCharacterContainer: {
+		paddingHorizontal: 10,
+		paddingVertical: 20,
+		flexDirection: "row",
+		alignItems: "center",
+		flexWrap: "wrap",
+		borderTopRightRadius: 10,
+		borderTopLeftRadius: 10,
+		borderTopWidth: 5,
+		borderTopColor: "#F0E4D1",
+		borderBottomWidth: 5,
+		borderBottomColor: "#F0E4D1",
+		backgroundColor: "rgba(240, 228, 209, 0.5)",
+		justifyContent: "space-between",
+	},
 	characterContainer: {
 		paddingHorizontal: 10,
 		paddingVertical: 20,
@@ -171,7 +187,6 @@ const styles = StyleSheet.create({
 		borderTopColor: "#F0E4D1",
 		borderBottomWidth: 5,
 		borderBottomColor: "#F0E4D1",
-		/* backgroundColor: "rgba(153, 0, 0, 0.1)", */
 		backgroundColor: "rgba(240, 228, 209, 0.5)",
 		justifyContent: "space-between",
 	},
