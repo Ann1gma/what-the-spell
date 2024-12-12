@@ -126,13 +126,13 @@ export default function SpellDetailScreen() {
 									))}
 								</View>
 								{spellData.damage && (
-									<>
+									<View>
 										<View style={styles.infoContainer}>
 											<Text style={styles.boldText}>Damage type:</Text>
 											<Text style={styles.text}>{spellData.damage.damage_type.name}</Text>
 										</View>
 										{spellData.damage.damage_at_slot_level && (
-											<>
+											<View>
 												<Text style={[styles.boldText, { marginTop: 10 }]}>Damage at slot level:</Text>
 
 												{spellData.damage.damage_at_slot_level.map((lvl, index) => (
@@ -141,12 +141,12 @@ export default function SpellDetailScreen() {
 														<Text style={styles.text}>{lvl.damage}</Text>
 													</View>
 												))}
-											</>
+											</View>
 										)}
-									</>
+									</View>
 								)}
 								{spellData.heal_at_slot_level && (
-									<>
+									<View>
 										<Text style={[styles.boldText, { marginTop: 10 }]}>Heal at slot level:</Text>
 
 										{spellData.heal_at_slot_level.map((lvl, index) => (
@@ -155,7 +155,7 @@ export default function SpellDetailScreen() {
 												<Text style={styles.text}>{lvl.healing}</Text>
 											</View>
 										))}
-									</>
+									</View>
 								)}
 							</View>
 

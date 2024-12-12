@@ -2,6 +2,7 @@ import useAuth from "@/hooks/useAuth";
 import useGetCharacters from "@/hooks/useGetCharacters";
 import Feather from "@expo/vector-icons/Feather";
 import Entypo from "@expo/vector-icons/Entypo";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, Pressable } from "react-native";
 
@@ -9,6 +10,19 @@ const Characters = () => {
 	const { currentUser } = useAuth();
 	const { data, loading } = useGetCharacters(currentUser?.uid);
 	const router = useRouter();
+
+	const handlePress = (id: string) => {
+		router.push({
+			pathname: "/(tabs)/characters/[id]",
+			params: { id },
+		});
+	};
+
+	const handleAddCharacter = () => {
+		router.push({
+			pathname: "/(tabs)/AddCharacter",
+		});
+	};
 
 	if (loading) {
 		return (
@@ -56,7 +70,7 @@ const Characters = () => {
 								data={data}
 								style={{ flexGrow: 0 }}
 								renderItem={({ item }) => (
-									<TouchableOpacity activeOpacity={0.8}>
+									<TouchableOpacity activeOpacity={0.8} onPress={() => handlePress(item._id)}>
 										<View style={styles.characterContainer}>
 											<View style={{ flexDirection: "row" }}>
 												<View style={styles.logoContainer}>
@@ -88,6 +102,12 @@ const Characters = () => {
 							<Text>You don't have any characters, maybe you should create one! 😊</Text>
 						</View>
 					)}
+					<TouchableOpacity activeOpacity={0.8} onPress={handleAddCharacter}>
+						<View style={styles.addCharacterContainer}>
+							<Ionicons name="person-add" size={26} color="#2b2b2b" style={{ marginRight: 10 }} />
+							<Text style={styles.characterName}>Add character</Text>
+						</View>
+					</TouchableOpacity>
 				</SafeAreaView>
 			</ImageBackground>
 		</View>
@@ -131,12 +151,14 @@ const styles = StyleSheet.create({
 		zIndex: 1,
 	},
 	contentWrapper: {
-		height: "100%",
+		height: "90%",
 		backgroundColor: "rgba(240, 228, 209, 0.3)",
 		marginHorizontal: 20,
 		marginTop: 10,
-		borderTopWidth: 5,
-		borderTopColor: "#F0E4D1",
+		marginBottom: 10,
+		paddingBottom: 20,
+		flexDirection: "column",
+		justifyContent: "space-between",
 	},
 	charactersContainer: {},
 	characterContainer: {
@@ -145,10 +167,12 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		flexWrap: "wrap",
+		borderTopWidth: 5,
+		borderTopColor: "#F0E4D1",
 		borderBottomWidth: 5,
 		borderBottomColor: "#F0E4D1",
 		/* backgroundColor: "rgba(153, 0, 0, 0.1)", */
-		backgroundColor: "rgba(240, 228, 209, 0.3)",
+		backgroundColor: "rgba(240, 228, 209, 0.5)",
 		justifyContent: "space-between",
 	},
 	characterName: {
@@ -156,7 +180,16 @@ const styles = StyleSheet.create({
 		fontSize: 22,
 		color: "#990000",
 	},
-	addCharacterContainer: {},
+	addCharacterContainer: {
+		paddingHorizontal: 30,
+		marginHorizontal: 20,
+		flexDirection: "row",
+		justifyContent: "space-evenly",
+		alignItems: "center",
+		paddingVertical: 20,
+		borderRadius: 10,
+		backgroundColor: "#F0E4D1",
+	},
 	logoContainer: {
 		marginRight: 10,
 	},

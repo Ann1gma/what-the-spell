@@ -84,6 +84,22 @@ export default function TabLayout() {
 						href: null,
 					}}
 				/>
+
+				<Tabs.Screen
+					name="AddCharacter"
+					options={{
+						headerShown: false,
+						href: null,
+					}}
+				/>
+
+				<Tabs.Screen
+					name="characters/[id]"
+					options={{
+						headerShown: false,
+						href: null,
+					}}
+				/>
 			</Tabs>
 		);
 	}
@@ -158,6 +174,22 @@ export default function TabLayout() {
 
 			<Tabs.Screen
 				name="Signup"
+				options={{
+					headerShown: false,
+					href: null,
+				}}
+			/>
+
+			<Tabs.Screen
+				name="AddCharacter"
+				options={{
+					headerShown: false,
+					href: null,
+				}}
+			/>
+
+			<Tabs.Screen
+				name="characters/[id]"
 				options={{
 					headerShown: false,
 					href: null,
