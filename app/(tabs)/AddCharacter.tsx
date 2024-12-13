@@ -7,24 +7,21 @@ import { ClassObject } from "@/types/DnD5e_API.types";
 import DropdownComponent from "@/components/DropdownComponent";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { doc, setDoc } from "firebase/firestore";
+import { newCharacterCol } from "@/services/firebaseConfig";
+import useSetSpellslots from "@/hooks/useSetSpellslots";
+import { useRouter } from "expo-router";
 
 const AddCharacter = () => {
 	const { currentUser } = useAuth();
 	const [className, setClassName] = useState<ClassObject | null>(null);
 	const [submitting, setSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState<string | null>(null);
-	const [showPreparedSpells, setShowPreparedSpells] = useState(false);
-	const [showSpellslots, setShowSpellslots] = useState(false);
-	const [lvlOneSpellSlots, setLvlOneSpellSlots] = useState<number | null>(null);
-	const [lvlTwoSpellSlots, setLvlTwoSpellSlots] = useState<number | null>(null);
-	const [lvlThreeSpellSlots, setLvlThreeSpellSlots] = useState<number | null>(null);
-	const [lvlFourSpellSlots, setLvlFourSpellSlots] = useState<number | null>(null);
-	const [lvlFiveSpellSlots, setLvlFiveSpellSlots] = useState<number | null>(null);
-	const [lvlSixSpellSlots, setLvlSixSpellSlots] = useState<number | null>(null);
-	const [lvlSevenSpellSlots, setLvlSevenSpellSlots] = useState<number | null>(null);
-	const [lvlEightSpellSlots, setLvlEightSpellSlots] = useState<number | null>(null);
-	const [lvlNineSpellSlots, setLvlNineSpellSlots] = useState<number | null>(null);
+	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
+	const [enableSpellslots, setEnableSpellslots] = useState(false);
 	const { error, isError, isLoading, options } = useGetAllClasses([]);
+	const { spellslots, updateSpellslots, resetSepllslots } = useSetSpellslots();
+	const router = useRouter();
 
 	const {
 		control,
@@ -40,12 +37,37 @@ const AddCharacter = () => {
 	const onCreateCharacter: SubmitHandler<NewCharacter> = async (data) => {
 		setSubmitting(true);
 		setSubmitError(null);
-		try {
-			await reset();
-		} catch (err) {
-			setSubmitError("Failed to login. Please check your credentials.");
+
+		if (!className) {
+			setSubmitError("You must choose a class");
+		} else {
+			const docRef = doc(newCharacterCol);
+			try {
+				await setDoc(docRef, {
+					...data,
+					uid: currentUser?.uid,
+					character_level: data.character_level,
+					character_name: data.character_name,
+					class_name: className.name,
+					spell_attack_modifier: data.spell_attack_modifier ? data.spell_attack_modifier : null,
+					spell_save_dc: data.spell_save_dc ? data.spell_save_dc : null,
+					show_prepared_spells: enablePreparedSpells,
+					show_spellslots: enableSpellslots,
+					spellslots: enableSpellslots ? spellslots : null,
+				});
+
+				reset();
+				resetSepllslots();
+				setClassName(null);
+				setEnablePreparedSpells(false);
+				setEnableSpellslots(false);
+
+				router.push("/Characters");
+			} catch (err) {
+				setSubmitError("Failed to create character. Please check your inputs.");
+			}
+			setSubmitting(false);
 		}
-		setSubmitting(false);
 	};
 
 	if (isLoading) {
@@ -192,10 +214,10 @@ const AddCharacter = () => {
 							<TouchableOpacity
 								style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
 								activeOpacity={0.8}
-								onPress={() => setShowPreparedSpells(!showPreparedSpells)}
+								onPress={() => setEnablePreparedSpells(!enablePreparedSpells)}
 							>
 								<MaterialCommunityIcons
-									name={showPreparedSpells ? "checkbox-marked" : "checkbox-blank-outline"}
+									name={enablePreparedSpells ? "checkbox-marked" : "checkbox-blank-outline"}
 									size={28}
 									color="#660000"
 								/>
@@ -207,17 +229,17 @@ const AddCharacter = () => {
 							<TouchableOpacity
 								style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
 								activeOpacity={0.8}
-								onPress={() => setShowSpellslots(!showSpellslots)}
+								onPress={() => setEnableSpellslots(!enableSpellslots)}
 							>
 								<MaterialCommunityIcons
-									name={showSpellslots ? "checkbox-marked" : "checkbox-blank-outline"}
+									name={enableSpellslots ? "checkbox-marked" : "checkbox-blank-outline"}
 									size={28}
 									color="#660000"
 								/>
 							</TouchableOpacity>
 						</View>
 
-						{showSpellslots && (
+						{enableSpellslots && (
 							<View style={{ flexDirection: "row" }}>
 								<View style={{ flexDirection: "column" }}>
 									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
@@ -228,9 +250,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlOneSpellSlots(Number(text));
+												updateSpellslots(1, Number(text));
 											}}
-											value={!lvlOneSpellSlots ? "" : lvlOneSpellSlots.toString()}
 										/>
 									</View>
 									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
@@ -241,9 +262,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlTwoSpellSlots(Number(text));
+												updateSpellslots(2, Number(text));
 											}}
-											value={!lvlTwoSpellSlots ? "" : lvlTwoSpellSlots.toString()}
 										/>
 									</View>
 									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
@@ -254,9 +274,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlThreeSpellSlots(Number(text));
+												updateSpellslots(3, Number(text));
 											}}
-											value={!lvlThreeSpellSlots ? "" : lvlThreeSpellSlots.toString()}
 										/>
 									</View>
 									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
@@ -267,9 +286,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlFourSpellSlots(Number(text));
+												updateSpellslots(4, Number(text));
 											}}
-											value={!lvlFourSpellSlots ? "" : lvlFourSpellSlots.toString()}
 										/>
 									</View>
 									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
@@ -280,9 +298,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlFiveSpellSlots(Number(text));
+												updateSpellslots(5, Number(text));
 											}}
-											value={!lvlFiveSpellSlots ? "" : lvlFiveSpellSlots.toString()}
 										/>
 									</View>
 								</View>
@@ -296,9 +313,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlSixSpellSlots(Number(text));
+												updateSpellslots(6, Number(text));
 											}}
-											value={!lvlSixSpellSlots ? "" : lvlSixSpellSlots.toString()}
 										/>
 									</View>
 									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
@@ -309,9 +325,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlSevenSpellSlots(Number(text));
+												updateSpellslots(7, Number(text));
 											}}
-											value={!lvlSevenSpellSlots ? "" : lvlSevenSpellSlots.toString()}
 										/>
 									</View>
 									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
@@ -322,9 +337,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlEightSpellSlots(Number(text));
+												updateSpellslots(8, Number(text));
 											}}
-											value={!lvlEightSpellSlots ? "" : lvlEightSpellSlots.toString()}
 										/>
 									</View>
 									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
@@ -335,9 +349,8 @@ const AddCharacter = () => {
 											keyboardType="number-pad"
 											inputMode="numeric"
 											onChangeText={(text) => {
-												setLvlNineSpellSlots(Number(text));
+												updateSpellslots(9, Number(text));
 											}}
-											value={!lvlNineSpellSlots ? "" : lvlNineSpellSlots.toString()}
 										/>
 									</View>
 								</View>

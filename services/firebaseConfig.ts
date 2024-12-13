@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, getReactNativePersistence, initializeAuth } from "firebase/auth";
 import { CollectionReference, collection, getFirestore } from "firebase/firestore";
-import { Character } from "../types/Character.types";
+import { Character, NewCharacter } from "../types/Character.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -30,3 +30,4 @@ export const db = getFirestore(app);
 
 // Collection reference
 export const characterCol = collection(db, "characters") as CollectionReference<Character>;
+export const newCharacterCol = collection(db, "characters") as CollectionReference<NewCharacter>;
