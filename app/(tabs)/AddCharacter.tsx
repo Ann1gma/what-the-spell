@@ -1,19 +1,31 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground, TouchableOpacity, ScrollView } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import { NewCharacter } from "@/types/Character.types";
+import { NewCharacter, Spellslot } from "@/types/Character.types";
 import { ClassObject } from "@/types/DnD5e_API.types";
-import { getAllClasses } from "@/services/DnD5e_API";
 import DropdownComponent from "@/components/DropdownComponent";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const AddCharacter = () => {
 	const { currentUser } = useAuth();
 	const [className, setClassName] = useState<ClassObject | null>(null);
 	const [submitting, setSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState<string | null>(null);
+	const [showPreparedSpells, setShowPreparedSpells] = useState(false);
+	const [showSpellslots, setShowSpellslots] = useState(false);
+	const [lvlOneSpellSlots, setLvlOneSpellSlots] = useState<number | null>(null);
+	const [lvlTwoSpellSlots, setLvlTwoSpellSlots] = useState<number | null>(null);
+	const [lvlThreeSpellSlots, setLvlThreeSpellSlots] = useState<number | null>(null);
+	const [lvlFourSpellSlots, setLvlFourSpellSlots] = useState<number | null>(null);
+	const [lvlFiveSpellSlots, setLvlFiveSpellSlots] = useState<number | null>(null);
+	const [lvlSixSpellSlots, setLvlSixSpellSlots] = useState<number | null>(null);
+	const [lvlSevenSpellSlots, setLvlSevenSpellSlots] = useState<number | null>(null);
+	const [lvlEightSpellSlots, setLvlEightSpellSlots] = useState<number | null>(null);
+	const [lvlNineSpellSlots, setLvlNineSpellSlots] = useState<number | null>(null);
 	const { error, isError, isLoading, options } = useGetAllClasses([]);
+
 	const {
 		control,
 		handleSubmit,
@@ -73,52 +85,270 @@ const AddCharacter = () => {
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>Character creation</Text>
 				</View>
+				<ScrollView>
+					<View style={styles.formWrapper}>
+						{submitError && <Text style={styles.error}>{submitError}</Text>}
 
-				<View style={styles.formWrapper}>
-					{submitError && <Text style={styles.error}>{submitError}</Text>}
+						<Text style={styles.text}>Character name*</Text>
+						<Controller
+							control={control}
+							rules={{ required: "Character name is required" }}
+							render={({ field: { onChange, onBlur, value } }) => (
+								<TextInput
+									style={styles.input}
+									placeholder="Baldric the Bold"
+									onBlur={onBlur}
+									onChangeText={onChange}
+									value={value}
+								/>
+							)}
+							name="character_name"
+						/>
+						{errors.character_name && <Text style={styles.error}>{errors.character_name.message}</Text>}
 
-					<Text style={styles.text}>Character name*</Text>
-					<Controller
-						control={control}
-						rules={{ required: "Character name is required" }}
-						render={({ field: { onChange, onBlur, value } }) => (
-							<TextInput style={styles.input} placeholder="Baldric the Bold" onBlur={onBlur} onChangeText={onChange} value={value} />
-						)}
-						name="character_name"
-					/>
-					{errors.character_name && <Text style={styles.error}>{errors.character_name.message}</Text>}
+						<Text style={styles.text}>Class*</Text>
+						<DropdownComponent options={options} onChange={(e) => onFiltration(e)} placeholder="Class" />
 
-					<Text style={styles.text}>Class*</Text>
-					<DropdownComponent options={options} onChange={(e) => onFiltration(e)} placeholder="Class" />
-
-					<Text style={[styles.text, { marginTop: 12 }]}>Level*</Text>
-					<Controller
-						control={control}
-						rules={{
-							required: "Character level is required",
-							validate: (value) => !isNaN(value) || "Value must be a number",
-						}}
-						render={({ field: { onChange, onBlur, value } }) => (
-							<TextInput
-								style={styles.input}
-								placeholder="Level"
-								keyboardType="number-pad"
-								inputMode="numeric"
-								onBlur={onBlur}
-								onChangeText={(text) => {
-									onChange(Number(text));
+						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
+							<Text style={[styles.text, { marginRight: 12 }]}>Level*</Text>
+							<Controller
+								control={control}
+								rules={{
+									required: "Character level is required",
+									validate: (value) => !isNaN(value) || "Value must be a number",
 								}}
-								value={!value ? "" : value.toString()}
+								render={({ field: { onChange, onBlur, value } }) => (
+									<TextInput
+										style={styles.inputNumber}
+										placeholder="0-20"
+										keyboardType="number-pad"
+										inputMode="numeric"
+										onBlur={onBlur}
+										onChangeText={(text) => {
+											onChange(Number(text));
+										}}
+										value={!value ? "" : value.toString()}
+									/>
+								)}
+								name="character_level"
 							/>
-						)}
-						name="character_level"
-					/>
-					{errors.character_level && <Text style={styles.error}>{errors.character_level.message}</Text>}
+						</View>
+						{errors.character_level && <Text style={styles.error}>{errors.character_level.message}</Text>}
 
-					<Pressable style={styles.button} onPress={handleSubmit(onCreateCharacter)} disabled={submitting}>
-						<Text style={styles.buttonText}>{submitting ? "Creating character..." : "Create character"}</Text>
-					</Pressable>
-				</View>
+						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 30 }}>
+							<Text style={[styles.text, { marginRight: 12 }]}>Spell attack modifier</Text>
+							<Controller
+								control={control}
+								rules={{
+									validate: (value) => (value !== null && !isNaN(value)) || "Value must be a number",
+								}}
+								render={({ field: { onChange, onBlur, value } }) => (
+									<TextInput
+										style={styles.inputNumber}
+										placeholder="0-30"
+										keyboardType="number-pad"
+										inputMode="numeric"
+										onBlur={onBlur}
+										onChangeText={(text) => {
+											onChange(Number(text));
+										}}
+										value={!value ? "" : value.toString()}
+									/>
+								)}
+								name="spell_attack_modifier"
+							/>
+						</View>
+
+						{errors.spell_attack_modifier && <Text style={styles.error}>{errors.spell_attack_modifier.message}</Text>}
+
+						<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+							<Text style={[styles.text, { marginRight: 12 }]}>Spell save dc</Text>
+							<Controller
+								control={control}
+								rules={{
+									validate: (value) => (value !== null && !isNaN(value)) || "Value must be a number",
+								}}
+								render={({ field: { onChange, onBlur, value } }) => (
+									<TextInput
+										style={styles.inputNumber}
+										placeholder="15"
+										keyboardType="number-pad"
+										inputMode="numeric"
+										onBlur={onBlur}
+										onChangeText={(text) => {
+											onChange(Number(text));
+										}}
+										value={!value ? "" : value.toString()}
+									/>
+								)}
+								name="spell_save_dc"
+							/>
+						</View>
+
+						{errors.spell_save_dc && <Text style={styles.error}>{errors.spell_save_dc.message}</Text>}
+
+						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 30 }}>
+							<Text style={[styles.text, { marginRight: 15 }]}>Enabel Prepare spells</Text>
+							<TouchableOpacity
+								style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
+								activeOpacity={0.8}
+								onPress={() => setShowPreparedSpells(!showPreparedSpells)}
+							>
+								<MaterialCommunityIcons
+									name={showPreparedSpells ? "checkbox-marked" : "checkbox-blank-outline"}
+									size={28}
+									color="#660000"
+								/>
+							</TouchableOpacity>
+						</View>
+
+						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
+							<Text style={[styles.text, { marginRight: 15, marginBottom: 25 }]}>Enabel Spellslots</Text>
+							<TouchableOpacity
+								style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
+								activeOpacity={0.8}
+								onPress={() => setShowSpellslots(!showSpellslots)}
+							>
+								<MaterialCommunityIcons
+									name={showSpellslots ? "checkbox-marked" : "checkbox-blank-outline"}
+									size={28}
+									color="#660000"
+								/>
+							</TouchableOpacity>
+						</View>
+
+						{showSpellslots && (
+							<View style={{ flexDirection: "row" }}>
+								<View style={{ flexDirection: "column" }}>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 1</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlOneSpellSlots(Number(text));
+											}}
+											value={!lvlOneSpellSlots ? "" : lvlOneSpellSlots.toString()}
+										/>
+									</View>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 2</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlTwoSpellSlots(Number(text));
+											}}
+											value={!lvlTwoSpellSlots ? "" : lvlTwoSpellSlots.toString()}
+										/>
+									</View>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 3</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlThreeSpellSlots(Number(text));
+											}}
+											value={!lvlThreeSpellSlots ? "" : lvlThreeSpellSlots.toString()}
+										/>
+									</View>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 4</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlFourSpellSlots(Number(text));
+											}}
+											value={!lvlFourSpellSlots ? "" : lvlFourSpellSlots.toString()}
+										/>
+									</View>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 5</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlFiveSpellSlots(Number(text));
+											}}
+											value={!lvlFiveSpellSlots ? "" : lvlFiveSpellSlots.toString()}
+										/>
+									</View>
+								</View>
+
+								<View style={{ flexDirection: "column" }}>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 6</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlSixSpellSlots(Number(text));
+											}}
+											value={!lvlSixSpellSlots ? "" : lvlSixSpellSlots.toString()}
+										/>
+									</View>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 7</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlSevenSpellSlots(Number(text));
+											}}
+											value={!lvlSevenSpellSlots ? "" : lvlSevenSpellSlots.toString()}
+										/>
+									</View>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 8</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlEightSpellSlots(Number(text));
+											}}
+											value={!lvlEightSpellSlots ? "" : lvlEightSpellSlots.toString()}
+										/>
+									</View>
+									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+										<Text style={styles.textSpellslot}>Level 9</Text>
+										<TextInput
+											style={styles.inputSpellslot}
+											placeholder="0-30"
+											keyboardType="number-pad"
+											inputMode="numeric"
+											onChangeText={(text) => {
+												setLvlNineSpellSlots(Number(text));
+											}}
+											value={!lvlNineSpellSlots ? "" : lvlNineSpellSlots.toString()}
+										/>
+									</View>
+								</View>
+							</View>
+						)}
+
+						<Pressable style={styles.button} onPress={handleSubmit(onCreateCharacter)} disabled={submitting}>
+							<Text style={styles.buttonText}>{submitting ? "Creating character..." : "Create character"}</Text>
+						</Pressable>
+					</View>
+				</ScrollView>
 			</ImageBackground>
 		</View>
 	);
@@ -167,21 +397,22 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "NunitoRegular",
 		color: "#2b2b2b",
-		marginBottom: 10,
+		marginBottom: 5,
+		marginTop: 10,
+	},
+	textSpellslot: {
+		fontSize: 14,
+		fontFamily: "NunitoRegular",
+		color: "#2b2b2b",
+		marginBottom: 5,
+		marginRight: 12,
+		marginTop: 10,
 	},
 	textBold: {
 		fontSize: 18,
 		fontFamily: "NunitoBold",
 		color: "#2b2b2b",
 		marginBottom: 10,
-	},
-	linkText: {
-		fontSize: 20,
-		fontFamily: "NunitoBold",
-		color: "#990000",
-		marginBottom: 10,
-		textDecorationLine: "underline",
-		textAlign: "center",
 	},
 	error: {
 		color: "red",
@@ -197,8 +428,25 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		paddingHorizontal: 15,
 		borderRadius: 5,
-		marginBottom: 15,
 		fontFamily: "NunitoRegular",
+	},
+	inputNumber: {
+		backgroundColor: "#F0E4D1",
+		paddingVertical: 5,
+		paddingHorizontal: 10,
+		borderRadius: 5,
+		textAlign: "center",
+		fontFamily: "NunitoRegular",
+		width: "20%",
+	},
+	inputSpellslot: {
+		backgroundColor: "#F0E4D1",
+		paddingVertical: 5,
+		paddingHorizontal: 10,
+		borderRadius: 5,
+		textAlign: "center",
+		fontFamily: "NunitoRegular",
+		width: "35%",
 	},
 	button: {
 		backgroundColor: "#990000",

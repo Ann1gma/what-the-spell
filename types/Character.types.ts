@@ -1,4 +1,4 @@
-interface Spellslot {
+export interface Spellslot {
 	level: number;
 	used: boolean;
 }

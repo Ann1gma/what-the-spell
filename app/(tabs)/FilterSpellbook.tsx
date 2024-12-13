@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import DropdownComponent from "@/components/DropdownComponent";
 import { ClassObject } from "@/types/DnD5e_API.types";
@@ -46,10 +46,12 @@ const FilterSpellbook = () => {
 						</Pressable>
 					</View>
 				</View>
-				<View style={styles.formWrapper}>
-					<Text style={styles.text}>Filter spells by class</Text>
-					<DropdownComponent options={options} onChange={(e) => onFiltration(e)} placeholder="All spells" />
-				</View>
+				<ScrollView>
+					<View style={styles.formWrapper}>
+						<Text style={styles.text}>Filter spells by class</Text>
+						<DropdownComponent options={options} onChange={(e) => onFiltration(e)} placeholder="All spells" />
+					</View>
+				</ScrollView>
 			</ImageBackground>
 		</View>
 	);
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		paddingTop: 10,
 		paddingBottom: 20,
-		backgroundColor: "rgba(240, 228, 209, 0.5)",
+		backgroundColor: "rgba(240, 228, 209, 0.3)",
 		marginHorizontal: 20,
 		marginTop: 20,
 		borderRadius: 10,

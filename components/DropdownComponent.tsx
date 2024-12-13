@@ -20,7 +20,7 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({ onChange, placeho
 	};
 
 	return (
-		<SafeAreaView>
+		<View>
 			<View style={styles.container}>
 				<TouchableOpacity onPress={() => setExpanded(!expanded)} style={styles.buttonContainer}>
 					<Text style={styles.labelPlaceholder}>{value}</Text>
@@ -28,24 +28,31 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({ onChange, placeho
 				</TouchableOpacity>
 			</View>
 			{expanded && (
-				<TouchableWithoutFeedback>
-					<View style={styles.optionsContainer}>
-						<FlatList
-							keyExtractor={(item) => item.index}
-							data={options}
-							style={{ flexGrow: 0 }}
-							renderItem={({ item }) => (
-								<TouchableOpacity activeOpacity={0.8} style={styles.optionItem} onPress={() => onSelect(item)}>
-									<Text style={item.name === value ? styles.selectedTextStyle : styles.optionText}>
-										{item.index === "none" ? "None" : item.name}
-									</Text>
+				<SafeAreaView>
+					<TouchableWithoutFeedback>
+						<View style={styles.optionsContainer}>
+							{options.map((item) => (
+								<TouchableOpacity key={item.index} style={styles.optionItem} activeOpacity={0.8} onPress={() => onSelect(item)}>
+									<Text style={styles.optionText}>{item.name}</Text>
 								</TouchableOpacity>
-							)}
-						/>
-					</View>
-				</TouchableWithoutFeedback>
+							))}
+							{/* <FlatList
+								keyExtractor={(item) => item.index}
+								data={options}
+								style={{ flexGrow: 0 }}
+								renderItem={({ item }) => (
+									<TouchableOpacity activeOpacity={0.8} style={styles.optionItem} onPress={() => onSelect(item)}>
+										<Text style={item.name === value ? styles.selectedTextStyle : styles.optionText}>
+											{item.index === "none" ? "None" : item.name}
+										</Text>
+									</TouchableOpacity>
+								)}
+							/> */}
+						</View>
+					</TouchableWithoutFeedback>
+				</SafeAreaView>
 			)}
-		</SafeAreaView>
+		</View>
 	);
 };
 
@@ -53,7 +60,8 @@ export default DropdownComponent;
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 10,
+		paddingHorizontal: 20,
+		paddingVertical: 10,
 		width: "100%",
 		marginHorizontal: "auto",
 		marginTop: 5,
@@ -90,15 +98,14 @@ const styles = StyleSheet.create({
 		padding: 16,
 		marginHorizontal: "auto",
 		borderRadius: 5,
-		backgroundColor: "rgba(240, 228, 209, 0.4)",
-		maxHeight: "80%",
+		backgroundColor: "rgba(240, 228, 209, 0.6)",
 		overflow: "scroll",
 	},
 	optionItem: {
 		paddingVertical: 15,
 		paddingLeft: 5,
 		borderBottomWidth: 2,
-		borderBottomColor: "#F0E4D1",
+		borderBottomColor: "#F2F2F2",
 	},
 	optionText: {
 		fontSize: 16,
