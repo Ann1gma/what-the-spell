@@ -8,6 +8,7 @@ import { Link } from "expo-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import useGetSpellsByClass from "@/hooks/useGetSpellsByClass";
+import LoadingComponent from "@/components/LoadingComponent";
 
 export default function Index() {
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
@@ -53,11 +54,7 @@ export default function Index() {
 	}, [filtrationOption]);
 
 	if (isLoading || classIsLoading) {
-		return (
-			<View>
-				<Text>Loading ...</Text>
-			</View>
-		);
+		return <LoadingComponent />;
 	}
 
 	if (isError || isClassError) {

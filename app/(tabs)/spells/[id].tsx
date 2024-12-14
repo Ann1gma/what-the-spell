@@ -4,6 +4,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { useEffect, useState } from "react";
 import { SpellDetails } from "@/types/DnD5e_API.types";
 import { getSpellDetails } from "@/services/DnD5e_API";
+import LoadingComponent from "@/components/LoadingComponent";
 
 export default function SpellDetailScreen() {
 	const [error, setError] = useState<string | null>(null);
@@ -38,11 +39,7 @@ export default function SpellDetailScreen() {
 	}, [id]);
 
 	if (isLoading) {
-		return (
-			<View>
-				<Text>Loading ...</Text>
-			</View>
-		);
+		return <LoadingComponent />;
 	}
 
 	if (isError) {

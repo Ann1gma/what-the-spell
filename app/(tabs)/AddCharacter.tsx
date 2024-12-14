@@ -13,6 +13,7 @@ import useSetSpellslots from "@/hooks/useSetSpellslots";
 import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
 import SpellslotInputComponent from "@/components/SpellslotInputComponent";
+import LoadingComponent from "@/components/LoadingComponent";
 
 const AddCharacter = () => {
 	const { currentUser } = useAuth();
@@ -76,11 +77,7 @@ const AddCharacter = () => {
 	};
 
 	if (isLoading) {
-		return (
-			<View>
-				<Text>Loading...</Text>
-			</View>
-		);
+		return <LoadingComponent />;
 	}
 
 	if (isError) {

@@ -6,6 +6,7 @@ import { ClassObject } from "@/types/DnD5e_API.types";
 import { useDispatch } from "react-redux";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
+import LoadingComponent from "@/components/LoadingComponent";
 
 const FilterSpellbook = () => {
 	const dispatch = useDispatch();
@@ -18,11 +19,7 @@ const FilterSpellbook = () => {
 	};
 
 	if (isLoading) {
-		return (
-			<View>
-				<Text>Loading...</Text>
-			</View>
-		);
+		return <LoadingComponent />;
 	}
 
 	if (isError) {

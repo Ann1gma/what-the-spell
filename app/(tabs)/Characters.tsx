@@ -5,6 +5,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, Pressable } from "react-native";
+import LoadingComponent from "@/components/LoadingComponent";
 
 const Characters = () => {
 	const { currentUser } = useAuth();
@@ -25,13 +26,7 @@ const Characters = () => {
 	};
 
 	if (loading) {
-		return (
-			<View style={styles.container}>
-				<View>
-					<Text>Loading...</Text>
-				</View>
-			</View>
-		);
+		return <LoadingComponent />;
 	}
 
 	if (!currentUser) {
