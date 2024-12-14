@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground, TouchableOpacity, ScrollView } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import { NewCharacter, Spellslot } from "@/types/Character.types";
+import { NewCharacter } from "@/types/Character.types";
 import { ClassObject } from "@/types/DnD5e_API.types";
 import DropdownComponent from "@/components/DropdownComponent";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
@@ -10,17 +10,21 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { doc, setDoc } from "firebase/firestore";
 import { newCharacterCol } from "@/services/firebaseConfig";
 import useSetSpellslots from "@/hooks/useSetSpellslots";
+import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
+import SpellslotInputComponent from "@/components/SpellslotInputComponent";
 
 const AddCharacter = () => {
 	const { currentUser } = useAuth();
 	const [className, setClassName] = useState<ClassObject | null>(null);
+	const [classError, setClassError] = useState<string | null>(null);
 	const [submitting, setSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState<string | null>(null);
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
 	const { error, isError, isLoading, options } = useGetAllClasses([]);
 	const { spellslots, updateSpellslots, resetSepllslots } = useSetSpellslots();
+
 	const router = useRouter();
 
 	const {
@@ -37,9 +41,10 @@ const AddCharacter = () => {
 	const onCreateCharacter: SubmitHandler<NewCharacter> = async (data) => {
 		setSubmitting(true);
 		setSubmitError(null);
+		setClassError(null);
 
 		if (!className) {
-			setSubmitError("You must choose a class");
+			setClassError("You must choose a class");
 		} else {
 			const docRef = doc(newCharacterCol);
 			try {
@@ -105,7 +110,14 @@ const AddCharacter = () => {
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				<View style={styles.titleContainer}>
-					<Text style={styles.title}>Character creation</Text>
+					<View>
+						<Text style={styles.title}>Character creation</Text>
+					</View>
+					<View style={styles.iconContainer}>
+						<Pressable onPress={() => router.back()}>
+							<Feather name="arrow-left" size={24} color="#2b2b2b" />
+						</Pressable>
+					</View>
 				</View>
 				<ScrollView>
 					<View style={styles.formWrapper}>
@@ -129,7 +141,8 @@ const AddCharacter = () => {
 						{errors.character_name && <Text style={styles.error}>{errors.character_name.message}</Text>}
 
 						<Text style={styles.text}>Class*</Text>
-						<DropdownComponent options={options} onChange={(e) => onFiltration(e)} placeholder="Class" />
+						<DropdownComponent options={options} onChange={(e) => onFiltration(e)} placeholder={!className ? "Class" : className.name} />
+						{classError && <Text style={styles.error}>{classError}</Text>}
 
 						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
 							<Text style={[styles.text, { marginRight: 12 }]}>Level*</Text>
@@ -137,6 +150,7 @@ const AddCharacter = () => {
 								control={control}
 								rules={{
 									required: "Character level is required",
+									max: 20,
 									validate: (value) => !isNaN(value) || "Value must be a number",
 								}}
 								render={({ field: { onChange, onBlur, value } }) => (
@@ -162,7 +176,8 @@ const AddCharacter = () => {
 							<Controller
 								control={control}
 								rules={{
-									validate: (value) => (value !== null && !isNaN(value)) || "Value must be a number",
+									required: false,
+									validate: (value) => (value !== null && !isNaN(value)) || "Spell attack modifier must be a number",
 								}}
 								render={({ field: { onChange, onBlur, value } }) => (
 									<TextInput
@@ -188,7 +203,8 @@ const AddCharacter = () => {
 							<Controller
 								control={control}
 								rules={{
-									validate: (value) => (value !== null && !isNaN(value)) || "Value must be a number",
+									required: false,
+									validate: (value) => (value !== null && !isNaN(value)) || "Spell save dc must be a number",
 								}}
 								render={({ field: { onChange, onBlur, value } }) => (
 									<TextInput
@@ -242,117 +258,18 @@ const AddCharacter = () => {
 						{enableSpellslots && (
 							<View style={{ flexDirection: "row" }}>
 								<View style={{ flexDirection: "column" }}>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 1</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(1, Number(text));
-											}}
-										/>
-									</View>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 2</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(2, Number(text));
-											}}
-										/>
-									</View>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 3</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(3, Number(text));
-											}}
-										/>
-									</View>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 4</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(4, Number(text));
-											}}
-										/>
-									</View>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 5</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(5, Number(text));
-											}}
-										/>
-									</View>
+									<SpellslotInputComponent level={1} onChange={updateSpellslots} />
+									<SpellslotInputComponent level={2} onChange={updateSpellslots} />
+									<SpellslotInputComponent level={3} onChange={updateSpellslots} />
+									<SpellslotInputComponent level={4} onChange={updateSpellslots} />
+									<SpellslotInputComponent level={5} onChange={updateSpellslots} />
 								</View>
 
 								<View style={{ flexDirection: "column" }}>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 6</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(6, Number(text));
-											}}
-										/>
-									</View>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 7</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(7, Number(text));
-											}}
-										/>
-									</View>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 8</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(8, Number(text));
-											}}
-										/>
-									</View>
-									<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-										<Text style={styles.textSpellslot}>Level 9</Text>
-										<TextInput
-											style={styles.inputSpellslot}
-											placeholder="0-30"
-											keyboardType="number-pad"
-											inputMode="numeric"
-											onChangeText={(text) => {
-												updateSpellslots(9, Number(text));
-											}}
-										/>
-									</View>
+									<SpellslotInputComponent level={6} onChange={updateSpellslots} />
+									<SpellslotInputComponent level={7} onChange={updateSpellslots} />
+									<SpellslotInputComponent level={8} onChange={updateSpellslots} />
+									<SpellslotInputComponent level={9} onChange={updateSpellslots} />
 								</View>
 							</View>
 						)}
@@ -380,6 +297,8 @@ const styles = StyleSheet.create({
 	},
 	titleContainer: {
 		backgroundColor: "#F0E4D1",
+		height: 50,
+		justifyContent: "center",
 		paddingVertical: 10,
 		alignItems: "center",
 	},
@@ -413,14 +332,6 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 		marginTop: 10,
 	},
-	textSpellslot: {
-		fontSize: 14,
-		fontFamily: "NunitoRegular",
-		color: "#2b2b2b",
-		marginBottom: 5,
-		marginRight: 12,
-		marginTop: 10,
-	},
 	textBold: {
 		fontSize: 18,
 		fontFamily: "NunitoBold",
@@ -452,15 +363,6 @@ const styles = StyleSheet.create({
 		fontFamily: "NunitoRegular",
 		width: "20%",
 	},
-	inputSpellslot: {
-		backgroundColor: "#F0E4D1",
-		paddingVertical: 5,
-		paddingHorizontal: 10,
-		borderRadius: 5,
-		textAlign: "center",
-		fontFamily: "NunitoRegular",
-		width: "35%",
-	},
 	button: {
 		backgroundColor: "#990000",
 		paddingVertical: 12,
@@ -473,5 +375,10 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		fontSize: 18,
 		fontFamily: "NunitoSemiBold",
+	},
+	iconContainer: {
+		position: "absolute",
+		left: "3%",
+		zIndex: 1,
 	},
 });

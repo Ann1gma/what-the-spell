@@ -39,7 +39,14 @@ const Characters = () => {
 			<View style={styles.container}>
 				<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 					<View style={styles.titleContainer}>
-						<Text style={styles.title}>Characters</Text>
+						<View>
+							<Text style={styles.title}>Characters</Text>
+						</View>
+						<View style={styles.iconContainer}>
+							<Pressable onPress={() => router.back()}>
+								<Feather name="arrow-left" size={24} color="#2b2b2b" />
+							</Pressable>
+						</View>
 					</View>
 				</ImageBackground>
 				<View>
