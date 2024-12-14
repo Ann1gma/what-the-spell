@@ -64,7 +64,7 @@ const Characters = () => {
 				</View>
 				<SafeAreaView style={styles.contentWrapper}>
 					{data && data.length > 0 && (
-						<View style={styles.charactersContainer}>
+						<View>
 							<FlatList
 								keyExtractor={(item) => item._id}
 								data={data}
@@ -98,8 +98,15 @@ const Characters = () => {
 						</View>
 					)}
 					{data && data.length <= 0 && (
-						<View>
-							<Text>You don't have any characters, maybe you should create one! 😊</Text>
+						<View style={styles.noCharacterContainer}>
+							<Text style={styles.textBold}>No charachters registrered!</Text>
+							<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+								<Text style={styles.text}>Why not add a</Text>
+								<TouchableOpacity activeOpacity={0.8} onPress={handleAddCharacter}>
+									<Text style={[styles.textBold, { color: "#990000" }]}>character</Text>
+								</TouchableOpacity>
+								<Text style={styles.text}>?</Text>
+							</View>
 						</View>
 					)}
 					<TouchableOpacity activeOpacity={0.8} onPress={handleAddCharacter}>
@@ -145,6 +152,13 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 		marginRight: 5,
 	},
+	textBold: {
+		fontSize: 18,
+		fontFamily: "NunitoBold",
+		color: "#2b2b2b",
+		marginBottom: 5,
+		marginRight: 5,
+	},
 	iconContainer: {
 		position: "absolute",
 		left: "3%",
@@ -161,7 +175,6 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		borderRadius: 10,
 	},
-	charactersContainer: {},
 	firstCharacterContainer: {
 		paddingHorizontal: 10,
 		paddingVertical: 20,
@@ -194,6 +207,10 @@ const styles = StyleSheet.create({
 		fontFamily: "CinzelBold",
 		fontSize: 22,
 		color: "#990000",
+	},
+	noCharacterContainer: {
+		alignItems: "center",
+		marginTop: 30,
 	},
 	addCharacterContainer: {
 		paddingHorizontal: 30,
