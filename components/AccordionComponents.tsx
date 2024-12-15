@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable, SafeAreaView } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
-import { useState } from "react";
+import React, { useState } from "react";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -13,6 +13,7 @@ interface AccordionComponentProps {
 	data: SpellsOverview[];
 }
 
+//@CodeScene(disable:"Complex Method")
 const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) => {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();

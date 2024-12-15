@@ -1,6 +1,6 @@
 import { ClassObject } from "@/types/DnD5e_API.types";
 import React, { useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 interface DropdownComponentProps {
@@ -36,18 +36,6 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({ onChange, placeho
 									<Text style={styles.optionText}>{item.name}</Text>
 								</TouchableOpacity>
 							))}
-							{/* <FlatList
-								keyExtractor={(item) => item.index}
-								data={options}
-								style={{ flexGrow: 0 }}
-								renderItem={({ item }) => (
-									<TouchableOpacity activeOpacity={0.8} style={styles.optionItem} onPress={() => onSelect(item)}>
-										<Text style={item.name === value ? styles.selectedTextStyle : styles.optionText}>
-											{item.index === "none" ? "None" : item.name}
-										</Text>
-									</TouchableOpacity>
-								)}
-							/> */}
 						</View>
 					</TouchableWithoutFeedback>
 				</SafeAreaView>
