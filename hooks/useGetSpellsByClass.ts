@@ -1,8 +1,11 @@
+import { changeLoading } from "@/features/loading/loadingSlice";
 import { getSpellsByClass } from "@/services/DnD5e_API";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const useGetSpellsByClass = () => {
+	const dispatch = useDispatch();
 	const [cantripsDataClass, setCantripsDataClass] = useState<SpellsOverview[] | null>(null);
 	const [lvlOneDataClass, setLvlOneDataClass] = useState<SpellsOverview[] | null>(null);
 	const [lvlTwoDataClass, setLvlTwoDataClass] = useState<SpellsOverview[] | null>(null);
@@ -15,10 +18,10 @@ const useGetSpellsByClass = () => {
 	const [lvlNineDataClass, setLvlNineDataClass] = useState<SpellsOverview[] | null>(null);
 	const [classError, setClassError] = useState<string | null>(null);
 	const [isClassError, setIsClassError] = useState(false);
-	const [classIsLoading, setClassIsLoading] = useState(false);
 
 	const getAllSpellsByClass = async (classIndex: string) => {
-		setClassIsLoading(true);
+		dispatch(changeLoading(true));
+
 		setIsClassError(false);
 		setClassError(null);
 
@@ -66,7 +69,7 @@ const useGetSpellsByClass = () => {
 			setIsClassError(true);
 			setClassError("Failed to fetch all spells.");
 		} finally {
-			setClassIsLoading(false);
+			dispatch(changeLoading(false));
 		}
 	};
 
@@ -84,7 +87,6 @@ const useGetSpellsByClass = () => {
 		lvlNineDataClass,
 		classError,
 		isClassError,
-		classIsLoading,
 	};
 };
 

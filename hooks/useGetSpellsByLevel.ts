@@ -1,8 +1,12 @@
+import { RootState } from "@/app/store";
+import { changeLoading } from "@/features/loading/loadingSlice";
 import { getSpellsByLevel } from "@/services/DnD5e_API";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const useGetSpellsByLevel = () => {
+	const dispatch = useDispatch();
 	const [cantripsData, setCantripsData] = useState<SpellsOverview[] | null>(null);
 	const [lvlOneData, setLvlOneData] = useState<SpellsOverview[] | null>(null);
 	const [lvlTwoData, setLvlTwoData] = useState<SpellsOverview[] | null>(null);
@@ -15,7 +19,6 @@ const useGetSpellsByLevel = () => {
 	const [lvlNineData, setLvlNineData] = useState<SpellsOverview[] | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [isError, setIsError] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
 
 	const getAllSpellsByLevel = async (level: number) => {
 		try {
@@ -61,7 +64,7 @@ const useGetSpellsByLevel = () => {
 	};
 
 	const fetchAllSpells = async () => {
-		setIsLoading(true);
+		dispatch(changeLoading(true));
 		setIsError(false);
 		setError(null);
 
@@ -73,7 +76,7 @@ const useGetSpellsByLevel = () => {
 			setIsError(true);
 			setError("Failed to fetch all spells.");
 		} finally {
-			setIsLoading(false);
+			dispatch(changeLoading(false));
 		}
 	};
 
@@ -137,7 +140,6 @@ const useGetSpellsByLevel = () => {
 		lvlNineData,
 		error,
 		isError,
-		isLoading,
 	};
 };
 

@@ -12,6 +12,8 @@ import { newCharacterCol } from "@/services/firebaseConfig";
 import useSetSpellslots from "@/hooks/useSetSpellslots";
 import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 import SpellslotInputComponent from "@/components/SpellslotInputComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 
@@ -23,8 +25,9 @@ const AddCharacter = () => {
 	const [submitError, setSubmitError] = useState<string | null>(null);
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
-	const { error, isError, isLoading, options } = useGetAllClasses([]);
+	const { error, isError, options } = useGetAllClasses([]);
 	const { spellslots, updateSpellslots, resetSepllslots } = useSetSpellslots();
+	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
 	const router = useRouter();
 

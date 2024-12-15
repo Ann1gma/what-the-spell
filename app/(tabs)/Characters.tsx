@@ -6,10 +6,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, Pressable } from "react-native";
 import LoadingComponent from "@/components/LoadingComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 const Characters = () => {
 	const { currentUser } = useAuth();
-	const { data, loading } = useGetCharacters(currentUser?.uid);
+	const { data } = useGetCharacters(currentUser?.uid);
+	const isLoading = useSelector((state: RootState) => state.loading.loading);
 	const router = useRouter();
 
 	const handlePress = (id: string) => {
@@ -25,7 +28,7 @@ const Characters = () => {
 		});
 	};
 
-	if (loading) {
+	if (isLoading) {
 		return <LoadingComponent />;
 	}
 

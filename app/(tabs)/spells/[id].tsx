@@ -5,17 +5,21 @@ import { useEffect, useState } from "react";
 import { SpellDetails } from "@/types/DnD5e_API.types";
 import { getSpellDetails } from "@/services/DnD5e_API";
 import LoadingComponent from "@/components/LoadingComponent";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/app/store";
+import { changeLoading } from "@/features/loading/loadingSlice";
 
 export default function SpellDetailScreen() {
 	const [error, setError] = useState<string | null>(null);
 	const [isError, setIsError] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
 	const [spellData, setSpellData] = useState<SpellDetails | null>(null);
+	const isLoading = useSelector((state: RootState) => state.loading.loading);
 	const { id } = useLocalSearchParams();
 	const router = useRouter();
+	const dispatch = useDispatch();
 
 	const getSpellData = async (id: string) => {
-		setIsLoading(true);
+		dispatch(changeLoading(true));
 		setIsError(false);
 		setError(null);
 
@@ -26,7 +30,7 @@ export default function SpellDetailScreen() {
 			setIsError(true);
 			setError("Failed to fetch all spells.");
 		} finally {
-			setIsLoading(false);
+			dispatch(changeLoading(false));
 		}
 	};
 

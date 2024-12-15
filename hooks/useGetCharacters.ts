@@ -2,13 +2,16 @@ import { where, onSnapshot, query } from "firebase/firestore";
 import { characterCol } from "../services/firebaseConfig";
 import { useEffect, useState } from "react";
 import { Character } from "../types/Character.types";
+import { useDispatch } from "react-redux";
+import { changeLoading } from "@/features/loading/loadingSlice";
 
 const useGetCharacters = (uid = "") => {
-	const [loading, setLoading] = useState(true);
+	const dispatch = useDispatch();
 	const [data, setData] = useState<Character[] | null>(null);
 
 	useEffect(() => {
 		if (!uid) return;
+		dispatch(changeLoading(true));
 
 		const characterQuery = query(characterCol, where("uid", "==", uid));
 
@@ -21,7 +24,7 @@ const useGetCharacters = (uid = "") => {
 			});
 
 			setData(data);
-			setLoading(false);
+			dispatch(changeLoading(false));
 		});
 
 		return unsubscribe;
@@ -29,7 +32,6 @@ const useGetCharacters = (uid = "") => {
 
 	return {
 		data,
-		loading,
 	};
 };
 

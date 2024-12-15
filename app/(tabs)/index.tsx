@@ -13,6 +13,8 @@ import LoadingComponent from "@/components/LoadingComponent";
 export default function Index() {
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
 	const [subTitle, setSubtitle] = useState(filtrationOption);
+	const isLoading = useSelector((state: RootState) => state.loading.loading);
+
 	const {
 		cantripsData,
 		lvlOneData,
@@ -26,7 +28,6 @@ export default function Index() {
 		lvlNineData,
 		error,
 		isError,
-		isLoading,
 	} = useGetSpellsByLevel();
 
 	const {
@@ -43,7 +44,6 @@ export default function Index() {
 		lvlNineDataClass,
 		classError,
 		isClassError,
-		classIsLoading,
 	} = useGetSpellsByClass();
 
 	useEffect(() => {
@@ -53,7 +53,7 @@ export default function Index() {
 		}
 	}, [filtrationOption]);
 
-	if (isLoading || classIsLoading) {
+	if (isLoading) {
 		return <LoadingComponent />;
 	}
 
