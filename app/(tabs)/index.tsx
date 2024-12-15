@@ -3,44 +3,42 @@ import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AccordionComponent from "@/components/AccordionComponents";
-import useGetSpellsByLevel from "@/hooks/useGetSpellsByLevel";
 import { Link } from "expo-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
-import useGetSpellsByClass from "@/hooks/useGetSpellsByClass";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import useGetSpellOverview from "@/hooks/useGetSpellOverview";
 
-export default function Index() {
+const Index = () => {
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
 
 	const [subTitle, setSubtitle] = useState(filtrationOption);
 
 	const isError = useSelector((state: RootState) => state.error.isError);
-	const error = useSelector((state: RootState) => state.error.errorMessage);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
-	const { cantripsData, lvlOneData, lvlTwoData, lvlThreeData, lvlFourData, lvlFiveData, lvlSixData, lvlSevenData, lvlEightData, lvlNineData } =
-		useGetSpellsByLevel();
-
 	const {
+		cantripsData,
+		lvlOneData,
+		lvlTwoData,
+		lvlThreeData,
+		lvlFourData,
+		lvlFiveData,
+		lvlSixData,
+		lvlSevenData,
+		lvlEightData,
+		lvlNineData,
+		fetchAllSpells,
 		getAllSpellsByClass,
-		cantripsDataClass,
-		lvlOneDataClass,
-		lvlTwoDataClass,
-		lvlThreeDataClass,
-		lvlFourDataClass,
-		lvlFiveDataClass,
-		lvlSixDataClass,
-		lvlSevenDataClass,
-		lvlEightDataClass,
-		lvlNineDataClass,
-	} = useGetSpellsByClass();
+	} = useGetSpellOverview();
 
 	useEffect(() => {
 		setSubtitle(filtrationOption);
 		if (filtrationOption.index !== "none") {
 			getAllSpellsByClass(filtrationOption.index);
+		} else {
+			fetchAllSpells();
 		}
 	}, [filtrationOption]);
 
@@ -70,40 +68,26 @@ export default function Index() {
 				</View>
 				<SafeAreaView style={styles.scrollContainer}>
 					<ScrollView>
-						{filtrationOption.index === "none" && (
-							<View style={styles.accordionContainer}>
-								{cantripsData && <AccordionComponent title="Cantrips" data={cantripsData} />}
-								{lvlOneData && <AccordionComponent title="Level 1" data={lvlOneData} />}
-								{lvlTwoData && <AccordionComponent title="Level 2" data={lvlTwoData} />}
-								{lvlThreeData && <AccordionComponent title="Level 3" data={lvlThreeData} />}
-								{lvlFourData && <AccordionComponent title="Level 4" data={lvlFourData} />}
-								{lvlFiveData && <AccordionComponent title="Level 5" data={lvlFiveData} />}
-								{lvlSixData && <AccordionComponent title="Level 6" data={lvlSixData} />}
-								{lvlSevenData && <AccordionComponent title="Level 7" data={lvlSevenData} />}
-								{lvlEightData && <AccordionComponent title="Level 8" data={lvlEightData} />}
-								{lvlNineData && <AccordionComponent title="Level 9" data={lvlNineData} />}
-							</View>
-						)}
-						{filtrationOption.index !== "none" && (
-							<View style={styles.accordionContainer}>
-								{cantripsDataClass && <AccordionComponent title="Cantrips" data={cantripsDataClass} />}
-								{lvlOneDataClass && <AccordionComponent title="Level 1" data={lvlOneDataClass} />}
-								{lvlTwoDataClass && <AccordionComponent title="Level 2" data={lvlTwoDataClass} />}
-								{lvlThreeDataClass && <AccordionComponent title="Level 3" data={lvlThreeDataClass} />}
-								{lvlFourDataClass && <AccordionComponent title="Level 4" data={lvlFourDataClass} />}
-								{lvlFiveDataClass && <AccordionComponent title="Level 5" data={lvlFiveDataClass} />}
-								{lvlSixDataClass && <AccordionComponent title="Level 6" data={lvlSixDataClass} />}
-								{lvlSevenDataClass && <AccordionComponent title="Level 7" data={lvlSevenDataClass} />}
-								{lvlEightDataClass && <AccordionComponent title="Level 8" data={lvlEightDataClass} />}
-								{lvlNineDataClass && <AccordionComponent title="Level 9" data={lvlNineDataClass} />}
-							</View>
-						)}
+						<View style={styles.accordionContainer}>
+							{cantripsData && <AccordionComponent title="Cantrips" data={cantripsData} />}
+							{lvlOneData && <AccordionComponent title="Level 1" data={lvlOneData} />}
+							{lvlTwoData && <AccordionComponent title="Level 2" data={lvlTwoData} />}
+							{lvlThreeData && <AccordionComponent title="Level 3" data={lvlThreeData} />}
+							{lvlFourData && <AccordionComponent title="Level 4" data={lvlFourData} />}
+							{lvlFiveData && <AccordionComponent title="Level 5" data={lvlFiveData} />}
+							{lvlSixData && <AccordionComponent title="Level 6" data={lvlSixData} />}
+							{lvlSevenData && <AccordionComponent title="Level 7" data={lvlSevenData} />}
+							{lvlEightData && <AccordionComponent title="Level 8" data={lvlEightData} />}
+							{lvlNineData && <AccordionComponent title="Level 9" data={lvlNineData} />}
+						</View>
 					</ScrollView>
 				</SafeAreaView>
 			</ImageBackground>
 		</View>
 	);
-}
+};
+
+export default Index;
 
 const styles = StyleSheet.create({
 	container: {

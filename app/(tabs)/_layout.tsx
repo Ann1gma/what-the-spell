@@ -62,22 +62,6 @@ export default function TabLayout() {
 				/>
 
 				<Tabs.Screen
-					name="Login"
-					options={{
-						headerShown: false,
-						href: null,
-					}}
-				/>
-
-				<Tabs.Screen
-					name="Logout"
-					options={{
-						headerShown: false,
-						href: null,
-					}}
-				/>
-
-				<Tabs.Screen
 					name="Signup"
 					options={{
 						headerShown: false,
@@ -150,22 +134,6 @@ export default function TabLayout() {
 
 			<Tabs.Screen
 				name="spells/[id]"
-				options={{
-					headerShown: false,
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="Login"
-				options={{
-					headerShown: false,
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="Logout"
 				options={{
 					headerShown: false,
 					href: null,

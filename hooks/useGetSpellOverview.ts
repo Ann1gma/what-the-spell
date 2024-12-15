@@ -1,12 +1,11 @@
-import { RootState } from "@/app/store";
 import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import { changeLoading } from "@/features/loading/loadingSlice";
-import { getSpellsByLevel } from "@/services/DnD5e_API";
+import { getSpellsByClass, getSpellsByLevel } from "@/services/DnD5e_API";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-const useGetSpellsByLevel = () => {
+const useGetSpellOverview = () => {
 	const dispatch = useDispatch();
 	const [cantripsData, setCantripsData] = useState<SpellsOverview[] | null>(null);
 	const [lvlOneData, setLvlOneData] = useState<SpellsOverview[] | null>(null);
@@ -68,6 +67,17 @@ const useGetSpellsByLevel = () => {
 		dispatch(changeErrorMessage(""));
 		dispatch(changeIsError(false));
 
+		setCantripsData(null);
+		setLvlOneData(null);
+		setLvlTwoData(null);
+		setLvlThreeData(null);
+		setLvlFourData(null);
+		setLvlFiveData(null);
+		setLvlSixData(null);
+		setLvlSevenData(null);
+		setLvlEightData(null);
+		setLvlNineData(null);
+
 		const levels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 		try {
@@ -80,11 +90,22 @@ const useGetSpellsByLevel = () => {
 		}
 	};
 
-	/* ev. combine to one hook instead of two
-	 const getAllSpellsByClass = async (classIndex: string) => {
-		setIsLoading(true);
-		setIsError(false);
-		setError(null);
+	const getAllSpellsByClass = async (classIndex: string) => {
+		dispatch(changeLoading(true));
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
+
+		setCantripsData(null);
+		setLvlOneData(null);
+		setLvlTwoData(null);
+		setLvlThreeData(null);
+		setLvlFourData(null);
+		setLvlFiveData(null);
+		setLvlSixData(null);
+		setLvlSevenData(null);
+		setLvlEightData(null);
+		setLvlNineData(null);
+
 		try {
 			const data = await getSpellsByClass(classIndex);
 
@@ -110,24 +131,25 @@ const useGetSpellsByLevel = () => {
 				} else if (spell.level === 9) {
 					setLvlNineData((previousState) => [...(previousState || []), spell]);
 				} else {
-					setIsError(true);
-					setError("Invalid level");
+					dispatch(changeErrorMessage("Invalid level"));
+					dispatch(changeIsError(true));
 				}
 			});
 		} catch (err) {
-			setIsError(true);
-			setError("Failed to fetch all spells.");
+			dispatch(changeErrorMessage("Failed to fetch all spells."));
+			dispatch(changeIsError(true));
 		} finally {
-			setIsLoading(false);
+			dispatch(changeLoading(false));
 		}
-	}; */
+	};
 
 	useEffect(() => {
 		fetchAllSpells();
 	}, []);
 
 	return {
-		getAllSpellsByLevel,
+		fetchAllSpells,
+		getAllSpellsByClass,
 		cantripsData,
 		lvlOneData,
 		lvlTwoData,
@@ -141,4 +163,4 @@ const useGetSpellsByLevel = () => {
 	};
 };
 
-export default useGetSpellsByLevel;
+export default useGetSpellOverview;
