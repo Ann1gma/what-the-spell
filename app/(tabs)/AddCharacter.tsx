@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import SpellslotInputComponent from "@/components/SpellslotInputComponent";
 import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 const AddCharacter = () => {
 	const { currentUser } = useAuth();
@@ -87,11 +88,7 @@ const AddCharacter = () => {
 	}
 
 	if (isError) {
-		return (
-			<View>
-				<Text>{error}</Text>
-			</View>
-		);
+		return <ErrorComponent />;
 	}
 
 	if (!currentUser) {

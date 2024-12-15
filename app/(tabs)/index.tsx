@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import useGetSpellsByClass from "@/hooks/useGetSpellsByClass";
 import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function Index() {
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
@@ -48,12 +49,7 @@ export default function Index() {
 	}
 
 	if (isError) {
-		return (
-			<View>
-				<Text>ERROR!</Text>
-				<Text>{error}</Text>
-			</View>
-		);
+		return <ErrorComponent />;
 	}
 
 	return (

@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/store";
 import { changeLoading } from "@/features/loading/loadingSlice";
 import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function SpellDetailScreen() {
 	const isError = useSelector((state: RootState) => state.error.isError);
@@ -50,12 +51,7 @@ export default function SpellDetailScreen() {
 	}
 
 	if (isError) {
-		return (
-			<View>
-				<Text>ERROR!</Text>
-				<Text>{error}</Text>
-			</View>
-		);
+		return <ErrorComponent />;
 	}
 
 	return (

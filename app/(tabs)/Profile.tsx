@@ -7,6 +7,7 @@ import { Link } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import { RootState } from "../store";
+import ErrorComponent from "@/components/ErrorComponent";
 
 const Profile = () => {
 	const { currentUser, login, logout } = useAuth();
@@ -57,11 +58,7 @@ const Profile = () => {
 	};
 
 	if (isError) {
-		return (
-			<View style={styles.container}>
-				<Text>{errorMessage}</Text>
-			</View>
-		);
+		return <ErrorComponent />;
 	}
 
 	return (

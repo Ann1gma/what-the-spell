@@ -8,6 +8,7 @@ import { changeFilter } from "@/features/filtration/filtrationSlice";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
 import LoadingComponent from "@/components/LoadingComponent";
 import { RootState } from "../store";
+import ErrorComponent from "@/components/ErrorComponent";
 
 const FilterSpellbook = () => {
 	const dispatch = useDispatch();
@@ -30,11 +31,7 @@ const FilterSpellbook = () => {
 	}
 
 	if (isError) {
-		return (
-			<View>
-				<Text>{error}</Text>
-			</View>
-		);
+		return <ErrorComponent />;
 	}
 
 	return (

@@ -1,22 +1,19 @@
+import { RootState } from "@/app/store";
 import { View, Text, StyleSheet } from "react-native";
-import { Image } from "expo-image";
+import { useSelector } from "react-redux";
 
-const LoadingComponent = () => {
+const ErrorComponent = () => {
+	const error = useSelector((state: RootState) => state.error.errorMessage);
+
 	return (
 		<View style={styles.container}>
-			<Image
-				style={styles.image}
-				source={require("../assets/images/loading_dice.gif")}
-				placeholder="Spinning d20"
-				contentFit="cover"
-				transition={1000}
-			/>
-			<Text style={styles.text}>Loading...</Text>
+			<Text style={styles.textBold}>ERROR</Text>
+			<Text>{error}</Text>
 		</View>
 	);
 };
 
-export default LoadingComponent;
+export default ErrorComponent;
 
 const styles = StyleSheet.create({
 	container: {
@@ -28,14 +25,16 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		backgroundColor: "rgba(224, 214, 197, 0.8)",
 	},
-	image: {
-		width: 150,
-		height: 150,
-	},
-	text: {
+	textBold: {
 		fontFamily: "NunitoBlack",
 		fontSize: 20,
 		color: "#990000",
+		textAlign: "center",
+	},
+	text: {
+		fontFamily: "NunitoRegular",
+		fontSize: 20,
+		color: "#2b2b2b",
 		textAlign: "center",
 	},
 });
