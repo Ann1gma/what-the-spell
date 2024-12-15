@@ -46,9 +46,10 @@ const Signup = () => {
 
 	useEffect(() => {
 		const userLoggedIn = async () => {
-			await new Promise((r) => setTimeout(r, 500));
+			await new Promise((r) => setTimeout(r, 5));
 			router.replace("/Profile");
 		};
+
 		if (currentUser) {
 			userLoggedIn();
 		}
@@ -93,7 +94,13 @@ const Signup = () => {
 						<Text style={styles.label}>Email*</Text>
 						<Controller
 							control={control}
-							rules={{ required: "Email is required" }}
+							rules={{
+								required: "Email is required",
+								pattern: {
+									value: /\S+@\S+\.\S+/,
+									message: "Entered value does not match email format",
+								},
+							}}
 							render={({ field: { onChange, onBlur, value } }) => (
 								<TextInput
 									style={styles.input}
@@ -111,7 +118,17 @@ const Signup = () => {
 						<Text style={styles.label}>Password*</Text>
 						<Controller
 							control={control}
-							rules={{ required: "Password is required" }}
+							rules={{
+								required: "Password is required",
+								minLength: {
+									message: "Enter at least a 8 characters",
+									value: 8,
+								},
+								validate: {
+									containsNumberOrSpecialChar: (value) =>
+										/[0-9!@#$%^&*(),.?":{}|<>]/.test(value) || "Password must contain at least one number or special character",
+								},
+							}}
 							render={({ field: { onChange, onBlur, value } }) => (
 								<TextInput
 									style={styles.input}
@@ -124,7 +141,12 @@ const Signup = () => {
 							)}
 							name="password"
 						/>
-						{errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+						{errors.password && (
+							<Text style={styles.error}>
+								Password is required. The password must be at least 8 characters. At least one of the characters must be a number or a
+								special character.
+							</Text>
+						)}
 
 						<Text style={styles.label}>Confirm your password*</Text>
 						<Controller

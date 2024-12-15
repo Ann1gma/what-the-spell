@@ -14,7 +14,6 @@ const Profile = () => {
 	const [submitting, setSubmitting] = useState(false);
 
 	const isError = useSelector((state: RootState) => state.error.isError);
-	const errorMessage = useSelector((state: RootState) => state.error.errorMessage);
 
 	const dispatch = useDispatch();
 
@@ -70,16 +69,15 @@ const Profile = () => {
 
 				{currentUser ? (
 					<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>
-						<Text style={[styles.text, { marginBottom: 10, textAlign: "center", fontSize: 24 }]}>Welcome to your profile!</Text>
-						<Text style={styles.text}>Logged in</Text>
-						<View style={{ flexDirection: "row", marginBottom: 40 }}>
-							<Text style={[styles.text, styles.textBold, { marginRight: 5 }]}>Email:</Text>
-							<Text style={styles.text}>{currentUser.email}</Text>
-						</View>
+						<Text style={[styles.text, { marginBottom: 20, textAlign: "center", fontSize: 24 }]}>Welcome to your profile!</Text>
+						<Text style={[styles.text, styles.textBold]}>User:</Text>
+						<Text style={styles.text}>{currentUser.email}</Text>
 
-						<Text style={[styles.text, { marginBottom: 10 }]}>Have you had a look at creating your own personal characters?</Text>
+						<Text style={[styles.text, { marginBottom: 10, marginTop: 40, textAlign: "center" }]}>
+							Have you had a look at creating your own personal characters?
+						</Text>
 
-						<Text style={styles.text}>If not take a look here:</Text>
+						<Text style={[styles.text, { textAlign: "center" }]}>If not take a look here:</Text>
 						<Link href="/Characters" asChild>
 							<Pressable>
 								<Text style={styles.linkText}>Characters</Text>

@@ -30,7 +30,6 @@ const AddCharacter = () => {
 	const { spellslots, updateSpellslots, resetSepllslots } = useSetSpellslots();
 
 	const isError = useSelector((state: RootState) => state.error.isError);
-	const error = useSelector((state: RootState) => state.error.errorMessage);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
 	const router = useRouter();
