@@ -1,26 +1,19 @@
 import useAuth from "@/hooks/useAuth";
 import useGetCharacters from "@/hooks/useGetCharacters";
 import Feather from "@expo/vector-icons/Feather";
-import Entypo from "@expo/vector-icons/Entypo";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, Pressable } from "react-native";
+import { ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Pressable } from "react-native";
 import LoadingComponent from "@/components/LoadingComponent";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
+import CharacterListComponent from "@/components/CharacterListComponent";
 
 const Characters = () => {
 	const { currentUser } = useAuth();
 	const { data } = useGetCharacters(currentUser?.uid);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
 	const router = useRouter();
-
-	const handlePress = (id: string) => {
-		router.push({
-			pathname: "/(tabs)/characters/[id]",
-			params: { id },
-		});
-	};
 
 	const handleAddCharacter = () => {
 		router.push({
@@ -68,40 +61,7 @@ const Characters = () => {
 					</View>
 				</View>
 				<SafeAreaView style={styles.contentWrapper}>
-					{data && data.length > 0 && (
-						<View>
-							<FlatList
-								keyExtractor={(item) => item._id}
-								data={data}
-								style={{ flexGrow: 0 }}
-								renderItem={({ item, index }) => (
-									<TouchableOpacity activeOpacity={0.8} onPress={() => handlePress(item._id)}>
-										<View style={index === 0 ? styles.firstCharacterContainer : styles.characterContainer}>
-											<View style={{ flexDirection: "row" }}>
-												<View style={styles.logoContainer}>
-													<Image
-														source={require("../../assets/images/wizard_transperent.png")}
-														resizeMode="cover"
-														style={styles.logo}
-													/>
-												</View>
-												<View>
-													<Text style={styles.characterName}>{item.character_name}</Text>
-													<View style={{ flexDirection: "row" }}>
-														<Text style={styles.text}>{item.class_name}, </Text>
-														<Text style={styles.text}>lvl {item.character_level}</Text>
-													</View>
-												</View>
-											</View>
-											<View>
-												<Entypo name="chevron-small-right" size={28} color="#2b2b2b" />
-											</View>
-										</View>
-									</TouchableOpacity>
-								)}
-							/>
-						</View>
-					)}
+					{data && data.length > 0 && <CharacterListComponent data={data} />}
 					{data && data.length <= 0 && (
 						<View style={styles.noCharacterContainer}>
 							<Text style={styles.textBold}>No charachters registrered!</Text>
@@ -179,34 +139,6 @@ const styles = StyleSheet.create({
 		flexDirection: "column",
 		justifyContent: "space-between",
 		borderRadius: 10,
-	},
-	firstCharacterContainer: {
-		paddingHorizontal: 10,
-		paddingVertical: 20,
-		flexDirection: "row",
-		alignItems: "center",
-		flexWrap: "wrap",
-		borderTopRightRadius: 10,
-		borderTopLeftRadius: 10,
-		borderTopWidth: 5,
-		borderTopColor: "#F0E4D1",
-		borderBottomWidth: 5,
-		borderBottomColor: "#F0E4D1",
-		backgroundColor: "rgba(240, 228, 209, 0.5)",
-		justifyContent: "space-between",
-	},
-	characterContainer: {
-		paddingHorizontal: 10,
-		paddingVertical: 20,
-		flexDirection: "row",
-		alignItems: "center",
-		flexWrap: "wrap",
-		borderTopWidth: 5,
-		borderTopColor: "#F0E4D1",
-		borderBottomWidth: 5,
-		borderBottomColor: "#F0E4D1",
-		backgroundColor: "rgba(240, 228, 209, 0.5)",
-		justifyContent: "space-between",
 	},
 	characterName: {
 		fontFamily: "CinzelBold",
