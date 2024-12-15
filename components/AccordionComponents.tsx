@@ -8,12 +8,12 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 
-interface AccordionProps {
+interface AccordionComponentProps {
 	title: string;
 	data: SpellsOverview[];
 }
 
-const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
+const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) => {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
 
@@ -113,7 +113,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, data }) => {
 	);
 };
 
-export default Accordion;
+export default AccordionComponent;
 
 const styles = StyleSheet.create({
 	headerContainer: {
