@@ -4,11 +4,18 @@ import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { LoginData } from "@/types/User.types";
 import { Link } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { RootState } from "../store";
 
 const Profile = () => {
 	const { currentUser, login, logout } = useAuth();
 	const [submitting, setSubmitting] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+
+	const isError = useSelector((state: RootState) => state.error.isError);
+	const errorMessage = useSelector((state: RootState) => state.error.errorMessage);
+
+	const dispatch = useDispatch();
 
 	const {
 		control,
@@ -19,26 +26,43 @@ const Profile = () => {
 
 	const onLogin: SubmitHandler<LoginData> = async (data) => {
 		setSubmitting(true);
-		setError(null);
+
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
+
 		try {
 			await login(data.email, data.password);
 			reset();
 		} catch (err) {
-			setError("Failed to login. Please check your credentials.");
+			dispatch(changeErrorMessage("Failed to login. Please check your credentials."));
+			dispatch(changeIsError(true));
 		}
 		setSubmitting(false);
 	};
 
 	const onLogout = async () => {
 		setSubmitting(true);
+
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
+
 		try {
 			await logout();
 			reset();
 		} catch (err) {
-			setError("Failed to logout.");
+			dispatch(changeErrorMessage("Failed to logout."));
+			dispatch(changeIsError(true));
 		}
 		setSubmitting(false);
 	};
+
+	if (isError) {
+		return (
+			<View style={styles.container}>
+				<Text>{errorMessage}</Text>
+			</View>
+		);
+	}
 
 	return (
 		<View style={styles.container}>
@@ -82,7 +106,6 @@ const Profile = () => {
 								<Text style={styles.textBold}>characters</Text>
 							</View>
 						</View>
-						{error && <Text style={styles.error}>{error}</Text>}
 
 						<Text style={styles.label}>Email*</Text>
 						<Controller

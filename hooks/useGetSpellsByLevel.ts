@@ -1,4 +1,5 @@
 import { RootState } from "@/app/store";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import { changeLoading } from "@/features/loading/loadingSlice";
 import { getSpellsByLevel } from "@/services/DnD5e_API";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
@@ -17,8 +18,6 @@ const useGetSpellsByLevel = () => {
 	const [lvlSevenData, setLvlSevenData] = useState<SpellsOverview[] | null>(null);
 	const [lvlEightData, setLvlEightData] = useState<SpellsOverview[] | null>(null);
 	const [lvlNineData, setLvlNineData] = useState<SpellsOverview[] | null>(null);
-	const [error, setError] = useState<string | null>(null);
-	const [isError, setIsError] = useState(false);
 
 	const getAllSpellsByLevel = async (level: number) => {
 		try {
@@ -55,26 +54,27 @@ const useGetSpellsByLevel = () => {
 					setLvlNineData(data);
 					break;
 				default:
-					setIsError(true);
-					setError("Invalid level");
+					dispatch(changeErrorMessage("Invalid level"));
+					dispatch(changeIsError(true));
 			}
 		} catch (err) {
-			setError((err as Error).message);
+			dispatch(changeErrorMessage((err as Error).message));
+			dispatch(changeIsError(true));
 		}
 	};
 
 	const fetchAllSpells = async () => {
 		dispatch(changeLoading(true));
-		setIsError(false);
-		setError(null);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 
 		const levels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 		try {
 			await Promise.all(levels.map((level) => getAllSpellsByLevel(level)));
 		} catch (err) {
-			setIsError(true);
-			setError("Failed to fetch all spells.");
+			dispatch(changeErrorMessage("Failed to fetch all spells."));
+			dispatch(changeIsError(true));
 		} finally {
 			dispatch(changeLoading(false));
 		}
@@ -138,8 +138,6 @@ const useGetSpellsByLevel = () => {
 		lvlSevenData,
 		lvlEightData,
 		lvlNineData,
-		error,
-		isError,
 	};
 };
 

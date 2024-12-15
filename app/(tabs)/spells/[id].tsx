@@ -8,27 +8,30 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/store";
 import { changeLoading } from "@/features/loading/loadingSlice";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 
 export default function SpellDetailScreen() {
-	const [error, setError] = useState<string | null>(null);
-	const [isError, setIsError] = useState(false);
-	const [spellData, setSpellData] = useState<SpellDetails | null>(null);
+	const isError = useSelector((state: RootState) => state.error.isError);
+	const error = useSelector((state: RootState) => state.error.errorMessage);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
+
+	const [spellData, setSpellData] = useState<SpellDetails | null>(null);
+
 	const { id } = useLocalSearchParams();
 	const router = useRouter();
 	const dispatch = useDispatch();
 
 	const getSpellData = async (id: string) => {
 		dispatch(changeLoading(true));
-		setIsError(false);
-		setError(null);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 
 		try {
 			const data = await getSpellDetails(id);
 			setSpellData(data);
 		} catch (err) {
-			setIsError(true);
-			setError("Failed to fetch all spells.");
+			dispatch(changeErrorMessage("Failed to fetch all spells."));
+			dispatch(changeIsError(true));
 		} finally {
 			dispatch(changeLoading(false));
 		}

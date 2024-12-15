@@ -11,9 +11,14 @@ import { RootState } from "../store";
 
 const FilterSpellbook = () => {
 	const dispatch = useDispatch();
+
 	const router = useRouter();
+
+	const { options } = useGetAllClasses([{ index: "none", name: "All spells" }]);
+
+	const isError = useSelector((state: RootState) => state.error.isError);
+	const error = useSelector((state: RootState) => state.error.errorMessage);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
-	const { options, isError, error } = useGetAllClasses([{ index: "none", name: "All spells" }]);
 
 	const onFiltration = (item: ClassObject) => {
 		dispatch(changeFilter(item));

@@ -1,7 +1,7 @@
 import React, { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
-import { Text, View } from "react-native";
+import LoadingComponent from "@/components/LoadingComponent";
 
 interface AuthContextType {
 	login: (email: string, password: string) => Promise<UserCredential>;
@@ -62,13 +62,7 @@ const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
 				isLoading,
 			}}
 		>
-			{isLoading ? (
-				<View>
-					<Text>Loading...</Text>
-				</View>
-			) : (
-				children
-			)}
+			{isLoading ? <LoadingComponent /> : children}
 		</AuthContext.Provider>
 	);
 };

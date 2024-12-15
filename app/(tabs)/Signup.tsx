@@ -4,12 +4,19 @@ import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { SignupData } from "@/types/User.types";
 import { Link, useRouter } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 
 const Signup = () => {
 	const { currentUser, signup } = useAuth();
 	const [submitting, setSubmitting] = useState(false);
-	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
+
+	const isError = useSelector((state: RootState) => state.error.isError);
+	const errorMessage = useSelector((state: RootState) => state.error.errorMessage);
+
+	const dispatch = useDispatch();
 
 	const {
 		control,
@@ -23,11 +30,15 @@ const Signup = () => {
 
 	const onSignup: SubmitHandler<SignupData> = async (data) => {
 		setSubmitting(true);
-		setError(null);
+
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
+
 		try {
 			await signup(data.email, data.password);
 		} catch (err) {
-			setError("Failed to Sign up. Please check your credentials.");
+			dispatch(changeErrorMessage("Failed to Sign up. Please check your credentials."));
+			dispatch(changeIsError(true));
 		}
 		setSubmitting(false);
 	};
@@ -58,6 +69,14 @@ const Signup = () => {
 		);
 	}
 
+	if (isError) {
+		return (
+			<View style={styles.container}>
+				<Text>{errorMessage}</Text>
+			</View>
+		);
+	}
+
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
@@ -72,7 +91,7 @@ const Signup = () => {
 								Sign up for free to create your magic-casting characters and track their spells!
 							</Text>
 						</View>
-						{error && <Text style={styles.error}>{error}</Text>}
+						{isError && <Text style={styles.error}>{errorMessage}</Text>}
 
 						<Text style={styles.label}>Email*</Text>
 						<Controller

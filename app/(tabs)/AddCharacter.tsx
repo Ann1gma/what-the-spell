@@ -25,8 +25,11 @@ const AddCharacter = () => {
 	const [submitError, setSubmitError] = useState<string | null>(null);
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
-	const { error, isError, options } = useGetAllClasses([]);
+	const { options } = useGetAllClasses([]);
 	const { spellslots, updateSpellslots, resetSepllslots } = useSetSpellslots();
+
+	const isError = useSelector((state: RootState) => state.error.isError);
+	const error = useSelector((state: RootState) => state.error.errorMessage);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
 	const router = useRouter();

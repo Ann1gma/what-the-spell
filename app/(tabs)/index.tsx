@@ -12,23 +12,15 @@ import LoadingComponent from "@/components/LoadingComponent";
 
 export default function Index() {
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
+
 	const [subTitle, setSubtitle] = useState(filtrationOption);
+
+	const isError = useSelector((state: RootState) => state.error.isError);
+	const error = useSelector((state: RootState) => state.error.errorMessage);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
-	const {
-		cantripsData,
-		lvlOneData,
-		lvlTwoData,
-		lvlThreeData,
-		lvlFourData,
-		lvlFiveData,
-		lvlSixData,
-		lvlSevenData,
-		lvlEightData,
-		lvlNineData,
-		error,
-		isError,
-	} = useGetSpellsByLevel();
+	const { cantripsData, lvlOneData, lvlTwoData, lvlThreeData, lvlFourData, lvlFiveData, lvlSixData, lvlSevenData, lvlEightData, lvlNineData } =
+		useGetSpellsByLevel();
 
 	const {
 		getAllSpellsByClass,
@@ -42,8 +34,6 @@ export default function Index() {
 		lvlSevenDataClass,
 		lvlEightDataClass,
 		lvlNineDataClass,
-		classError,
-		isClassError,
 	} = useGetSpellsByClass();
 
 	useEffect(() => {
@@ -57,12 +47,11 @@ export default function Index() {
 		return <LoadingComponent />;
 	}
 
-	if (isError || isClassError) {
+	if (isError) {
 		return (
 			<View>
 				<Text>ERROR!</Text>
-				{isError && <Text>{error}</Text>}
-				{isClassError && <Text>{classError}</Text>}
+				<Text>{error}</Text>
 			</View>
 		);
 	}

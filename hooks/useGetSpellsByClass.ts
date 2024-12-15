@@ -1,3 +1,4 @@
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import { changeLoading } from "@/features/loading/loadingSlice";
 import { getSpellsByClass } from "@/services/DnD5e_API";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
@@ -16,14 +17,11 @@ const useGetSpellsByClass = () => {
 	const [lvlSevenDataClass, setLvlSevenDataClass] = useState<SpellsOverview[] | null>(null);
 	const [lvlEightDataClass, setLvlEightDataClass] = useState<SpellsOverview[] | null>(null);
 	const [lvlNineDataClass, setLvlNineDataClass] = useState<SpellsOverview[] | null>(null);
-	const [classError, setClassError] = useState<string | null>(null);
-	const [isClassError, setIsClassError] = useState(false);
 
 	const getAllSpellsByClass = async (classIndex: string) => {
 		dispatch(changeLoading(true));
-
-		setIsClassError(false);
-		setClassError(null);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 
 		setCantripsDataClass(null);
 		setLvlOneDataClass(null);
@@ -61,13 +59,13 @@ const useGetSpellsByClass = () => {
 				} else if (spell.level === 9) {
 					setLvlNineDataClass((previousState) => [...(previousState || []), spell]);
 				} else {
-					setIsClassError(true);
-					setClassError("Invalid level");
+					dispatch(changeErrorMessage("Invalid level"));
+					dispatch(changeIsError(true));
 				}
 			});
 		} catch (err) {
-			setIsClassError(true);
-			setClassError("Failed to fetch all spells.");
+			dispatch(changeErrorMessage("Failed to fetch all spells."));
+			dispatch(changeIsError(true));
 		} finally {
 			dispatch(changeLoading(false));
 		}
@@ -85,8 +83,6 @@ const useGetSpellsByClass = () => {
 		lvlSevenDataClass,
 		lvlEightDataClass,
 		lvlNineDataClass,
-		classError,
-		isClassError,
 	};
 };
 
