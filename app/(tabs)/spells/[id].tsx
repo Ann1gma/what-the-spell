@@ -1,41 +1,21 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ImageBackground, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import { useEffect, useState } from "react";
-import { SpellDetails } from "@/types/DnD5e_API.types";
-import { getSpellDetails } from "@/services/DnD5e_API";
+import { useEffect } from "react";
 import LoadingComponent from "@/components/LoadingComponent";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
-import { changeLoading } from "@/features/loading/loadingSlice";
-import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import ErrorComponent from "@/components/ErrorComponent";
+import useGetSpellByIndex from "@/hooks/useGetSpellByIndex";
 
 export default function SpellDetailScreen() {
 	const isError = useSelector((state: RootState) => state.error.isError);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
-	const [spellData, setSpellData] = useState<SpellDetails | null>(null);
+	const { spellData, getSpellData } = useGetSpellByIndex();
 
 	const { id } = useLocalSearchParams();
 	const router = useRouter();
-	const dispatch = useDispatch();
-
-	const getSpellData = async (id: string) => {
-		dispatch(changeLoading(true));
-		dispatch(changeErrorMessage(""));
-		dispatch(changeIsError(false));
-
-		try {
-			const data = await getSpellDetails(id);
-			setSpellData(data);
-		} catch (err) {
-			dispatch(changeErrorMessage("Failed to fetch all spells."));
-			dispatch(changeIsError(true));
-		} finally {
-			dispatch(changeLoading(false));
-		}
-	};
 
 	useEffect(() => {
 		if (typeof id === "string") {
