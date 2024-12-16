@@ -4,11 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AccordionComponent from "@/components/AccordionComponents";
 import { Link } from "expo-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import useGetSpellOverview from "@/hooks/useGetSpellOverview";
+import { changeIsError } from "@/features/error/errorSlice";
 
 const Index = () => {
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
@@ -46,10 +47,6 @@ const Index = () => {
 		return <LoadingComponent />;
 	}
 
-	if (isError) {
-		return <ErrorComponent />;
-	}
-
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
@@ -66,6 +63,9 @@ const Index = () => {
 						</Link>
 					</View>
 				</View>
+
+				{isError && <ErrorComponent />}
+
 				<SafeAreaView style={styles.scrollContainer}>
 					<ScrollView>
 						<View style={styles.accordionContainer}>

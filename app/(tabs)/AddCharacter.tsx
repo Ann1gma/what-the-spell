@@ -86,10 +86,6 @@ const AddCharacter = () => {
 		return <LoadingComponent />;
 	}
 
-	if (isError) {
-		return <ErrorComponent />;
-	}
-
 	if (!currentUser) {
 		return (
 			<View style={styles.container}>
@@ -118,6 +114,9 @@ const AddCharacter = () => {
 						</Pressable>
 					</View>
 				</View>
+
+				{isError && <ErrorComponent />}
+
 				<ScrollView>
 					<View style={styles.formWrapper}>
 						{submitError && <Text style={styles.error}>{submitError}</Text>}

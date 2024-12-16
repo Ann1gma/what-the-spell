@@ -33,10 +33,6 @@ export default function SpellDetailScreen() {
 		return <LoadingComponent />;
 	}
 
-	if (isError) {
-		return <ErrorComponent />;
-	}
-
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
@@ -52,6 +48,7 @@ export default function SpellDetailScreen() {
 						</Pressable>
 					</View>
 				</View>
+				{isError && <ErrorComponent />}
 				{spellData && (
 					<SafeAreaView style={styles.scrollContainer}>
 						<ScrollView>

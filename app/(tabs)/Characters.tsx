@@ -8,11 +8,13 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import CharacterListComponent from "@/components/CharacterListComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 const Characters = () => {
 	const { currentUser } = useAuth();
 	const { data } = useGetCharacters(currentUser?.uid);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
+	const isError = useSelector((state: RootState) => state.error.isError);
 	const router = useRouter();
 
 	const handleAddCharacter = () => {
@@ -60,6 +62,9 @@ const Characters = () => {
 						</Pressable>
 					</View>
 				</View>
+
+				{isError && <ErrorComponent />}
+
 				<SafeAreaView style={styles.contentWrapper}>
 					{data && data.length > 0 && <CharacterListComponent data={data} />}
 					{data && data.length <= 0 && (

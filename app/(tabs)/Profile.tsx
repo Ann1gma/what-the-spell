@@ -56,16 +56,14 @@ const Profile = () => {
 		setSubmitting(false);
 	};
 
-	if (isError) {
-		return <ErrorComponent />;
-	}
-
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>Profile</Text>
 				</View>
+
+				{isError && <ErrorComponent />}
 
 				{currentUser ? (
 					<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>

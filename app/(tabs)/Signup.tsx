@@ -41,16 +41,14 @@ const Signup = () => {
 		);
 	}
 
-	if (isError) {
-		return <ErrorComponent />;
-	}
-
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>Sign up</Text>
 				</View>
+
+				{isError && <ErrorComponent />}
 
 				{!currentUser && (
 					<View style={styles.formWrapper}>
@@ -59,13 +57,12 @@ const Signup = () => {
 								Sign up for free to create your magic-casting characters and track their spells!
 							</Text>
 						</View>
-						{isError && <Text style={styles.error}>{errorMessage}</Text>}
 
 						<SignupFormComponent />
 
 						<View style={{ marginTop: 30 }}>
 							<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Already have an account?</Text>
-							<Link href="/Login" asChild>
+							<Link href="/(tabs)/Profile" asChild>
 								<Pressable>
 									<Text style={styles.linkText}>Login</Text>
 								</Pressable>

@@ -18,7 +18,6 @@ const FilterSpellbook = () => {
 	const { options } = useGetAllClasses([{ index: "none", name: "All spells" }]);
 
 	const isError = useSelector((state: RootState) => state.error.isError);
-	const error = useSelector((state: RootState) => state.error.errorMessage);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
 	const onFiltration = (item: ClassObject) => {
@@ -28,10 +27,6 @@ const FilterSpellbook = () => {
 
 	if (isLoading) {
 		return <LoadingComponent />;
-	}
-
-	if (isError) {
-		return <ErrorComponent />;
 	}
 
 	return (
@@ -47,6 +42,9 @@ const FilterSpellbook = () => {
 						</Pressable>
 					</View>
 				</View>
+
+				{isError && <ErrorComponent />}
+
 				<ScrollView>
 					<View style={styles.formWrapper}>
 						<Text style={styles.text}>Filter spells by class</Text>
