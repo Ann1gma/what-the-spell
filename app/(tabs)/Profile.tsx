@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { LoginData } from "@/types/User.types";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import { RootState } from "../store";
@@ -12,6 +12,8 @@ import ErrorComponent from "@/components/ErrorComponent";
 const Profile = () => {
 	const { currentUser, login, logout } = useAuth();
 	const [submitting, setSubmitting] = useState(false);
+
+	const router = useRouter();
 
 	const isError = useSelector((state: RootState) => state.error.isError);
 
@@ -59,99 +61,100 @@ const Profile = () => {
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
-				<View style={styles.titleContainer}>
-					<Text style={styles.title}>Profile</Text>
-				</View>
-
-				{isError && <ErrorComponent />}
-
-				{currentUser ? (
-					<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>
-						<Text style={[styles.text, { marginBottom: 20, textAlign: "center", fontSize: 24 }]}>Welcome to your profile!</Text>
-						<Text style={[styles.text, styles.textBold]}>User:</Text>
-						<Text style={styles.text}>{currentUser.email}</Text>
-
-						<Text style={[styles.text, { marginBottom: 10, marginTop: 40, textAlign: "center" }]}>
-							Have you had a look at creating your own personal characters?
-						</Text>
-
-						<Text style={[styles.text, { textAlign: "center" }]}>If not take a look here:</Text>
-						<Link href="/Characters" asChild>
-							<Pressable>
-								<Text style={styles.linkText}>Characters</Text>
-							</Pressable>
-						</Link>
-
-						<View style={styles.profileWrapper}>
-							<Text style={styles.text}>Logout:</Text>
-							<Pressable style={styles.button} onPress={onLogout} disabled={submitting}>
-								<Text style={styles.buttonText}>{submitting ? "Logging out..." : "Log out"}</Text>
-							</Pressable>
-						</View>
-					</View>
-				) : (
-					<View style={styles.formWrapper}>
-						<View style={styles.subtitleWrapper}>
-							<Text style={[styles.text, { textAlign: "center" }]}>Please log in to access your</Text>
-							<View style={{ flexDirection: "row", justifyContent: "center" }}>
-								<Text style={styles.textBold}>profile </Text>
-								<Text style={styles.text}>and </Text>
-								<Text style={styles.textBold}>characters</Text>
-							</View>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+						<View style={styles.titleContainer}>
+							<Text style={styles.title}>Profile</Text>
 						</View>
 
-						<Text style={styles.label}>Email*</Text>
-						<Controller
-							control={control}
-							rules={{ required: "Email is required" }}
-							render={({ field: { onChange, onBlur, value } }) => (
-								<TextInput
-									style={styles.input}
-									placeholder="Email"
-									onBlur={onBlur}
-									onChangeText={onChange}
-									value={value}
-									keyboardType="email-address"
-									inputMode="email"
-								/>
-							)}
-							name="email"
-						/>
-						{errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+						{isError && <ErrorComponent />}
 
-						<Text style={styles.label}>Password*</Text>
-						<Controller
-							control={control}
-							rules={{ required: "Password is required" }}
-							render={({ field: { onChange, onBlur, value } }) => (
-								<TextInput
-									style={styles.input}
-									placeholder="Password"
-									onBlur={onBlur}
-									onChangeText={onChange}
-									value={value}
-									secureTextEntry
-								/>
-							)}
-							name="password"
-						/>
-						{errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+						{currentUser ? (
+							<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>
+								<Text style={[styles.text, { marginBottom: 20, textAlign: "center", fontSize: 24 }]}>Welcome to your profile!</Text>
+								<Text style={[styles.text, styles.textBold]}>User:</Text>
+								<Text style={styles.text}>{currentUser.email}</Text>
 
-						<Pressable style={styles.button} onPress={handleSubmit(onLogin)} disabled={submitting}>
-							<Text style={styles.buttonText}>{submitting ? "Logging in..." : "Login"}</Text>
-						</Pressable>
+								<Text style={[styles.text, { marginBottom: 10, marginTop: 40, textAlign: "center" }]}>
+									Have you had a look at creating your own personal characters?
+								</Text>
 
-						<View style={{ marginTop: 30 }}>
-							<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Don't have an account?</Text>
-							<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Sign up! - It's Free</Text>
-							<Link href="./Signup" asChild>
-								<Pressable>
-									<Text style={styles.linkText}>Sign up</Text>
+								<Text style={[styles.text, { textAlign: "center" }]}>If not take a look here:</Text>
+
+								<Pressable onPress={() => router.push("/Characters")}>
+									<Text style={styles.linkText}>Characters</Text>
 								</Pressable>
-							</Link>
-						</View>
-					</View>
-				)}
+
+								<View style={styles.profileWrapper}>
+									<Text style={styles.text}>Logout:</Text>
+									<Pressable style={styles.button} onPress={onLogout} disabled={submitting}>
+										<Text style={styles.buttonText}>{submitting ? "Logging out..." : "Log out"}</Text>
+									</Pressable>
+								</View>
+							</View>
+						) : (
+							<View style={styles.formWrapper}>
+								<View style={styles.subtitleWrapper}>
+									<Text style={[styles.text, { textAlign: "center" }]}>Please log in to access your</Text>
+									<View style={{ flexDirection: "row", justifyContent: "center" }}>
+										<Text style={styles.textBold}>profile </Text>
+										<Text style={styles.text}>and </Text>
+										<Text style={styles.textBold}>characters</Text>
+									</View>
+								</View>
+
+								<Text style={styles.label}>Email*</Text>
+								<Controller
+									control={control}
+									rules={{ required: "Email is required" }}
+									render={({ field: { onChange, onBlur, value } }) => (
+										<TextInput
+											style={styles.input}
+											placeholder="Email"
+											onBlur={onBlur}
+											onChangeText={onChange}
+											value={value}
+											keyboardType="email-address"
+											inputMode="email"
+										/>
+									)}
+									name="email"
+								/>
+								{errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+
+								<Text style={styles.label}>Password*</Text>
+								<Controller
+									control={control}
+									rules={{ required: "Password is required" }}
+									render={({ field: { onChange, onBlur, value } }) => (
+										<TextInput
+											style={styles.input}
+											placeholder="Password"
+											onBlur={onBlur}
+											onChangeText={onChange}
+											value={value}
+											secureTextEntry
+										/>
+									)}
+									name="password"
+								/>
+								{errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+
+								<Pressable style={styles.button} onPress={handleSubmit(onLogin)} disabled={submitting}>
+									<Text style={styles.buttonText}>{submitting ? "Logging in..." : "Login"}</Text>
+								</Pressable>
+
+								<View style={{ marginTop: 30 }}>
+									<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Don't have an account?</Text>
+									<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Sign up! - It's Free</Text>
+									<Pressable onPress={() => router.push("/(tabs)/Signup")}>
+										<Text style={styles.linkText}>Sign up</Text>
+									</Pressable>
+								</View>
+							</View>
+						)}
+					</ScrollView>
+				</TouchableWithoutFeedback>
 			</ImageBackground>
 		</View>
 	);

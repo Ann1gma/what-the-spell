@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, Pressable, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, Pressable, StyleSheet, ImageBackground, TouchableWithoutFeedback, Keyboard, ScrollView } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { Link, useRouter } from "expo-router";
 import { useSelector } from "react-redux";
@@ -44,32 +44,35 @@ const Signup = () => {
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
-				<View style={styles.titleContainer}>
-					<Text style={styles.title}>Sign up</Text>
-				</View>
-
-				{isError && <ErrorComponent />}
-
-				{!currentUser && (
-					<View style={styles.formWrapper}>
-						<View style={styles.subtitleWrapper}>
-							<Text style={[styles.text, { textAlign: "center" }]}>
-								Sign up for free to create your magic-casting characters and track their spells!
-							</Text>
-						</View>
-
-						<SignupFormComponent />
-
-						<View style={{ marginTop: 30 }}>
-							<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Already have an account?</Text>
-							<Link href="/(tabs)/Profile" asChild>
-								<Pressable>
-									<Text style={styles.linkText}>Login</Text>
-								</Pressable>
-							</Link>
-						</View>
+				<ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+					<View style={styles.titleContainer}>
+						<Text style={styles.title}>Sign up</Text>
 					</View>
-				)}
+
+					{isError && <ErrorComponent />}
+					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+						{!currentUser && (
+							<View style={styles.formWrapper}>
+								<View style={styles.subtitleWrapper}>
+									<Text style={[styles.text, { textAlign: "center" }]}>
+										Sign up for free to create your magic-casting characters and track their spells!
+									</Text>
+								</View>
+
+								<SignupFormComponent />
+
+								<View style={{ marginTop: 30 }}>
+									<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Already have an account?</Text>
+									<Link href="/(tabs)/Profile" asChild>
+										<Pressable>
+											<Text style={styles.linkText}>Login</Text>
+										</Pressable>
+									</Link>
+								</View>
+							</View>
+						)}
+					</TouchableWithoutFeedback>
+				</ScrollView>
 			</ImageBackground>
 		</View>
 	);

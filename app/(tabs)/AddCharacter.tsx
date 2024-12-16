@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground, TouchableOpacity, ScrollView } from "react-native";
+import {
+	View,
+	Text,
+	TextInput,
+	Pressable,
+	StyleSheet,
+	ImageBackground,
+	TouchableOpacity,
+	ScrollView,
+	TouchableWithoutFeedback,
+	Keyboard,
+} from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { NewCharacter } from "@/types/Character.types";
@@ -104,179 +115,187 @@ const AddCharacter = () => {
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
-				<View style={styles.titleContainer}>
-					<View>
-						<Text style={styles.title}>Character creation</Text>
-					</View>
-					<View style={styles.iconContainer}>
-						<Pressable onPress={() => router.back()}>
-							<Feather name="arrow-left" size={24} color="#2b2b2b" />
-						</Pressable>
-					</View>
-				</View>
-
-				{isError && <ErrorComponent />}
-
-				<ScrollView>
-					<View style={styles.formWrapper}>
-						{submitError && <Text style={styles.error}>{submitError}</Text>}
-
-						<Text style={styles.text}>Character name*</Text>
-						<Controller
-							control={control}
-							rules={{ required: "Character name is required" }}
-							render={({ field: { onChange, onBlur, value } }) => (
-								<TextInput
-									style={styles.input}
-									placeholder="Baldric the Bold"
-									onBlur={onBlur}
-									onChangeText={onChange}
-									value={value}
-								/>
-							)}
-							name="character_name"
-						/>
-						{errors.character_name && <Text style={styles.error}>{errors.character_name.message}</Text>}
-
-						<Text style={styles.text}>Class*</Text>
-						<DropdownComponent options={options} onChange={(e) => onFiltration(e)} placeholder={!className ? "Class" : className.name} />
-						{classError && <Text style={styles.error}>{classError}</Text>}
-
-						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
-							<Text style={[styles.text, { marginRight: 12 }]}>Level*</Text>
-							<Controller
-								control={control}
-								rules={{
-									required: "Character level is required",
-									max: 20,
-									validate: (value) => !isNaN(value) || "Value must be a number",
-								}}
-								render={({ field: { onChange, onBlur, value } }) => (
-									<TextInput
-										style={styles.inputNumber}
-										placeholder="0-20"
-										keyboardType="number-pad"
-										inputMode="numeric"
-										onBlur={onBlur}
-										onChangeText={(text) => {
-											onChange(Number(text));
-										}}
-										value={!value ? "" : value.toString()}
-									/>
-								)}
-								name="character_level"
-							/>
-						</View>
-						{errors.character_level && <Text style={styles.error}>{errors.character_level.message}</Text>}
-
-						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 30 }}>
-							<Text style={[styles.text, { marginRight: 12 }]}>Spell attack modifier</Text>
-							<Controller
-								control={control}
-								rules={{
-									required: false,
-									validate: (value) => (value !== null && !isNaN(value)) || "Spell attack modifier must be a number",
-								}}
-								render={({ field: { onChange, onBlur, value } }) => (
-									<TextInput
-										style={styles.inputNumber}
-										placeholder="0-30"
-										keyboardType="number-pad"
-										inputMode="numeric"
-										onBlur={onBlur}
-										onChangeText={(text) => {
-											onChange(Number(text));
-										}}
-										value={!value ? "" : value.toString()}
-									/>
-								)}
-								name="spell_attack_modifier"
-							/>
-						</View>
-
-						{errors.spell_attack_modifier && <Text style={styles.error}>{errors.spell_attack_modifier.message}</Text>}
-
-						<View style={{ flexDirection: "row", alignItems: "baseline" }}>
-							<Text style={[styles.text, { marginRight: 12 }]}>Spell save dc</Text>
-							<Controller
-								control={control}
-								rules={{
-									required: false,
-									validate: (value) => (value !== null && !isNaN(value)) || "Spell save dc must be a number",
-								}}
-								render={({ field: { onChange, onBlur, value } }) => (
-									<TextInput
-										style={styles.inputNumber}
-										placeholder="15"
-										keyboardType="number-pad"
-										inputMode="numeric"
-										onBlur={onBlur}
-										onChangeText={(text) => {
-											onChange(Number(text));
-										}}
-										value={!value ? "" : value.toString()}
-									/>
-								)}
-								name="spell_save_dc"
-							/>
-						</View>
-
-						{errors.spell_save_dc && <Text style={styles.error}>{errors.spell_save_dc.message}</Text>}
-
-						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 30 }}>
-							<Text style={[styles.text, { marginRight: 15 }]}>Enabel Prepare spells</Text>
-							<TouchableOpacity
-								style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
-								activeOpacity={0.8}
-								onPress={() => setEnablePreparedSpells(!enablePreparedSpells)}
-							>
-								<MaterialCommunityIcons
-									name={enablePreparedSpells ? "checkbox-marked" : "checkbox-blank-outline"}
-									size={28}
-									color="#660000"
-								/>
-							</TouchableOpacity>
-						</View>
-
-						<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
-							<Text style={[styles.text, { marginRight: 15, marginBottom: 25 }]}>Enabel Spellslots</Text>
-							<TouchableOpacity
-								style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
-								activeOpacity={0.8}
-								onPress={() => setEnableSpellslots(!enableSpellslots)}
-							>
-								<MaterialCommunityIcons
-									name={enableSpellslots ? "checkbox-marked" : "checkbox-blank-outline"}
-									size={28}
-									color="#660000"
-								/>
-							</TouchableOpacity>
-						</View>
-
-						{enableSpellslots && (
-							<View style={{ flexDirection: "row" }}>
-								<View style={{ flexDirection: "column" }}>
-									<SpellslotInputComponent level={1} onChange={updateSpellslots} />
-									<SpellslotInputComponent level={2} onChange={updateSpellslots} />
-									<SpellslotInputComponent level={3} onChange={updateSpellslots} />
-									<SpellslotInputComponent level={4} onChange={updateSpellslots} />
-									<SpellslotInputComponent level={5} onChange={updateSpellslots} />
-								</View>
-
-								<View style={{ flexDirection: "column" }}>
-									<SpellslotInputComponent level={6} onChange={updateSpellslots} />
-									<SpellslotInputComponent level={7} onChange={updateSpellslots} />
-									<SpellslotInputComponent level={8} onChange={updateSpellslots} />
-									<SpellslotInputComponent level={9} onChange={updateSpellslots} />
-								</View>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+						<View style={styles.titleContainer}>
+							<View>
+								<Text style={styles.title}>Character creation</Text>
 							</View>
-						)}
+							<View style={styles.iconContainer}>
+								<Pressable onPress={() => router.push("/(tabs)/Characters")}>
+									<Feather name="arrow-left" size={24} color="#2b2b2b" />
+								</Pressable>
+							</View>
+						</View>
 
-						<Pressable style={styles.button} onPress={handleSubmit(onCreateCharacter)} disabled={submitting}>
-							<Text style={styles.buttonText}>{submitting ? "Creating character..." : "Create character"}</Text>
-						</Pressable>
-					</View>
-				</ScrollView>
+						{isError && <ErrorComponent />}
+
+						<ScrollView>
+							<View style={styles.formWrapper}>
+								{submitError && <Text style={styles.error}>{submitError}</Text>}
+
+								<Text style={styles.text}>Character name*</Text>
+								<Controller
+									control={control}
+									rules={{ required: "Character name is required" }}
+									render={({ field: { onChange, onBlur, value } }) => (
+										<TextInput
+											style={styles.input}
+											placeholder="Baldric the Bold"
+											onBlur={onBlur}
+											onChangeText={onChange}
+											value={value}
+										/>
+									)}
+									name="character_name"
+								/>
+								{errors.character_name && <Text style={styles.error}>{errors.character_name.message}</Text>}
+
+								<Text style={styles.text}>Class*</Text>
+								<DropdownComponent
+									options={options}
+									onChange={(e) => onFiltration(e)}
+									placeholder={!className ? "Class" : className.name}
+								/>
+								{classError && <Text style={styles.error}>{classError}</Text>}
+
+								<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
+									<Text style={[styles.text, { marginRight: 12 }]}>Level*</Text>
+									<Controller
+										control={control}
+										rules={{
+											required: "Character level is required",
+											max: 20,
+											validate: (value) => !isNaN(value) || "Value must be a number",
+										}}
+										render={({ field: { onChange, onBlur, value } }) => (
+											<TextInput
+												style={styles.inputNumber}
+												placeholder="0-20"
+												keyboardType="number-pad"
+												inputMode="numeric"
+												onBlur={onBlur}
+												onChangeText={(text) => {
+													onChange(Number(text));
+												}}
+												value={!value ? "" : value.toString()}
+											/>
+										)}
+										name="character_level"
+									/>
+								</View>
+								{errors.character_level && <Text style={styles.error}>{errors.character_level.message}</Text>}
+
+								<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 30 }}>
+									<Text style={[styles.text, { marginRight: 12 }]}>Spell attack modifier</Text>
+									<Controller
+										control={control}
+										rules={{
+											required: false,
+											validate: (value) => (value !== null && !isNaN(value)) || "Spell attack modifier must be a number",
+										}}
+										render={({ field: { onChange, onBlur, value } }) => (
+											<TextInput
+												style={styles.inputNumber}
+												placeholder="0-30"
+												keyboardType="number-pad"
+												inputMode="numeric"
+												onBlur={onBlur}
+												onChangeText={(text) => {
+													onChange(Number(text));
+												}}
+												value={!value ? "" : value.toString()}
+											/>
+										)}
+										name="spell_attack_modifier"
+									/>
+								</View>
+
+								{errors.spell_attack_modifier && <Text style={styles.error}>{errors.spell_attack_modifier.message}</Text>}
+
+								<View style={{ flexDirection: "row", alignItems: "baseline" }}>
+									<Text style={[styles.text, { marginRight: 12 }]}>Spell save dc</Text>
+									<Controller
+										control={control}
+										rules={{
+											required: false,
+											validate: (value) => (value !== null && !isNaN(value)) || "Spell save dc must be a number",
+										}}
+										render={({ field: { onChange, onBlur, value } }) => (
+											<TextInput
+												style={styles.inputNumber}
+												placeholder="15"
+												keyboardType="number-pad"
+												inputMode="numeric"
+												onBlur={onBlur}
+												onChangeText={(text) => {
+													onChange(Number(text));
+												}}
+												value={!value ? "" : value.toString()}
+											/>
+										)}
+										name="spell_save_dc"
+									/>
+								</View>
+
+								{errors.spell_save_dc && <Text style={styles.error}>{errors.spell_save_dc.message}</Text>}
+
+								<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 30 }}>
+									<Text style={[styles.text, { marginRight: 15 }]}>Enabel Prepare spells</Text>
+									<TouchableOpacity
+										style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
+										activeOpacity={0.8}
+										onPress={() => setEnablePreparedSpells(!enablePreparedSpells)}
+									>
+										<MaterialCommunityIcons
+											name={enablePreparedSpells ? "checkbox-marked" : "checkbox-blank-outline"}
+											size={28}
+											color="#660000"
+										/>
+									</TouchableOpacity>
+								</View>
+
+								<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
+									<Text style={[styles.text, { marginRight: 15, marginBottom: 25 }]}>Enabel Spellslots</Text>
+									<TouchableOpacity
+										style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
+										activeOpacity={0.8}
+										onPress={() => setEnableSpellslots(!enableSpellslots)}
+									>
+										<MaterialCommunityIcons
+											name={enableSpellslots ? "checkbox-marked" : "checkbox-blank-outline"}
+											size={28}
+											color="#660000"
+										/>
+									</TouchableOpacity>
+								</View>
+
+								{enableSpellslots && (
+									<View style={{ flexDirection: "row" }}>
+										<View style={{ flexDirection: "column" }}>
+											<SpellslotInputComponent level={1} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={2} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={3} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={4} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={5} onChange={updateSpellslots} />
+										</View>
+
+										<View style={{ flexDirection: "column" }}>
+											<SpellslotInputComponent level={6} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={7} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={8} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={9} onChange={updateSpellslots} />
+										</View>
+									</View>
+								)}
+
+								<Pressable style={styles.button} onPress={handleSubmit(onCreateCharacter)} disabled={submitting}>
+									<Text style={styles.buttonText}>{submitting ? "Creating character..." : "Create character"}</Text>
+								</Pressable>
+							</View>
+						</ScrollView>
+					</ScrollView>
+				</TouchableWithoutFeedback>
 			</ImageBackground>
 		</View>
 	);
