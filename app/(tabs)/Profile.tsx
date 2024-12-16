@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground, ScrollVi
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { LoginData } from "@/types/User.types";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import { RootState } from "../store";
@@ -106,7 +106,13 @@ const Profile = () => {
 								<Text style={styles.label}>Email*</Text>
 								<Controller
 									control={control}
-									rules={{ required: "Email is required" }}
+									rules={{
+										required: "Email is required",
+										pattern: {
+											value: /\S+@\S+\.\S+/,
+											message: "Entered value does not match email format",
+										},
+									}}
 									render={({ field: { onChange, onBlur, value } }) => (
 										<TextInput
 											style={styles.input}
@@ -149,6 +155,13 @@ const Profile = () => {
 									<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Sign up! - It's Free</Text>
 									<Pressable onPress={() => router.push("/(tabs)/Signup")}>
 										<Text style={styles.linkText}>Sign up</Text>
+									</Pressable>
+								</View>
+
+								<View style={{ marginTop: 30 }}>
+									<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Forgotten your password?</Text>
+									<Pressable onPress={() => router.push("/(tabs)/ResetPassword")}>
+										<Text style={styles.linkText}>Reset password</Text>
 									</Pressable>
 								</View>
 							</View>

@@ -8,3 +8,7 @@ export type SignupData = {
 	password: string;
 	confirmPassword: string;
 };
+
+export type ResetPasswordData = {
+	email: string;
+};

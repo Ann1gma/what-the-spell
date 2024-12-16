@@ -95,7 +95,7 @@ const SignupFormComponent = () => {
 				render={({ field: { onChange, onBlur, value } }) => (
 					<TextInput
 						style={styles.input}
-						placeholder="ConfirmPassword"
+						placeholder="Confirm password"
 						onBlur={onBlur}
 						onChangeText={onChange}
 						value={value}

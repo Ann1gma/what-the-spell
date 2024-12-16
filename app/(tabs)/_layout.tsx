@@ -76,6 +76,14 @@ export default function TabLayout() {
 			/>
 
 			<Tabs.Screen
+				name="ResetPassword"
+				options={{
+					headerShown: false,
+					href: null,
+				}}
+			/>
+
+			<Tabs.Screen
 				name="AddCharacter"
 				options={{
 					headerShown: false,
