@@ -4,12 +4,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AccordionComponent from "@/components/AccordionComponents";
 import { Link } from "expo-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import useGetSpellOverview from "@/hooks/useGetSpellOverview";
-import { changeIsError } from "@/features/error/errorSlice";
 
 const Index = () => {
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);

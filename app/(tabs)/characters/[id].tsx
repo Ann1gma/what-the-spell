@@ -1,13 +1,255 @@
 import { useLocalSearchParams } from "expo-router";
-import { View, Text } from "react-native";
+import { View, Text, Pressable, StyleSheet, ImageBackground, ScrollView } from "react-native";
+import { useState } from "react";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "expo-router";
+import Feather from "@expo/vector-icons/Feather";
+import useGetCharacter from "@/hooks/useGetCharacter";
+import CharacterSpellslotComponent from "@/components/CharacterSpellslotComponent";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Entypo from "@expo/vector-icons/Entypo";
+import CharacterSpellComponent from "@/components/CharacterSpellComponent";
 
+//@CodeScene(disable:"Complex Method")
 const CharacterProfile = () => {
 	const { id } = useLocalSearchParams();
+	const { data: character } = useGetCharacter(id.toString());
+	const { currentUser } = useAuth();
+
+	const router = useRouter();
+
+	const [showSpellslots, setShowSpellslots] = useState(false);
+	const [showPreparedSpells, setShowPreparedSpells] = useState(false);
+
+	if (!currentUser) {
+		router.replace("/");
+	}
+
+	if (!character) {
+		return (
+			<View>
+				<Text>Could not find the character!</Text>
+			</View>
+		);
+	}
+
 	return (
-		<View>
-			<Text>Character with id: {id}</Text>
+		<View style={styles.container}>
+			<ImageBackground source={require("../../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
+				<View style={styles.titleContainer}>
+					<View>
+						<Text style={styles.title}>{character.character_name}</Text>
+					</View>
+					<View style={styles.iconContainer}>
+						<Pressable onPress={() => router.replace("/(tabs)/Characters")}>
+							<Feather name="arrow-left" size={24} color="#2b2b2b" />
+						</Pressable>
+					</View>
+				</View>
+				<ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+					<View style={styles.characterInfoContainer}>
+						<View style={styles.rowContainer}>
+							<Text style={styles.classText}>{character.class_name}</Text>
+							<Text style={styles.text}> - lvl {character.character_level}</Text>
+						</View>
+						<View style={styles.rowWrapContainer}>
+							{character.spell_attack_modifier && <Text style={styles.text}>Attack mod: {character.spell_attack_modifier}</Text>}
+							{character.spell_save_dc && <Text style={styles.text}>Save dc: {character.spell_save_dc}</Text>}
+						</View>
+						{character.spellslots && (
+							<View>
+								<Pressable onPress={() => setShowSpellslots(!showSpellslots)} style={styles.spellslotButtonContainer}>
+									<Text style={styles.textBold}>Spellslots</Text>
+									<Entypo name={showSpellslots ? "minus" : "plus"} size={24} color="#ffff" />
+								</Pressable>
+								{showSpellslots && <CharacterSpellslotComponent characterId={character._id} spellslots={character.spellslots} />}
+							</View>
+						)}
+					</View>
+					<View>
+						{character.show_prepared_spells && (
+							<View style={styles.spellButtonContainer}>
+								<Pressable
+									style={showPreparedSpells ? styles.spellButton : styles.spellButtonActive}
+									onPress={() => setShowPreparedSpells(false)}
+								>
+									<Text style={showPreparedSpells ? styles.spellButtonText : styles.spellButtonTextActive}>Known</Text>
+								</Pressable>
+								<Pressable
+									style={showPreparedSpells ? styles.spellButtonActive : styles.spellButton}
+									onPress={() => setShowPreparedSpells(true)}
+								>
+									<Text style={showPreparedSpells ? styles.spellButtonTextActive : styles.spellButtonText}>Prepared</Text>
+								</Pressable>
+							</View>
+						)}
+						{!character.show_prepared_spells && (
+							<View style={styles.spellsInfo}>
+								<Text style={styles.spellButtonText}>Known spells</Text>
+							</View>
+						)}
+					</View>
+
+					{!character.show_prepared_spells && (
+						<View>{character.known_spells && <CharacterSpellComponent data={character.known_spells} characterId={character._id} />}</View>
+					)}
+
+					{character.show_spellslots && (
+						<View>
+							{character.known_spells && !showPreparedSpells && (
+								<CharacterSpellComponent data={character.known_spells} characterId={character._id} />
+							)}
+							{character.prepared_spells && showPreparedSpells && (
+								<CharacterSpellComponent data={character.prepared_spells} characterId={character._id} />
+							)}
+						</View>
+					)}
+
+					<View style={styles.addButtonContainer}>
+						<Pressable style={styles.addSpellButton}>
+							<MaterialCommunityIcons name="book-plus" size={24} color="#ffff" />
+							<Text style={styles.addSpellText}>Add spells</Text>
+						</Pressable>
+					</View>
+				</ScrollView>
+			</ImageBackground>
 		</View>
 	);
 };
 
 export default CharacterProfile;
+
+//@CodeScene(disable:"Large Method")
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
+	image: {
+		width: "100%",
+		height: "100%",
+		flex: 1,
+		resizeMode: "cover",
+	},
+	titleContainer: {
+		flexWrap: "wrap",
+		backgroundColor: "#F0E4D1",
+		height: 60,
+		justifyContent: "center",
+		alignContent: "space-between",
+	},
+	title: {
+		fontSize: 26,
+		fontFamily: "CinzelBlack",
+		color: "#990000",
+		textAlign: "center",
+	},
+	text: {
+		fontFamily: "NunitoRegular",
+		fontSize: 16,
+		color: "#2b2b2b",
+	},
+	classText: {
+		fontFamily: "NunitoBlack",
+		fontSize: 22,
+		color: "#990000",
+	},
+	textBold: {
+		fontFamily: "NunitoBold",
+		fontSize: 20,
+		color: "#ffff",
+		marginRight: 10,
+	},
+	iconContainer: {
+		position: "absolute",
+		left: "3%",
+		zIndex: 1,
+	},
+	addButtonContainer: {
+		alignSelf: "center",
+		justifyContent: "center",
+		alignItems: "center",
+		width: "100%",
+		marginTop: 30,
+	},
+	addSpellButton: {
+		paddingVertical: 10,
+		paddingHorizontal: 10,
+		backgroundColor: "#990000",
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		width: "50%",
+		borderRadius: 10,
+	},
+	addSpellText: {
+		fontFamily: "NunitoBold",
+		fontSize: 18,
+		color: "#ffff",
+		marginLeft: 10,
+	},
+	characterInfoContainer: {
+		backgroundColor: "rgba(224, 214, 197, 0.5)",
+		paddingHorizontal: 30,
+		paddingVertical: 10,
+	},
+	spellslotButtonContainer: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		alignSelf: "center",
+		backgroundColor: "#990000",
+		marginTop: 20,
+		marginBottom: 10,
+		marginRight: 10,
+		width: "55%",
+		paddingTop: 3,
+		paddingBottom: 5,
+		borderRadius: 10,
+	},
+	rowContainer: {
+		flex: 1,
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "baseline",
+	},
+	rowWrapContainer: {
+		flex: 1,
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "space-around",
+		marginTop: 8,
+	},
+	spellButtonContainer: {
+		flexDirection: "row",
+		backgroundColor: "#F0E4D1",
+	},
+	spellButton: {
+		width: "50%",
+		height: "auto",
+		paddingVertical: 3,
+	},
+	spellButtonActive: {
+		width: "50%",
+		height: "auto",
+		borderBottomColor: "#990000",
+		borderBottomWidth: 4,
+		paddingVertical: 3,
+	},
+	spellButtonText: {
+		textAlign: "center",
+		fontFamily: "NunitoBlack",
+		fontSize: 22,
+		color: "#2b2b2b",
+	},
+	spellButtonTextActive: {
+		textAlign: "center",
+		fontFamily: "NunitoBlack",
+		fontSize: 22,
+		color: "#990000",
+	},
+	spellsInfo: {
+		height: "auto",
+		paddingVertical: 3,
+		backgroundColor: "#F0E4D1",
+	},
+});

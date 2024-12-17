@@ -20,7 +20,7 @@ import useGetAllClasses from "@/hooks/useGetAllClasses";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { doc, setDoc } from "firebase/firestore";
 import { newCharacterCol } from "@/services/firebaseConfig";
-import useSetSpellslots from "@/hooks/useSetSpellslots";
+import useCreateSpellslots from "@/hooks/useCreateSpellslots";
 import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
 import { useSelector } from "react-redux";
@@ -38,7 +38,7 @@ const AddCharacter = () => {
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
 	const { options } = useGetAllClasses([]);
-	const { spellslots, updateSpellslots, resetSepllslots } = useSetSpellslots();
+	const { spellslots, updateSpellslots, resetSepllslots } = useCreateSpellslots();
 
 	const isError = useSelector((state: RootState) => state.error.isError);
 	const isLoading = useSelector((state: RootState) => state.loading.loading);
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
 		marginTop: 30,
 	},
 	buttonText: {
-		color: "#fff",
+		color: "#ffff",
 		fontSize: 18,
 		fontFamily: "NunitoSemiBold",
 	},

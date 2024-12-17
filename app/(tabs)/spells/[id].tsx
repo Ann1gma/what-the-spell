@@ -18,8 +18,16 @@ export default function SpellDetailScreen() {
 
 	const { spellData, getSpellData } = useGetSpellByIndex();
 
-	const { id } = useLocalSearchParams();
+	const { id, returnCharacterId } = useLocalSearchParams();
 	const router = useRouter();
+
+	const goBack = () => {
+		if (returnCharacterId) {
+			router.replace(`/(tabs)/characters/${returnCharacterId}`);
+		} else {
+			router.back();
+		}
+	};
 
 	useEffect(() => {
 		if (typeof id === "string") {
@@ -43,7 +51,7 @@ export default function SpellDetailScreen() {
 						</View>
 					)}
 					<View style={styles.iconContainer}>
-						<Pressable onPress={() => router.back()}>
+						<Pressable onPress={goBack}>
 							<Feather name="arrow-left" size={24} color="#2b2b2b" />
 						</Pressable>
 					</View>

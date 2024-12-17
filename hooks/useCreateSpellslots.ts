@@ -1,7 +1,7 @@
 import { Spellslot } from "@/types/Character.types";
 import { useState } from "react";
 
-const useSetSpellslots = () => {
+const useCreateSpellslots = () => {
 	const [spellslots, setSpellslots] = useState<Spellslot[]>([]);
 
 	const updateSpellslots = (level: number, numOf: number) => {
@@ -10,7 +10,7 @@ const useSetSpellslots = () => {
 		const newSlots = [];
 
 		for (let i = 0; i < numOf; i++) {
-			newSlots.push({ level: level, used: false });
+			newSlots.push({ _id: Date.now().toString(), level: level, used: false });
 		}
 
 		if (!newSlots) {
@@ -31,4 +31,4 @@ const useSetSpellslots = () => {
 	};
 };
 
-export default useSetSpellslots;
+export default useCreateSpellslots;

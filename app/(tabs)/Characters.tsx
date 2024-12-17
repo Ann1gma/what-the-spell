@@ -81,7 +81,7 @@ const Characters = () => {
 					)}
 					<TouchableOpacity activeOpacity={0.8} onPress={handleAddCharacter}>
 						<View style={styles.addCharacterContainer}>
-							<Ionicons name="person-add" size={26} color="#2b2b2b" style={{ marginRight: 10 }} />
+							<Ionicons name="person-add" size={26} color="#ffff" style={{ marginRight: 10 }} />
 							<Text style={styles.characterName}>Add character</Text>
 						</View>
 					</TouchableOpacity>
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
 	characterName: {
 		fontFamily: "CinzelBold",
 		fontSize: 22,
-		color: "#990000",
+		color: "#ffff",
 	},
 	noCharacterContainer: {
 		alignItems: "center",
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingVertical: 20,
 		borderRadius: 10,
-		backgroundColor: "#F0E4D1",
+		backgroundColor: "#990000",
 	},
 	logoContainer: {
 		marginRight: 10,
