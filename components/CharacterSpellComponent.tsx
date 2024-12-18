@@ -1,25 +1,38 @@
-import { CharacterSpells } from "@/types/Character.types";
+import { CharacterSpell } from "@/types/Character.types";
 import { StyleSheet, View } from "react-native";
 import CharacterAccordionComponent from "./CharacterAccordionComponents";
 
 interface CharacterSpellComponentProps {
-	data: CharacterSpells;
+	data: CharacterSpell[];
 	characterId: string;
 }
 //@CodeScene(disable:"Complex Method")
 const CharacterSpellComponent: React.FC<CharacterSpellComponentProps> = ({ data, characterId }) => {
+	const cantripsData = data.filter((spell) => spell.level === 0);
+	const lvlOneData = data.filter((spell) => spell.level === 1);
+	const lvlTwoData = data.filter((spell) => spell.level === 2);
+	const lvlThreeData = data.filter((spell) => spell.level === 3);
+	const lvlFourData = data.filter((spell) => spell.level === 4);
+	const lvlFiveData = data.filter((spell) => spell.level === 5);
+	const lvlSixData = data.filter((spell) => spell.level === 6);
+	const lvlSevenData = data.filter((spell) => spell.level === 7);
+	const lvlEightData = data.filter((spell) => spell.level === 8);
+	const lvlNineData = data.filter((spell) => spell.level === 9);
+
 	return (
 		<View style={styles.accordionContainer}>
-			{data.cantrips && <CharacterAccordionComponent title="Cantrips" data={data.cantrips} characterId={characterId} />}
-			{data.lvl_one && <CharacterAccordionComponent title="Level 1" data={data.lvl_one} characterId={characterId} />}
-			{data.lvl_two && <CharacterAccordionComponent title="Level 2" data={data.lvl_two} characterId={characterId} />}
-			{data.lvl_three && <CharacterAccordionComponent title="Level 3" data={data.lvl_three} characterId={characterId} />}
-			{data.lvl_four && <CharacterAccordionComponent title="Level 4" data={data.lvl_four} characterId={characterId} />}
-			{data.lvl_five && <CharacterAccordionComponent title="Level 5" data={data.lvl_five} characterId={characterId} />}
-			{data.lvl_six && <CharacterAccordionComponent title="Level 6" data={data.lvl_six} characterId={characterId} />}
-			{data.lvl_seven && <CharacterAccordionComponent title="Level 7" data={data.lvl_seven} characterId={characterId} />}
-			{data.lvl_eight && <CharacterAccordionComponent title="Level 8" data={data.lvl_eight} characterId={characterId} />}
-			{data.lvl_nine && <CharacterAccordionComponent title="Level 9" data={data.lvl_nine} characterId={characterId} />}
+			{cantripsData && cantripsData.length > 0 && (
+				<CharacterAccordionComponent title="Cantrips" data={cantripsData} characterId={characterId} />
+			)}
+			{lvlOneData && lvlOneData.length > 0 && <CharacterAccordionComponent title="Level 1" data={lvlOneData} characterId={characterId} />}
+			{lvlTwoData && lvlTwoData.length > 0 && <CharacterAccordionComponent title="Level 2" data={lvlTwoData} characterId={characterId} />}
+			{lvlThreeData && lvlThreeData.length > 0 && <CharacterAccordionComponent title="Level 3" data={lvlThreeData} characterId={characterId} />}
+			{lvlFourData && lvlFourData.length > 0 && <CharacterAccordionComponent title="Level 4" data={lvlFourData} characterId={characterId} />}
+			{lvlFiveData && lvlFiveData.length > 0 && <CharacterAccordionComponent title="Level 5" data={lvlFiveData} characterId={characterId} />}
+			{lvlSixData && lvlSixData.length > 0 && <CharacterAccordionComponent title="Level 6" data={lvlSixData} characterId={characterId} />}
+			{lvlSevenData && lvlSevenData.length > 0 && <CharacterAccordionComponent title="Level 7" data={lvlSevenData} characterId={characterId} />}
+			{lvlEightData && lvlEightData.length > 0 && <CharacterAccordionComponent title="Level 8" data={lvlEightData} characterId={characterId} />}
+			{lvlNineData && lvlNineData.length > 0 && <CharacterAccordionComponent title="Level 9" data={lvlNineData} characterId={characterId} />}
 		</View>
 	);
 };

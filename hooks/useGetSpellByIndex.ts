@@ -18,11 +18,22 @@ const useGetSpellByIndex = () => {
 		}
 	};
 
+	const getSpell = async (id: string) => {
+		try {
+			return await getSpellDetails(id);
+		} catch (err) {
+			setError(true);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return {
 		spellData,
 		getSpellData,
 		error,
 		loading,
+		getSpell,
 	};
 };
 

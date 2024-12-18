@@ -8,7 +8,20 @@ const useIsSpellKnown = () => {
 	const isSpellKnown = (characters: Character[], spellIndex: string, spellLevel: number) => {
 		const characterKnowledgeArray: CharacterKnowsSpells[] = [];
 
-		if (spellLevel === 0) {
+		characters.forEach((character) => {
+			if (character.known_spells) {
+				const characterKnowledge = character.known_spells.find((spell) => spell.index === spellIndex);
+				characterKnowledgeArray.push(
+					characterKnowledge
+						? { character_name: character.character_name, knowsSpell: true }
+						: { character_name: character.character_name, knowsSpell: false }
+				);
+			} else {
+				characterKnowledgeArray.push({ character_name: character.character_name, knowsSpell: false });
+			}
+		});
+
+		/* if (spellLevel === 0) {
 			characters.forEach((character) => {
 				if (character.known_spells && character.known_spells.cantrips) {
 					const characterKnowledge = character.known_spells.cantrips.find((spell) => spell.index === spellIndex);
@@ -138,7 +151,7 @@ const useIsSpellKnown = () => {
 					characterKnowledgeArray.push({ character_name: character.character_name, knowsSpell: false });
 				}
 			});
-		}
+		} */
 
 		setCharactersKnowsSpell(characterKnowledgeArray);
 	};

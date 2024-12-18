@@ -49,10 +49,6 @@ const Index = () => {
 		}
 	}, [filtrationOption]);
 
-	if (loadingSpells || loadingCharacters) {
-		return <LoadingComponent />;
-	}
-
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
@@ -71,7 +67,7 @@ const Index = () => {
 				</View>
 
 				{spellError && <ErrorComponent />}
-				{loadingSpells || (loadingCharacters && <LoadingComponent />)}
+				{loadingSpells && <LoadingComponent />}
 				{showAddSpells && <AddSpellComponent />}
 
 				<SafeAreaView style={styles.scrollContainer}>

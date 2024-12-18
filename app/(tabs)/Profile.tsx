@@ -16,7 +16,7 @@ const Profile = () => {
 	const [error, setError] = useState(false);
 
 	const { currentUser, login, logout } = useAuth();
-	const { data, loading } = useGetCharacters(currentUser?.uid);
+	const { data } = useGetCharacters(currentUser?.uid);
 
 	const [submitting, setSubmitting] = useState(false);
 
@@ -42,15 +42,28 @@ const Profile = () => {
 	};
 
 	const onLogout = async () => {
+		let isMounted = true;
 		setSubmitting(true);
 		setError(false);
+
 		try {
 			await logout();
-			reset();
+			if (isMounted) {
+				reset();
+			}
 		} catch (err) {
-			setError(true);
+			if (isMounted) {
+				setError(true);
+			}
+		} finally {
+			if (isMounted) {
+				setSubmitting(false);
+			}
 		}
-		setSubmitting(false);
+
+		return () => {
+			isMounted = false;
+		};
 	};
 
 	return (
@@ -62,7 +75,6 @@ const Profile = () => {
 							<Text style={styles.title}>Profile</Text>
 						</View>
 
-						{loading && <LoadingComponent />}
 						{error && <ErrorComponent />}
 
 						{currentUser ? (

@@ -6,17 +6,25 @@ import { useRouter } from "expo-router";
 import { Character } from "@/types/Character.types";
 import { RootState } from "@/app/store";
 import useIsSpellKnown from "@/hooks/useIsSpellKnown";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import useGetCharacters from "@/hooks/useGetCharacters";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import useAddSpell from "@/hooks/useAddSpell";
+import LoadingComponent from "./LoadingComponent";
+import { doc, getDoc } from "firebase/firestore";
+import { characterCol } from "@/services/firebaseConfig";
 
 const { width, height } = Dimensions.get("window");
 
 //@CodeScene(disable:"Complex Method")
 const AddSpellComponent = () => {
 	const { currentUser } = useAuth();
-	const { data, loading } = useGetCharacters(currentUser?.uid);
+	const { data } = useGetCharacters(currentUser?.uid);
+	const { addSpell, error: spellError, loading: spellLoading } = useAddSpell();
+
+	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const router = useRouter();
 	const dispatch = useDispatch();
@@ -25,9 +33,43 @@ const AddSpellComponent = () => {
 
 	const { charactersKnowsSpell, isSpellKnown } = useIsSpellKnown();
 
+	const getCharacterDoc = async (characterId: string) => {
+		setLoading(true);
+		setError(false);
+
+		try {
+			const docRef = doc(characterCol, characterId);
+			const snapshot = await getDoc(docRef);
+
+			if (!snapshot.exists()) {
+				setError(true);
+			} else {
+				const data = {
+					...snapshot.data(),
+					_id: snapshot.id,
+				} as Character;
+
+				return data;
+			}
+		} catch (err) {
+			console.error("Error fetching character:", err);
+			setError(true);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const handleNavigation = () => {
 		router.push("/Characters");
 		dispatch(setShowAddSpells(false));
+	};
+
+	const handleAddSpell = async (characterId: string) => {
+		const characterData = await getCharacterDoc(characterId);
+
+		if (characterData) {
+			await addSpell(spellId.index, characterData);
+		}
 	};
 
 	useEffect(() => {
@@ -36,24 +78,33 @@ const AddSpellComponent = () => {
 		}
 	}, [data, spellId]);
 
-	const renderItem = ({ item }: { item: Character }) => (
-		<View style={styles.listContainer}>
-			<Text style={styles.characterText}>{item.character_name}</Text>
-			{charactersKnowsSpell.map((spell) => {
-				if (spell.character_name === item.character_name && spell.knowsSpell === true) {
-					return <MaterialCommunityIcons key={spell.character_name} name="checkbox-marked" size={24} color="#990000" />;
-				} else if (spell.character_name === item.character_name && spell.knowsSpell === false) {
-					return <MaterialCommunityIcons key={spell.character_name} name="checkbox-blank-outline" size={24} color="#990000" />;
-				}
-			})}
-		</View>
-	);
+	const renderItem = ({ item }: { item: Character }) => {
+		const characterSpell = charactersKnowsSpell.find((spell) => spell.character_name === item.character_name);
+
+		return (
+			<View style={styles.listContainer}>
+				<Text style={styles.characterText}>{item.character_name}</Text>
+
+				{characterSpell?.knowsSpell ? (
+					<MaterialCommunityIcons name={loading ? "checkbox-blank" : "checkbox-marked"} size={24} color={loading ? "grey" : "#990000"} />
+				) : (
+					<Pressable onPress={() => handleAddSpell(item._id)} disabled={loading}>
+						<MaterialCommunityIcons
+							name={loading ? "checkbox-blank" : "checkbox-blank-outline"}
+							size={24}
+							color={loading ? "grey" : "#990000"}
+						/>
+					</Pressable>
+				)}
+			</View>
+		);
+	};
 
 	if (!data || data.length <= 0) {
 		return (
 			<View style={styles.container}>
 				<View style={styles.addContainer}>
-					<Pressable style={styles.iconContainer} onPress={() => dispatch(setShowAddSpells(false))}>
+					<Pressable style={styles.iconContainer} onPress={() => dispatch(setShowAddSpells(false))} disabled={loading}>
 						<AntDesign name="close" size={30} color="#990000" />
 					</Pressable>
 					<Text style={styles.textBold}>No characters</Text>
@@ -68,6 +119,7 @@ const AddSpellComponent = () => {
 
 	return (
 		<View style={styles.container}>
+			{/* 			{loading && <LoadingComponent />} */}
 			<View style={styles.addContainer}>
 				<Pressable style={styles.iconContainer} onPress={() => dispatch(setShowAddSpells(false))}>
 					<AntDesign name="close" size={24} color="#990000" />

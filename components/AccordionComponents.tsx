@@ -65,11 +65,13 @@ const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) 
 				)}
 			</View>
 			<View style={styles.iconWrapper}>
-				{currentUser && (
-					<Pressable style={{ marginLeft: 10 }} onPress={() => onAddSpell(item.index, item.level)}>
-						<MaterialCommunityIcons name="book-plus" size={26} color="#990000" />
-					</Pressable>
-				)}
+				<View>
+					{currentUser && (
+						<Pressable style={{ marginLeft: 10 }} onPress={() => onAddSpell(item.index, item.level)}>
+							<MaterialCommunityIcons name="book-plus" size={26} color="#990000" />
+						</Pressable>
+					)}
+				</View>
 
 				<View style={styles.iconContainer}>
 					{!item.heal_at_slot_level && !item.damage && !item.attack_type && (
