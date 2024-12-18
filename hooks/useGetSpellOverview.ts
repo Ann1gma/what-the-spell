@@ -1,12 +1,10 @@
-import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
-import { changeLoading } from "@/features/loading/loadingSlice";
 import { getSpellsByClass, getSpellsByLevel } from "@/services/DnD5e_API";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 
 const useGetSpellOverview = () => {
-	const dispatch = useDispatch();
+	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [cantripsData, setCantripsData] = useState<SpellsOverview[] | null>(null);
 	const [lvlOneData, setLvlOneData] = useState<SpellsOverview[] | null>(null);
 	const [lvlTwoData, setLvlTwoData] = useState<SpellsOverview[] | null>(null);
@@ -18,6 +16,7 @@ const useGetSpellOverview = () => {
 	const [lvlEightData, setLvlEightData] = useState<SpellsOverview[] | null>(null);
 	const [lvlNineData, setLvlNineData] = useState<SpellsOverview[] | null>(null);
 
+	//@CodeScene(disable:"Complex Method")
 	const getAllSpellsByLevel = async (level: number) => {
 		try {
 			const data = await getSpellsByLevel(level);
@@ -53,19 +52,16 @@ const useGetSpellOverview = () => {
 					setLvlNineData(data);
 					break;
 				default:
-					dispatch(changeErrorMessage("Invalid level"));
-					dispatch(changeIsError(true));
+					setError(true);
 			}
 		} catch (err) {
-			dispatch(changeErrorMessage((err as Error).message));
-			dispatch(changeIsError(true));
+			setError(true);
 		}
 	};
 
 	const fetchAllSpells = async () => {
-		dispatch(changeLoading(true));
-		dispatch(changeErrorMessage(""));
-		dispatch(changeIsError(false));
+		setError(false);
+		setLoading(true);
 
 		setCantripsData(null);
 		setLvlOneData(null);
@@ -83,17 +79,16 @@ const useGetSpellOverview = () => {
 		try {
 			await Promise.all(levels.map((level) => getAllSpellsByLevel(level)));
 		} catch (err) {
-			dispatch(changeErrorMessage("Failed to fetch all spells."));
-			dispatch(changeIsError(true));
+			setError(true);
 		} finally {
-			dispatch(changeLoading(false));
+			setLoading(false);
 		}
 	};
 
+	//@CodeScene(disable:"Complex Method")
 	const getAllSpellsByClass = async (classIndex: string) => {
-		dispatch(changeLoading(true));
-		dispatch(changeErrorMessage(""));
-		dispatch(changeIsError(false));
+		setError(false);
+		setLoading(true);
 
 		setCantripsData(null);
 		setLvlOneData(null);
@@ -131,15 +126,13 @@ const useGetSpellOverview = () => {
 				} else if (spell.level === 9) {
 					setLvlNineData((previousState) => [...(previousState || []), spell]);
 				} else {
-					dispatch(changeErrorMessage("Invalid level"));
-					dispatch(changeIsError(true));
+					setError(true);
 				}
 			});
 		} catch (err) {
-			dispatch(changeErrorMessage("Failed to fetch all spells."));
-			dispatch(changeIsError(true));
+			setError(true);
 		} finally {
-			dispatch(changeLoading(false));
+			setLoading(false);
 		}
 	};
 
@@ -160,6 +153,8 @@ const useGetSpellOverview = () => {
 		lvlSevenData,
 		lvlEightData,
 		lvlNineData,
+		error,
+		loading,
 	};
 };
 

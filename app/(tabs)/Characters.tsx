@@ -5,16 +5,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Pressable } from "react-native";
 import LoadingComponent from "@/components/LoadingComponent";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
 import CharacterListComponent from "@/components/CharacterListComponent";
-import ErrorComponent from "@/components/ErrorComponent";
 
+//@CodeScene(disable:"Complex Method")
 const Characters = () => {
 	const { currentUser } = useAuth();
-	const { data } = useGetCharacters(currentUser?.uid);
-	const isLoading = useSelector((state: RootState) => state.loading.loading);
-	const isError = useSelector((state: RootState) => state.error.isError);
+	const { data, loading } = useGetCharacters(currentUser?.uid);
+
 	const router = useRouter();
 
 	const handleAddCharacter = () => {
@@ -22,10 +19,6 @@ const Characters = () => {
 			pathname: "/(tabs)/AddCharacter",
 		});
 	};
-
-	if (isLoading) {
-		return <LoadingComponent />;
-	}
 
 	if (!currentUser) {
 		return (
@@ -40,11 +33,12 @@ const Characters = () => {
 								<Feather name="arrow-left" size={24} color="#2b2b2b" />
 							</Pressable>
 						</View>
+						{loading && <LoadingComponent />}
+						<View>
+							<Text>You have to login to see and use Characters</Text>
+						</View>
 					</View>
 				</ImageBackground>
-				<View>
-					<Text>You have to login to see and use Characters</Text>
-				</View>
 			</View>
 		);
 	}
@@ -63,7 +57,7 @@ const Characters = () => {
 					</View>
 				</View>
 
-				{isError && <ErrorComponent />}
+				{loading && <LoadingComponent />}
 
 				<SafeAreaView style={styles.contentWrapper}>
 					{data && data.length > 0 && <CharacterListComponent data={data} />}

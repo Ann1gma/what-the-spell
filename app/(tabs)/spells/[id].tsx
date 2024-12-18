@@ -3,8 +3,6 @@ import { ImageBackground, Pressable, SafeAreaView, ScrollView, StyleSheet, Text,
 import Feather from "@expo/vector-icons/Feather";
 import { useEffect } from "react";
 import LoadingComponent from "@/components/LoadingComponent";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/store";
 import ErrorComponent from "@/components/ErrorComponent";
 import useGetSpellByIndex from "@/hooks/useGetSpellByIndex";
 import SpellDetailsInfoComponent from "@/components/SpellDetailsInfoComponent";
@@ -13,10 +11,7 @@ import SpellDetailsHealingComponent from "@/components/SpellDetailsHealingCompon
 import SpellDetailsHigherLvlComponent from "@/components/SpellDetailsHigherLvlComponent";
 
 export default function SpellDetailScreen() {
-	const isError = useSelector((state: RootState) => state.error.isError);
-	const isLoading = useSelector((state: RootState) => state.loading.loading);
-
-	const { spellData, getSpellData } = useGetSpellByIndex();
+	const { spellData, getSpellData, loading, error } = useGetSpellByIndex();
 
 	const { id, returnCharacterId } = useLocalSearchParams();
 	const router = useRouter();
@@ -37,10 +32,6 @@ export default function SpellDetailScreen() {
 		}
 	}, [id]);
 
-	if (isLoading) {
-		return <LoadingComponent />;
-	}
-
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
@@ -56,7 +47,8 @@ export default function SpellDetailScreen() {
 						</Pressable>
 					</View>
 				</View>
-				{isError && <ErrorComponent />}
+				{loading && <LoadingComponent />}
+				{error && <ErrorComponent />}
 				{spellData && (
 					<SafeAreaView style={styles.scrollContainer}>
 						<ScrollView>

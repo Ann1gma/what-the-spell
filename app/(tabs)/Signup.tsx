@@ -2,17 +2,11 @@ import React, { useEffect } from "react";
 import { View, Text, Pressable, StyleSheet, ImageBackground, TouchableWithoutFeedback, Keyboard, ScrollView } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { Link, useRouter } from "expo-router";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
-import ErrorComponent from "@/components/ErrorComponent";
 import SignupFormComponent from "@/components/SignupFormComponent";
 
 const Signup = () => {
 	const { currentUser } = useAuth();
 	const router = useRouter();
-
-	const isError = useSelector((state: RootState) => state.error.isError);
-	const errorMessage = useSelector((state: RootState) => state.error.errorMessage);
 
 	useEffect(() => {
 		const userLoggedIn = async () => {
@@ -49,7 +43,6 @@ const Signup = () => {
 						<Text style={styles.title}>Sign up</Text>
 					</View>
 
-					{isError && <ErrorComponent />}
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						{!currentUser && (
 							<View style={styles.formWrapper}>

@@ -3,11 +3,10 @@ import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "
 import Feather from "@expo/vector-icons/Feather";
 import DropdownComponent from "@/components/DropdownComponent";
 import { ClassObject } from "@/types/DnD5e_API.types";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
 import LoadingComponent from "@/components/LoadingComponent";
-import { RootState } from "../store";
 import ErrorComponent from "@/components/ErrorComponent";
 
 const FilterSpellbook = () => {
@@ -15,19 +14,12 @@ const FilterSpellbook = () => {
 
 	const router = useRouter();
 
-	const { options } = useGetAllClasses([{ index: "none", name: "All spells" }]);
-
-	const isError = useSelector((state: RootState) => state.error.isError);
-	const isLoading = useSelector((state: RootState) => state.loading.loading);
+	const { options, loading, error } = useGetAllClasses([{ index: "none", name: "All spells" }]);
 
 	const onFiltration = (item: ClassObject) => {
 		dispatch(changeFilter(item));
 		router.back();
 	};
-
-	if (isLoading) {
-		return <LoadingComponent />;
-	}
 
 	return (
 		<View style={styles.container}>
@@ -43,7 +35,8 @@ const FilterSpellbook = () => {
 					</View>
 				</View>
 
-				{isError && <ErrorComponent />}
+				{error && <ErrorComponent />}
+				{loading && <LoadingComponent />}
 
 				<ScrollView>
 					<View style={styles.formWrapper}>

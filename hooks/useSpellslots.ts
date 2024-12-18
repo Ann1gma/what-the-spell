@@ -1,22 +1,22 @@
 import { doc, updateDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
 import useGetCharacter from "./useGetCharacter";
-import { useDispatch } from "react-redux";
-import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { useState } from "react";
 
 const useSpellslots = (characterId: string) => {
 	const { data: character } = useGetCharacter(characterId.toString());
-	const dispatch = useDispatch();
+	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(true);
 
 	const useSpellslotsFunc = async (spellslotId: string, newState: boolean) => {
-		dispatch(changeIsError(false));
-		dispatch(changeErrorMessage(""));
-
 		if (!character || !character.spellslots) {
 			return;
 		}
 
 		const updatedSpellslots = character.spellslots.map((slot) => {
+			setError(false);
+			setLoading(true);
+
 			if (slot._id === spellslotId) {
 				return { ...slot, used: newState };
 			}
@@ -28,13 +28,16 @@ const useSpellslots = (characterId: string) => {
 		try {
 			await updateDoc(docRef, { ...character, spellslots: updatedSpellslots });
 		} catch (err) {
-			dispatch(changeIsError(true));
-			dispatch(changeErrorMessage("Error when trying to update spellslot"));
+			setError(true);
 		}
+
+		setLoading(false);
 	};
 
 	return {
 		useSpellslotsFunc,
+		error,
+		loading,
 	};
 };
 

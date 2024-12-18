@@ -9,11 +9,13 @@ import CharacterSpellslotComponent from "@/components/CharacterSpellslotComponen
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import CharacterSpellComponent from "@/components/CharacterSpellComponent";
+import LoadingComponent from "@/components/LoadingComponent";
+import ErrorComponent from "@/components/ErrorComponent";
 
 //@CodeScene(disable:"Complex Method")
 const CharacterProfile = () => {
 	const { id } = useLocalSearchParams();
-	const { data: character } = useGetCharacter(id.toString());
+	const { data: character, loading, error } = useGetCharacter(id.toString());
 	const { currentUser } = useAuth();
 
 	const router = useRouter();
@@ -36,6 +38,9 @@ const CharacterProfile = () => {
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
+				{loading && <LoadingComponent />}
+				{error && <ErrorComponent />}
+
 				<View style={styles.titleContainer}>
 					<View>
 						<Text style={styles.title}>{character.character_name}</Text>

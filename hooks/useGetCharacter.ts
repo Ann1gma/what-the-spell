@@ -2,28 +2,20 @@ import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { characterCol } from "../services/firebaseConfig";
 import { Character } from "../types/Character.types";
-import { useDispatch } from "react-redux";
-import { changeLoading } from "@/features/loading/loadingSlice";
-import { changeIsError, changeErrorMessage } from "@/features/error/errorSlice";
 
 const useGetCharacter = (characterId: string | undefined) => {
-	const dispatch = useDispatch();
 	const [data, setData] = useState<Character | null>(null);
+	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		dispatch(changeLoading(true));
-		dispatch(changeIsError(false));
-		dispatch(changeErrorMessage(""));
-
 		const docRef = doc(characterCol, characterId);
 
 		const unsubscribe = onSnapshot(docRef, (snapshot) => {
 			if (!snapshot.exists()) {
 				setData(null);
-				dispatch(changeIsError(true));
-				dispatch(changeErrorMessage("Could not find the character"));
-				dispatch(changeLoading(false));
-
+				setError(true);
+				setLoading(false);
 				return;
 			}
 
@@ -33,7 +25,7 @@ const useGetCharacter = (characterId: string | undefined) => {
 			};
 
 			setData(data);
-			dispatch(changeLoading(false));
+			setLoading(false);
 		});
 
 		return unsubscribe;
@@ -41,6 +33,8 @@ const useGetCharacter = (characterId: string | undefined) => {
 
 	return {
 		data,
+		error,
+		loading,
 	};
 };
 

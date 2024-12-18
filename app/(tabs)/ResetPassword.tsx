@@ -14,12 +14,9 @@ const ResetPassword = () => {
 	const { resetPassword } = useAuth();
 	const [submitting, setSubmitting] = useState(false);
 	const [showMessage, setShowMessage] = useState(false);
+	const [error, setError] = useState(false);
 
 	const router = useRouter();
-
-	const isError = useSelector((state: RootState) => state.error.isError);
-
-	const dispatch = useDispatch();
 
 	const {
 		control,
@@ -30,17 +27,14 @@ const ResetPassword = () => {
 
 	const onResetPassword: SubmitHandler<ResetPasswordData> = async (data) => {
 		setSubmitting(true);
-
-		dispatch(changeErrorMessage(""));
-		dispatch(changeIsError(false));
+		setError(false);
 
 		try {
 			await resetPassword(data.email);
 			reset();
 			setShowMessage(true);
 		} catch (err) {
-			dispatch(changeErrorMessage("Failed to reset password. Please check your credentials."));
-			dispatch(changeIsError(true));
+			setError(true);
 		}
 		setSubmitting(false);
 	};
@@ -54,7 +48,7 @@ const ResetPassword = () => {
 							<Text style={styles.title}>Reset password</Text>
 						</View>
 
-						{isError && <ErrorComponent />}
+						{error && <ErrorComponent />}
 
 						{showMessage && <SentMessageComponent />}
 

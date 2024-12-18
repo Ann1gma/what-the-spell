@@ -1,34 +1,28 @@
-import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
-import { changeLoading } from "@/features/loading/loadingSlice";
 import { getSpellDetails } from "@/services/DnD5e_API";
 import { SpellDetails } from "@/types/DnD5e_API.types";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 
 const useGetSpellByIndex = () => {
 	const [spellData, setSpellData] = useState<SpellDetails | null>(null);
-
-	const dispatch = useDispatch();
+	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(true);
 
 	const getSpellData = async (id: string) => {
-		dispatch(changeLoading(true));
-		dispatch(changeErrorMessage(""));
-		dispatch(changeIsError(false));
-
 		try {
 			const data = await getSpellDetails(id);
 			setSpellData(data);
 		} catch (err) {
-			dispatch(changeErrorMessage("Failed to fetch all spells."));
-			dispatch(changeIsError(true));
+			setError(true);
 		} finally {
-			dispatch(changeLoading(false));
+			setLoading(false);
 		}
 	};
 
 	return {
 		spellData,
 		getSpellData,
+		error,
+		loading,
 	};
 };
 

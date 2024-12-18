@@ -1,19 +1,13 @@
-import { changeLoading } from "@/features/loading/loadingSlice";
-import { changeIsError, changeErrorMessage } from "@/features/error/errorSlice";
 import { getAllClasses } from "@/services/DnD5e_API";
 import { ClassObject } from "@/types/DnD5e_API.types";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 
 const useGetAllClasses = (initialOptions: ClassObject[]) => {
-	const dispatch = useDispatch();
+	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [options, setOptions] = useState<ClassObject[]>(initialOptions);
 
 	const getClasses = async () => {
-		dispatch(changeErrorMessage(""));
-		dispatch(changeIsError(false));
-		dispatch(changeLoading(true));
-
 		try {
 			const data = await getAllClasses();
 
@@ -26,10 +20,9 @@ const useGetAllClasses = (initialOptions: ClassObject[]) => {
 				setOptions(data);
 			}
 		} catch (err) {
-			dispatch(changeErrorMessage((err as Error).message));
-			dispatch(changeIsError(true));
+			setError(true);
 		} finally {
-			dispatch(changeLoading(false));
+			setLoading(false);
 		}
 	};
 
@@ -39,6 +32,8 @@ const useGetAllClasses = (initialOptions: ClassObject[]) => {
 
 	return {
 		options,
+		error,
+		loading,
 	};
 };
 

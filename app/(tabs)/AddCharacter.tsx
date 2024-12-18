@@ -29,6 +29,8 @@ import SpellslotInputComponent from "@/components/SpellslotInputComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 
+//@CodeScene(disable:"Complex Method")
+//@CodeScene(disable:"Large Method")
 const AddCharacter = () => {
 	const { currentUser } = useAuth();
 	const [className, setClassName] = useState<ClassObject | null>(null);
@@ -37,11 +39,8 @@ const AddCharacter = () => {
 	const [submitError, setSubmitError] = useState<string | null>(null);
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
-	const { options } = useGetAllClasses([]);
+	const { options, loading, error } = useGetAllClasses([]);
 	const { spellslots, updateSpellslots, resetSepllslots } = useCreateSpellslots();
-
-	const isError = useSelector((state: RootState) => state.error.isError);
-	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
 	const router = useRouter();
 
@@ -93,21 +92,20 @@ const AddCharacter = () => {
 		}
 	};
 
-	if (isLoading) {
-		return <LoadingComponent />;
-	}
-
 	if (!currentUser) {
 		return (
 			<View style={styles.container}>
 				<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
+					{loading && <LoadingComponent />}
+					{error && <ErrorComponent />}
 					<View style={styles.titleContainer}>
 						<Text style={styles.title}>Character creation</Text>
 					</View>
+
+					<View>
+						<Text>You have to login to see and use Characters</Text>
+					</View>
 				</ImageBackground>
-				<View>
-					<Text>You have to login to see and use Characters</Text>
-				</View>
 			</View>
 		);
 	}
@@ -128,7 +126,8 @@ const AddCharacter = () => {
 							</View>
 						</View>
 
-						{isError && <ErrorComponent />}
+						{loading && <LoadingComponent />}
+						{error && <ErrorComponent />}
 
 						<ScrollView>
 							<View style={styles.formWrapper}>

@@ -4,20 +4,23 @@ import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { LoginData } from "@/types/User.types";
 import { useRouter } from "expo-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
-import { RootState } from "../store";
 import ErrorComponent from "@/components/ErrorComponent";
+import useGetCharacters from "@/hooks/useGetCharacters";
+import LoadingComponent from "@/components/LoadingComponent";
 
+//@CodeScene(disable:"Complex Method")
+//@CodeScene(disable:"Large Method")
 const Profile = () => {
+	const [error, setError] = useState(false);
+
 	const { currentUser, login, logout } = useAuth();
+	const { data, loading } = useGetCharacters(currentUser?.uid);
+
 	const [submitting, setSubmitting] = useState(false);
 
 	const router = useRouter();
-
-	const isError = useSelector((state: RootState) => state.error.isError);
-
-	const dispatch = useDispatch();
 
 	const {
 		control,
@@ -28,32 +31,24 @@ const Profile = () => {
 
 	const onLogin: SubmitHandler<LoginData> = async (data) => {
 		setSubmitting(true);
-
-		dispatch(changeErrorMessage(""));
-		dispatch(changeIsError(false));
-
+		setError(false);
 		try {
 			await login(data.email, data.password);
 			reset();
 		} catch (err) {
-			dispatch(changeErrorMessage("Failed to login. Please check your credentials."));
-			dispatch(changeIsError(true));
+			setError(true);
 		}
 		setSubmitting(false);
 	};
 
 	const onLogout = async () => {
 		setSubmitting(true);
-
-		dispatch(changeErrorMessage(""));
-		dispatch(changeIsError(false));
-
+		setError(false);
 		try {
 			await logout();
 			reset();
 		} catch (err) {
-			dispatch(changeErrorMessage("Failed to logout."));
-			dispatch(changeIsError(true));
+			setError(true);
 		}
 		setSubmitting(false);
 	};
@@ -67,7 +62,8 @@ const Profile = () => {
 							<Text style={styles.title}>Profile</Text>
 						</View>
 
-						{isError && <ErrorComponent />}
+						{loading && <LoadingComponent />}
+						{error && <ErrorComponent />}
 
 						{currentUser ? (
 							<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>
@@ -75,15 +71,19 @@ const Profile = () => {
 								<Text style={[styles.text, styles.textBold]}>User:</Text>
 								<Text style={styles.text}>{currentUser.email}</Text>
 
-								<Text style={[styles.text, { marginBottom: 10, marginTop: 40, textAlign: "center" }]}>
-									Have you had a look at creating your own personal characters?
-								</Text>
+								{!data && (
+									<View>
+										<Text style={[styles.text, { marginBottom: 10, marginTop: 40, textAlign: "center" }]}>
+											Have you had a look at creating your own personal characters?
+										</Text>
 
-								<Text style={[styles.text, { textAlign: "center" }]}>If not take a look here:</Text>
+										<Text style={[styles.text, { textAlign: "center" }]}>If not take a look here:</Text>
 
-								<Pressable onPress={() => router.push("/Characters")}>
-									<Text style={styles.linkText}>Characters</Text>
-								</Pressable>
+										<Pressable onPress={() => router.push("/Characters")}>
+											<Text style={styles.linkText}>Characters</Text>
+										</Pressable>
+									</View>
+								)}
 
 								<View style={styles.profileWrapper}>
 									<Text style={styles.text}>Logout:</Text>

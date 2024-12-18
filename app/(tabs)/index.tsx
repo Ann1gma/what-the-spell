@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AccordionComponent from "@/components/AccordionComponents";
@@ -9,14 +9,19 @@ import { RootState } from "../store";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import useGetSpellOverview from "@/hooks/useGetSpellOverview";
+import useAuth from "@/hooks/useAuth";
+import useGetCharacters from "@/hooks/useGetCharacters";
+import AddSpellComponent from "@/components/AddSpellComponent";
 
+//@CodeScene(disable:"Complex Method")
 const Index = () => {
+	const { currentUser } = useAuth();
+	const { data, loading: loadingCharacters } = useGetCharacters(currentUser?.uid);
+
+	const showAddSpells = useSelector((state: RootState) => state.addSpell.showAddSpells);
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
 
 	const [subTitle, setSubtitle] = useState(filtrationOption);
-
-	const isError = useSelector((state: RootState) => state.error.isError);
-	const isLoading = useSelector((state: RootState) => state.loading.loading);
 
 	const {
 		cantripsData,
@@ -31,6 +36,8 @@ const Index = () => {
 		lvlNineData,
 		fetchAllSpells,
 		getAllSpellsByClass,
+		loading: loadingSpells,
+		error: spellError,
 	} = useGetSpellOverview();
 
 	useEffect(() => {
@@ -42,7 +49,7 @@ const Index = () => {
 		}
 	}, [filtrationOption]);
 
-	if (isLoading) {
+	if (loadingSpells || loadingCharacters) {
 		return <LoadingComponent />;
 	}
 
@@ -63,23 +70,32 @@ const Index = () => {
 					</View>
 				</View>
 
-				{isError && <ErrorComponent />}
+				{spellError && <ErrorComponent />}
+				{loadingSpells || (loadingCharacters && <LoadingComponent />)}
+				{showAddSpells && <AddSpellComponent />}
 
 				<SafeAreaView style={styles.scrollContainer}>
-					<ScrollView>
-						<View style={styles.accordionContainer}>
-							{cantripsData && <AccordionComponent title="Cantrips" data={cantripsData} />}
-							{lvlOneData && <AccordionComponent title="Level 1" data={lvlOneData} />}
-							{lvlTwoData && <AccordionComponent title="Level 2" data={lvlTwoData} />}
-							{lvlThreeData && <AccordionComponent title="Level 3" data={lvlThreeData} />}
-							{lvlFourData && <AccordionComponent title="Level 4" data={lvlFourData} />}
-							{lvlFiveData && <AccordionComponent title="Level 5" data={lvlFiveData} />}
-							{lvlSixData && <AccordionComponent title="Level 6" data={lvlSixData} />}
-							{lvlSevenData && <AccordionComponent title="Level 7" data={lvlSevenData} />}
-							{lvlEightData && <AccordionComponent title="Level 8" data={lvlEightData} />}
-							{lvlNineData && <AccordionComponent title="Level 9" data={lvlNineData} />}
-						</View>
-					</ScrollView>
+					<View style={styles.accordionContainer}>
+						<FlatList
+							data={[
+								{ title: "Cantrips", data: cantripsData },
+								{ title: "Level 1", data: lvlOneData },
+								{ title: "Level 2", data: lvlTwoData },
+								{ title: "Level 3", data: lvlThreeData },
+								{ title: "Level 4", data: lvlFourData },
+								{ title: "Level 5", data: lvlFiveData },
+								{ title: "Level 6", data: lvlSixData },
+								{ title: "Level 7", data: lvlSevenData },
+								{ title: "Level 8", data: lvlEightData },
+								{ title: "Level 9", data: lvlNineData },
+							]}
+							renderItem={({ item }) => item.data && <AccordionComponent title={item.title} data={item.data} />}
+							keyExtractor={(item) => item.title}
+							initialNumToRender={9}
+							maxToRenderPerBatch={9}
+							windowSize={2}
+						/>
+					</View>
 				</SafeAreaView>
 			</ImageBackground>
 		</View>

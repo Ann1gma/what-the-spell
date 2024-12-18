@@ -1,15 +1,12 @@
-import { RootState } from "@/app/store";
 import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { changeIsError } from "@/features/error/errorSlice";
 
 const { width, height } = Dimensions.get("window");
 
 const ErrorComponent = () => {
-	const error = useSelector((state: RootState) => state.error.errorMessage);
-
-	const errorMessage = error ? String(error) : "An unknown error occurred.";
+	const errorMessage = "An error occurred.";
 
 	const dispatch = useDispatch();
 

@@ -55,3 +55,13 @@ export interface NewCharacter {
 	show_spellslots: boolean;
 	spellslots: Spellslot[] | null;
 }
+
+export interface AddSpellType {
+	index: string;
+	level: number | null;
+}
+
+export interface CharacterKnowsSpells {
+	character_name: string;
+	knowsSpell: boolean;
+}
