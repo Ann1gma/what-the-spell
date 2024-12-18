@@ -9,9 +9,20 @@ import SpellDetailsInfoComponent from "@/components/SpellDetailsInfoComponent";
 import SpellDetailsDamageComponent from "@/components/SpellDetailsDamageComponent";
 import SpellDetailsHealingComponent from "@/components/SpellDetailsHealingComponent";
 import SpellDetailsHigherLvlComponent from "@/components/SpellDetailsHigherLvlComponent";
+import AddSpellComponent from "@/components/AddSpellComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/app/store";
+import { setShowAddSpells, setSpellToAdd } from "@/features/addSpell/addSpellSlice";
+import useAuth from "@/hooks/useAuth";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function SpellDetailScreen() {
+	const { currentUser } = useAuth();
 	const { spellData, getSpellData, loading, error } = useGetSpellByIndex();
+
+	const dispatch = useDispatch();
+
+	const showAddSpells = useSelector((state: RootState) => state.addSpell.showAddSpells);
 
 	const { id, returnCharacterId } = useLocalSearchParams();
 	const router = useRouter();
@@ -22,6 +33,11 @@ export default function SpellDetailScreen() {
 		} else {
 			router.back();
 		}
+	};
+
+	const onAddSpell = (spellIndex: string, spellLevel: number) => {
+		dispatch(setSpellToAdd({ index: spellIndex, level: spellLevel }));
+		dispatch(setShowAddSpells(true));
 	};
 
 	useEffect(() => {
@@ -49,11 +65,20 @@ export default function SpellDetailScreen() {
 				</View>
 				{loading && <LoadingComponent />}
 				{error && <ErrorComponent />}
+				{showAddSpells && <AddSpellComponent />}
+
 				{spellData && (
 					<SafeAreaView style={styles.scrollContainer}>
 						<ScrollView>
 							<View style={styles.contentWrapper}>
-								<SpellDetailsInfoComponent spellData={spellData} />
+								<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+									<SpellDetailsInfoComponent spellData={spellData} />
+									{currentUser && (
+										<Pressable style={{ marginRight: 10 }} onPress={() => onAddSpell(spellData.index, spellData.level)}>
+											<MaterialCommunityIcons name="book-plus" size={26} color="#990000" />
+										</Pressable>
+									)}
+								</View>
 
 								<SpellDetailsDamageComponent spellData={spellData} />
 

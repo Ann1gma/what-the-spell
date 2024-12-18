@@ -86,14 +86,10 @@ const AddSpellComponent = () => {
 				<Text style={styles.characterText}>{item.character_name}</Text>
 
 				{characterSpell?.knowsSpell ? (
-					<MaterialCommunityIcons name={loading ? "checkbox-blank" : "checkbox-marked"} size={24} color={loading ? "grey" : "#990000"} />
+					<MaterialCommunityIcons name="checkbox-marked" size={24} color="#990000" />
 				) : (
 					<Pressable onPress={() => handleAddSpell(item._id)} disabled={loading}>
-						<MaterialCommunityIcons
-							name={loading ? "checkbox-blank" : "checkbox-blank-outline"}
-							size={24}
-							color={loading ? "grey" : "#990000"}
-						/>
+						<MaterialCommunityIcons name="checkbox-blank-outline" size={24} color="#990000" />
 					</Pressable>
 				)}
 			</View>

@@ -9,15 +9,10 @@ import { RootState } from "../store";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import useGetSpellOverview from "@/hooks/useGetSpellOverview";
-import useAuth from "@/hooks/useAuth";
-import useGetCharacters from "@/hooks/useGetCharacters";
 import AddSpellComponent from "@/components/AddSpellComponent";
 
 //@CodeScene(disable:"Complex Method")
 const Index = () => {
-	const { currentUser } = useAuth();
-	const { data, loading: loadingCharacters } = useGetCharacters(currentUser?.uid);
-
 	const showAddSpells = useSelector((state: RootState) => state.addSpell.showAddSpells);
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
 
