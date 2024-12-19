@@ -8,6 +8,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Character, CharacterSpell } from "@/types/Character.types";
 import usePrepareSpells from "@/hooks/usePrepareSpells";
+import PrepareButtonComponent from "./PrepareButtonComponent";
 
 interface CharacterAccordionComponentProps {
 	title: string;
@@ -66,9 +67,12 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 							<View style={styles.iconWrapper}>
 								{character.show_prepared_spells && (
 									<View>
-										<Pressable style={styles.prepareButton} onPress={() => onPrepareSpell(item)} disabled={submitting}>
-											<Text style={styles.prepareText}>{submitting ? "..." : "PREPARE"}</Text>
-										</Pressable>
+										<PrepareButtonComponent
+											spellId={item.index}
+											character={character}
+											submitting={submitting}
+											handlePress={() => onPrepareSpell(item)}
+										/>
 									</View>
 								)}
 
