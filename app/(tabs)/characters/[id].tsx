@@ -96,16 +96,32 @@ const CharacterProfile = () => {
 					</View>
 
 					{!character.show_prepared_spells && (
-						<View>{character.known_spells && <CharacterSpellComponent data={character.known_spells} characterId={character._id} />}</View>
+						<View>
+							{character.known_spells && (
+								<CharacterSpellComponent
+									data={character.known_spells}
+									characterData={character}
+									showPreparedSPells={character.show_prepared_spells}
+								/>
+							)}
+						</View>
 					)}
 
-					{character.show_spellslots && (
+					{character.show_prepared_spells && (
 						<View>
 							{character.known_spells && !showPreparedSpells && (
-								<CharacterSpellComponent data={character.known_spells} characterId={character._id} />
+								<CharacterSpellComponent
+									data={character.known_spells}
+									characterData={character}
+									showPreparedSPells={showPreparedSpells}
+								/>
 							)}
 							{character.prepared_spells && showPreparedSpells && (
-								<CharacterSpellComponent data={character.prepared_spells} characterId={character._id} />
+								<CharacterSpellComponent
+									data={character.prepared_spells}
+									characterData={character}
+									showPreparedSPells={showPreparedSpells}
+								/>
 							)}
 						</View>
 					)}

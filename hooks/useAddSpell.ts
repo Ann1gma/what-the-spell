@@ -1,5 +1,4 @@
 import { useState } from "react";
-import useGetCharacter from "./useGetCharacter";
 import { doc, updateDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
 import useGetSpellByIndex from "./useGetSpellByIndex";

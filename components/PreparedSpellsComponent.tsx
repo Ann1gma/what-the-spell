@@ -9,20 +9,20 @@ import { useRouter } from "expo-router";
 import { Character, CharacterSpell } from "@/types/Character.types";
 import usePrepareSpells from "@/hooks/usePrepareSpells";
 
-interface CharacterAccordionComponentProps {
+interface PreparedSpellsComponentProps {
 	title: string;
 	data: CharacterSpell[];
 	character: Character;
 }
 
 //@CodeScene(disable:"Complex Method")
-const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = ({ title, data, character }) => {
+const PreparedSpellsComponent: React.FC<PreparedSpellsComponentProps> = ({ title, data, character }) => {
 	const [open, setOpen] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 
 	const router = useRouter();
 
-	const { prepareSpell } = usePrepareSpells();
+	const { unPrepareSpell } = usePrepareSpells();
 
 	const handleOpen = () => {
 		setOpen(!open);
@@ -35,9 +35,9 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 		});
 	};
 
-	const onPrepareSpell = async (spell: CharacterSpell) => {
+	const onUnprepareSpell = async (spellIndex: string) => {
 		setSubmitting(true);
-		await prepareSpell(spell, character);
+		await unPrepareSpell(spellIndex, character);
 		setSubmitting(false);
 	};
 
@@ -63,14 +63,13 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 									<Text style={[styles.itemText, { marginLeft: 5 }]}> {item.school}</Text>
 								</View>
 							</View>
+
 							<View style={styles.iconWrapper}>
-								{character.show_prepared_spells && (
-									<View>
-										<Pressable style={styles.prepareButton} onPress={() => onPrepareSpell(item)} disabled={submitting}>
-											<Text style={styles.prepareText}>{submitting ? "..." : "PREPARE"}</Text>
-										</Pressable>
-									</View>
-								)}
+								<View>
+									<Pressable style={styles.prepareButton} onPress={() => onUnprepareSpell(item.index)}>
+										<Text style={styles.prepareText}>{submitting ? "... " : "REMOVE"}</Text>
+									</Pressable>
+								</View>
 
 								<View style={styles.iconContainer}>
 									{!item.healing && !item.damage && !item.attack_type && (
@@ -125,7 +124,7 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 	);
 };
 
-export default CharacterAccordionComponent;
+export default PreparedSpellsComponent;
 
 const styles = StyleSheet.create({
 	headerContainer: {
@@ -171,15 +170,15 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		color: "#2b2b2b",
 	},
-	iconContainer: {
-		flexDirection: "row",
-		justifyContent: "flex-end",
-	},
 	iconWrapper: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "flex-end",
 		marginBottom: 5,
+	},
+	iconContainer: {
+		flexDirection: "row",
+		justifyContent: "flex-end",
 	},
 	iconTextContainer: {
 		alignItems: "center",
