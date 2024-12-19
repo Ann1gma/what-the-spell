@@ -4,7 +4,7 @@ import { characterCol } from "@/services/firebaseConfig";
 import useGetSpellByIndex from "./useGetSpellByIndex";
 import { Character, CharacterSpell } from "@/types/Character.types";
 
-const useAddSpell = () => {
+const useAddAndRemoveSpell = () => {
 	const { getSpell } = useGetSpellByIndex();
 
 	const [error, setError] = useState(false);
@@ -14,11 +14,6 @@ const useAddSpell = () => {
 	const addSpell = async (spellIndex: string, character: Character) => {
 		setError(false);
 		setLoading(true);
-
-		if (!character) {
-			setLoading(false);
-			return;
-		}
 
 		const docRef = doc(characterCol, character._id);
 		const spellData = await getSpell(spellIndex);
@@ -64,11 +59,47 @@ const useAddSpell = () => {
 		}
 	};
 
+	const deleteSpell = async (spellId: string, character: Character) => {
+		setError(false);
+		setLoading(true);
+
+		const docRef = doc(characterCol, character._id);
+
+		if (!character.known_spells) {
+			return;
+		} else {
+			const filteredSpells = character.known_spells.filter((spell) => spell.index !== spellId);
+			const updatedSpells = filteredSpells.sort((a, b) => a.level - b.level).sort((a, b) => a.name.localeCompare(b.name));
+
+			try {
+				await updateDoc(docRef, { known_spells: updatedSpells });
+			} catch (err) {
+				setError(true);
+			}
+		}
+
+		if (!character.prepared_spells) {
+			return;
+		} else {
+			const filteredSpells = character.prepared_spells.filter((spell) => spell.index !== spellId);
+			const updatedSpells = filteredSpells.sort((a, b) => a.level - b.level).sort((a, b) => a.name.localeCompare(b.name));
+
+			try {
+				await updateDoc(docRef, { prepared_spells: updatedSpells });
+			} catch (err) {
+				setError(true);
+			}
+		}
+
+		setLoading(false);
+	};
+
 	return {
 		error,
 		loading,
 		addSpell,
+		deleteSpell,
 	};
 };
 
-export default useAddSpell;
+export default useAddAndRemoveSpell;

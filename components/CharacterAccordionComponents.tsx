@@ -9,6 +9,9 @@ import { useRouter } from "expo-router";
 import { Character, CharacterSpell } from "@/types/Character.types";
 import usePrepareSpells from "@/hooks/usePrepareSpells";
 import PrepareButtonComponent from "./PrepareButtonComponent";
+import useAddAndRemoveSpell from "@/hooks/useAddAndRemoveSpell";
+import ErrorComponent from "./ErrorComponent";
+import LoadingComponent from "./LoadingComponent";
 
 interface CharacterAccordionComponentProps {
 	title: string;
@@ -19,11 +22,12 @@ interface CharacterAccordionComponentProps {
 //@CodeScene(disable:"Complex Method")
 const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = ({ title, data, character }) => {
 	const [open, setOpen] = useState(false);
-	const [submitting, setSubmitting] = useState(false);
 
 	const router = useRouter();
 
-	const { prepareSpell } = usePrepareSpells();
+	const { prepareSpell, error: preppError, loading: preppLoading } = usePrepareSpells();
+
+	const { deleteSpell, error: deleteError, loading: deleteLoading } = useAddAndRemoveSpell();
 
 	const handleOpen = () => {
 		setOpen(!open);
@@ -37,13 +41,17 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 	};
 
 	const onPrepareSpell = async (spell: CharacterSpell) => {
-		setSubmitting(true);
 		await prepareSpell(spell, character);
-		setSubmitting(false);
+	};
+
+	const onDeleteSpell = async (spellId: string) => {
+		await deleteSpell(spellId, character);
 	};
 
 	return (
 		<View>
+			{deleteError || (preppError && <ErrorComponent />)}
+			{deleteLoading || (preppLoading && <LoadingComponent />)}
 			<View>
 				<Pressable style={styles.headerContainer} onPress={handleOpen}>
 					<Text style={styles.header}>{title}</Text>
@@ -55,9 +63,14 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 					{data.map((item) => (
 						<Pressable style={styles.itemContainer} key={item.index} onPress={() => handlePress(item.index)}>
 							<View>
-								<View style={styles.titleContainer}>
-									<Text style={styles.itemTitle}>{item.name}</Text>
-									<Text style={styles.itemText}>{item.level === 0 ? `- cantrip` : `- level ${item.level}`}</Text>
+								<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+									<View style={styles.titleContainer}>
+										<Text style={[styles.itemTitle, { maxWidth: "70%" }]}>{item.name}</Text>
+										<Text style={styles.itemText}>{item.level === 0 ? `- cantrip` : `- level ${item.level}`}</Text>
+									</View>
+									<Pressable onPress={() => onDeleteSpell(item.index)}>
+										<Entypo name="cross" size={30} color="#990000" />
+									</Pressable>
 								</View>
 								<View style={{ flexDirection: "row" }}>
 									<Text style={styles.itemTextBold}>School of magic:</Text>
@@ -67,12 +80,7 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 							<View style={styles.iconWrapper}>
 								{character.show_prepared_spells && (
 									<View>
-										<PrepareButtonComponent
-											spellId={item.index}
-											character={character}
-											submitting={submitting}
-											handlePress={() => onPrepareSpell(item)}
-										/>
+										<PrepareButtonComponent spellId={item.index} character={character} handlePress={() => onPrepareSpell(item)} />
 									</View>
 								)}
 
@@ -156,7 +164,7 @@ const styles = StyleSheet.create({
 	},
 	titleContainer: {
 		flexDirection: "row",
-		alignItems: "center",
+		flexWrap: "wrap",
 	},
 	itemTitle: {
 		fontFamily: "NunitoBlack",

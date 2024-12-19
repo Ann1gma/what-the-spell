@@ -10,10 +10,11 @@ import { useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import useGetCharacters from "@/hooks/useGetCharacters";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import useAddSpell from "@/hooks/useAddSpell";
+import useAddAndRemoveSpell from "@/hooks/useAddAndRemoveSpell";
 import LoadingComponent from "./LoadingComponent";
 import { doc, getDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
+import ErrorComponent from "./ErrorComponent";
 
 const { width, height } = Dimensions.get("window");
 
@@ -21,7 +22,7 @@ const { width, height } = Dimensions.get("window");
 const AddSpellComponent = () => {
 	const { currentUser } = useAuth();
 	const { data } = useGetCharacters(currentUser?.uid);
-	const { addSpell, error: spellError, loading: spellLoading } = useAddSpell();
+	const { addSpell, error: spellError, loading: spellLoading } = useAddAndRemoveSpell();
 
 	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -85,7 +86,7 @@ const AddSpellComponent = () => {
 			<View style={styles.listContainer}>
 				<Text style={styles.characterText}>{item.character_name}</Text>
 
-				{characterSpell?.knowsSpell ? (
+				{characterSpell && characterSpell.knowsSpell ? (
 					<MaterialCommunityIcons name="checkbox-marked" size={24} color="#990000" />
 				) : (
 					<Pressable onPress={() => handleAddSpell(item._id)} disabled={loading}>
@@ -115,7 +116,8 @@ const AddSpellComponent = () => {
 
 	return (
 		<View style={styles.container}>
-			{/* 			{loading && <LoadingComponent />} */}
+			{loading || (spellLoading && <LoadingComponent />)}
+			{error || (spellError && <ErrorComponent />)}
 			<View style={styles.addContainer}>
 				<Pressable style={styles.iconContainer} onPress={() => dispatch(setShowAddSpells(false))}>
 					<AntDesign name="close" size={24} color="#990000" />

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
-import useGetSpellByIndex from "./useGetSpellByIndex";
 import { Character, CharacterSpell } from "@/types/Character.types";
 
 const usePrepareSpells = () => {
@@ -30,9 +29,9 @@ const usePrepareSpells = () => {
 		try {
 			let updatedSpells: CharacterSpell[] = [];
 
-			if (!character.prepared_spells) {
+			if (!character.show_prepared_spells) {
 				return;
-			} else if (character.prepared_spells.length === 0) {
+			} else if (!character.prepared_spells || character.prepared_spells.length === 0) {
 				updatedSpells = [newSpell];
 
 				await updateDoc(docRef, { prepared_spells: updatedSpells });

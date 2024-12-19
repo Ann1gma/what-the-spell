@@ -5,24 +5,25 @@ import { Pressable, StyleSheet, Text } from "react-native";
 interface PrepareButtonComponentProps {
 	spellId: string;
 	character: Character;
-	submitting: boolean;
 	handlePress: () => void;
 }
 
-const PrepareButtonComponent: React.FC<PrepareButtonComponentProps> = ({ spellId, character, submitting, handlePress }) => {
+const PrepareButtonComponent: React.FC<PrepareButtonComponentProps> = ({ spellId, character, handlePress }) => {
 	const [spellPrepared, setSpellPrepared] = useState(false);
 
 	useEffect(() => {
-		const spellIsPrepared = character.prepared_spells?.find((spell) => spell.index === spellId);
+		if (character.prepared_spells) {
+			const spellIsPrepared = character.prepared_spells.find((spell) => spell.index === spellId);
 
-		if (spellIsPrepared) {
-			setSpellPrepared(true);
+			if (spellIsPrepared) {
+				setSpellPrepared(true);
+			}
 		}
 	}, [character.prepared_spells, spellId]);
 
 	if (!spellPrepared) {
 		return (
-			<Pressable style={styles.prepareButton} onPress={handlePress} disabled={submitting}>
+			<Pressable style={styles.prepareButton} onPress={handlePress}>
 				<Text style={styles.prepareText}>PREPARE</Text>
 			</Pressable>
 		);

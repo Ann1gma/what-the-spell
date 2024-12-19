@@ -8,6 +8,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Character, CharacterSpell } from "@/types/Character.types";
 import usePrepareSpells from "@/hooks/usePrepareSpells";
+import ErrorComponent from "./ErrorComponent";
+import LoadingComponent from "./LoadingComponent";
 
 interface PreparedSpellsComponentProps {
 	title: string;
@@ -22,7 +24,7 @@ const PreparedSpellsComponent: React.FC<PreparedSpellsComponentProps> = ({ title
 
 	const router = useRouter();
 
-	const { unPrepareSpell } = usePrepareSpells();
+	const { unPrepareSpell, loading, error } = usePrepareSpells();
 
 	const handleOpen = () => {
 		setOpen(!open);
@@ -43,6 +45,9 @@ const PreparedSpellsComponent: React.FC<PreparedSpellsComponentProps> = ({ title
 
 	return (
 		<View>
+			{error && <ErrorComponent />}
+			{loading && <LoadingComponent />}
+
 			<View>
 				<Pressable style={styles.headerContainer} onPress={handleOpen}>
 					<Text style={styles.header}>{title}</Text>
