@@ -4,67 +4,18 @@ import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { LoginData } from "@/types/User.types";
 import { useRouter } from "expo-router";
-import { useDispatch } from "react-redux";
-import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import ErrorComponent from "@/components/ErrorComponent";
 import useGetCharacters from "@/hooks/useGetCharacters";
-import LoadingComponent from "@/components/LoadingComponent";
+import LogOutComponent from "@/components/LogOutComponent";
+import LogInComponent from "@/components/LogInComponent";
 
 //@CodeScene(disable:"Complex Method")
 //@CodeScene(disable:"Large Method")
 const Profile = () => {
 	const [error, setError] = useState(false);
 
-	const { currentUser, login, logout } = useAuth();
+	const { currentUser } = useAuth();
 	const { data } = useGetCharacters(currentUser?.uid);
-
-	const [submitting, setSubmitting] = useState(false);
-
-	const router = useRouter();
-
-	const {
-		control,
-		handleSubmit,
-		formState: { errors },
-		reset,
-	} = useForm<LoginData>();
-
-	const onLogin: SubmitHandler<LoginData> = async (data) => {
-		setSubmitting(true);
-		setError(false);
-		try {
-			await login(data.email, data.password);
-			reset();
-		} catch (err) {
-			setError(true);
-		}
-		setSubmitting(false);
-	};
-
-	const onLogout = async () => {
-		let isMounted = true;
-		setSubmitting(true);
-		setError(false);
-
-		try {
-			await logout();
-			if (isMounted) {
-				reset();
-			}
-		} catch (err) {
-			if (isMounted) {
-				setError(true);
-			}
-		} finally {
-			if (isMounted) {
-				setSubmitting(false);
-			}
-		}
-
-		return () => {
-			isMounted = false;
-		};
-	};
 
 	return (
 		<View style={styles.container}>
@@ -76,108 +27,8 @@ const Profile = () => {
 						</View>
 
 						{error && <ErrorComponent />}
-
-						{currentUser ? (
-							<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>
-								<Text style={[styles.text, { marginBottom: 20, textAlign: "center", fontSize: 24 }]}>Welcome to your profile!</Text>
-								<Text style={[styles.text, styles.textBold]}>User:</Text>
-								<Text style={styles.text}>{currentUser.email}</Text>
-
-								{!data && (
-									<View>
-										<Text style={[styles.text, { marginBottom: 10, marginTop: 40, textAlign: "center" }]}>
-											Have you had a look at creating your own personal characters?
-										</Text>
-
-										<Text style={[styles.text, { textAlign: "center" }]}>If not take a look here:</Text>
-
-										<Pressable onPress={() => router.push("/Characters")}>
-											<Text style={styles.linkText}>Characters</Text>
-										</Pressable>
-									</View>
-								)}
-
-								<View style={styles.profileWrapper}>
-									<Text style={styles.text}>Logout:</Text>
-									<Pressable style={styles.button} onPress={onLogout} disabled={submitting}>
-										<Text style={styles.buttonText}>{submitting ? "Logging out..." : "Log out"}</Text>
-									</Pressable>
-								</View>
-							</View>
-						) : (
-							<View style={styles.formWrapper}>
-								<View style={styles.subtitleWrapper}>
-									<Text style={[styles.text, { textAlign: "center" }]}>Please log in to access your</Text>
-									<View style={{ flexDirection: "row", justifyContent: "center" }}>
-										<Text style={styles.textBold}>profile </Text>
-										<Text style={styles.text}>and </Text>
-										<Text style={styles.textBold}>characters</Text>
-									</View>
-								</View>
-
-								<Text style={styles.label}>Email*</Text>
-								<Controller
-									control={control}
-									rules={{
-										required: "Email is required",
-										pattern: {
-											value: /\S+@\S+\.\S+/,
-											message: "Entered value does not match email format",
-										},
-									}}
-									render={({ field: { onChange, onBlur, value } }) => (
-										<TextInput
-											style={styles.input}
-											placeholder="Email"
-											onBlur={onBlur}
-											onChangeText={onChange}
-											value={value}
-											keyboardType="email-address"
-											inputMode="email"
-										/>
-									)}
-									name="email"
-								/>
-								{errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
-
-								<Text style={styles.label}>Password*</Text>
-								<Controller
-									control={control}
-									rules={{ required: "Password is required" }}
-									render={({ field: { onChange, onBlur, value } }) => (
-										<TextInput
-											style={styles.input}
-											placeholder="Password"
-											onBlur={onBlur}
-											onChangeText={onChange}
-											value={value}
-											secureTextEntry
-										/>
-									)}
-									name="password"
-								/>
-								{errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-
-								<Pressable style={styles.button} onPress={handleSubmit(onLogin)} disabled={submitting}>
-									<Text style={styles.buttonText}>{submitting ? "Logging in..." : "Login"}</Text>
-								</Pressable>
-
-								<View style={{ marginTop: 30 }}>
-									<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Don't have an account?</Text>
-									<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Sign up! - It's Free</Text>
-									<Pressable onPress={() => router.push("/(tabs)/Signup")}>
-										<Text style={styles.linkText}>Sign up</Text>
-									</Pressable>
-								</View>
-
-								<View style={{ marginTop: 30 }}>
-									<Text style={[styles.text, { textAlign: "center", marginBottom: 0 }]}>Forgotten your password?</Text>
-									<Pressable onPress={() => router.push("/(tabs)/ResetPassword")}>
-										<Text style={styles.linkText}>Reset password</Text>
-									</Pressable>
-								</View>
-							</View>
-						)}
+						{currentUser && <LogOutComponent characterData={data} userEmail={currentUser?.email} setErrorState={(e) => setError(e)} />}
+						{!currentUser && <LogInComponent setErrorState={(e) => setError(e)} />}
 					</ScrollView>
 				</TouchableWithoutFeedback>
 			</ImageBackground>
