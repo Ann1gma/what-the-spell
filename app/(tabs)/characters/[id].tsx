@@ -12,20 +12,16 @@ import CharacterSpellComponent from "@/components/CharacterSpellComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 
-//@CodeScene(disable:"Complex Method")
+//@CodeScene(disable:"Complex Method") //@CodeScene(disable:"Large Method")
 const CharacterProfile = () => {
 	const { id } = useLocalSearchParams();
 	const { data: character, loading, error } = useGetCharacter(id.toString());
-	const { currentUser } = useAuth();
+	const { currentUser, isLoading } = useAuth();
 
 	const router = useRouter();
 
 	const [showSpellslots, setShowSpellslots] = useState(false);
 	const [showPreparedSpells, setShowPreparedSpells] = useState(false);
-
-	if (!currentUser) {
-		router.replace("/");
-	}
 
 	if (!character) {
 		return (
@@ -33,6 +29,10 @@ const CharacterProfile = () => {
 				<Text>Could not find the character!</Text>
 			</View>
 		);
+	}
+
+	if (isLoading || !currentUser) {
+		return <LoadingComponent />;
 	}
 
 	return (

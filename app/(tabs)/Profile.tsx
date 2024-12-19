@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, ImageBackground, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
 import useAuth from "@/hooks/useAuth";
-import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import { LoginData } from "@/types/User.types";
-import { useRouter } from "expo-router";
 import ErrorComponent from "@/components/ErrorComponent";
 import useGetCharacters from "@/hooks/useGetCharacters";
 import LogOutComponent from "@/components/LogOutComponent";
 import LogInComponent from "@/components/LogInComponent";
+import LoadingComponent from "@/components/LoadingComponent";
 
 //@CodeScene(disable:"Complex Method")
 //@CodeScene(disable:"Large Method")
 const Profile = () => {
-	const [error, setError] = useState(false);
-
-	const { currentUser } = useAuth();
+	const { currentUser, isLoading } = useAuth();
 	const { data } = useGetCharacters(currentUser?.uid);
+
+	if (isLoading) {
+		return <LoadingComponent />;
+	}
 
 	return (
 		<View style={styles.container}>
@@ -26,9 +26,8 @@ const Profile = () => {
 							<Text style={styles.title}>Profile</Text>
 						</View>
 
-						{error && <ErrorComponent />}
-						{currentUser && <LogOutComponent characterData={data} userEmail={currentUser?.email} setErrorState={(e) => setError(e)} />}
-						{!currentUser && <LogInComponent setErrorState={(e) => setError(e)} />}
+						{currentUser && <LogOutComponent characterData={data} userEmail={currentUser.email} />}
+						{!currentUser && <LogInComponent />}
 					</ScrollView>
 				</TouchableWithoutFeedback>
 			</ImageBackground>

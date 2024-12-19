@@ -9,7 +9,7 @@ import CharacterListComponent from "@/components/CharacterListComponent";
 
 //@CodeScene(disable:"Complex Method")
 const Characters = () => {
-	const { currentUser } = useAuth();
+	const { currentUser, isLoading } = useAuth();
 	const { data, loading } = useGetCharacters(currentUser?.uid);
 
 	const router = useRouter();
@@ -19,6 +19,10 @@ const Characters = () => {
 			pathname: "/(tabs)/AddCharacter",
 		});
 	};
+
+	if (isLoading) {
+		return <LoadingComponent />;
+	}
 
 	if (!currentUser) {
 		return (

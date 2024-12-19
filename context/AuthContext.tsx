@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
 import LoadingComponent from "@/components/LoadingComponent";
+import { useRouter } from "expo-router";
 
 interface AuthContextType {
 	login: (email: string, password: string) => Promise<UserCredential>;
@@ -37,6 +38,7 @@ const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
 	const logout = async () => {
 		await signOut(auth);
+		setCurrentUser(null);
 	};
 
 	const signup = (email: string, password: string) => {

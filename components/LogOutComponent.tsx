@@ -4,35 +4,34 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Pressable, Text, View } from "react-native";
+import ErrorComponent from "./ErrorComponent";
 
 interface LogOutComponentProps {
 	characterData: Character[] | null;
 	userEmail: string | null | undefined;
-	setErrorState: (state: boolean) => void;
 }
 
-const LogOutComponent: React.FC<LogOutComponentProps> = ({ characterData, userEmail, setErrorState }) => {
-	const [submitting, setSubmitting] = useState(false);
+const LogOutComponent: React.FC<LogOutComponentProps> = ({ characterData, userEmail }) => {
+	const [error, setError] = useState(false);
 
 	const { logout } = useAuth();
 
 	const router = useRouter();
 
 	const onLogout = async () => {
-		setSubmitting(true);
-		setErrorState(false);
-
 		try {
 			await logout();
+			setTimeout(() => {
+				router.replace("/"); // Navigera när currentUser har uppdaterats
+			}, 100); // Kort delay för att låta state uppdateras
 		} catch (err) {
-			setErrorState(true);
-		} finally {
-			setSubmitting(false);
+			setError(true);
 		}
 	};
 
 	return (
 		<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>
+			{error && <ErrorComponent />}
 			<Text style={[styles.text, { marginBottom: 20, textAlign: "center", fontSize: 24 }]}>Welcome to your profile!</Text>
 			<Text style={[styles.text, styles.textBold]}>User:</Text>
 			<Text style={styles.text}>{userEmail}</Text>
@@ -53,8 +52,8 @@ const LogOutComponent: React.FC<LogOutComponentProps> = ({ characterData, userEm
 
 			<View style={styles.profileWrapper}>
 				<Text style={styles.text}>Logout:</Text>
-				<Pressable style={styles.button} onPress={onLogout} disabled={submitting}>
-					<Text style={styles.buttonText}>{submitting ? "Logging out..." : "Log out"}</Text>
+				<Pressable style={styles.button} onPress={onLogout}>
+					<Text style={styles.buttonText}>Log out</Text>
 				</Pressable>
 			</View>
 		</View>

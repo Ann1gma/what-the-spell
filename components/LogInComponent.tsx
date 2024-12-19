@@ -4,13 +4,11 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import ErrorComponent from "./ErrorComponent";
 
-interface LogInComponentProps {
-	setErrorState: (state: boolean) => void;
-}
-
-const LogInComponent: React.FC<LogInComponentProps> = ({ setErrorState }) => {
+const LogInComponent = () => {
 	const [submitting, setSubmitting] = useState(false);
+	const [error, setError] = useState(false);
 
 	const router = useRouter();
 
@@ -24,17 +22,18 @@ const LogInComponent: React.FC<LogInComponentProps> = ({ setErrorState }) => {
 
 	const onLogin: SubmitHandler<LoginData> = async (data) => {
 		setSubmitting(true);
-		setErrorState(false);
+		setError(false);
 		try {
 			await login(data.email, data.password);
 		} catch (err) {
-			setErrorState(true);
+			setError(true);
 		}
 		setSubmitting(false);
 	};
 
 	return (
 		<View style={styles.formWrapper}>
+			{error && <ErrorComponent />}
 			<View style={styles.subtitleWrapper}>
 				<Text style={[styles.text, { textAlign: "center" }]}>Please log in to access your</Text>
 				<View style={{ flexDirection: "row", justifyContent: "center" }}>
