@@ -110,12 +110,14 @@ const CharacterProfile = () => {
 						</View>
 					)}
 
-					<View style={styles.addButtonContainer}>
-						<Pressable style={styles.addSpellButton}>
-							<MaterialCommunityIcons name="book-plus" size={24} color="#ffff" />
-							<Text style={styles.addSpellText}>Add spells</Text>
-						</Pressable>
-					</View>
+					{!showPreparedSpells && (
+						<View style={styles.addButtonContainer}>
+							<Pressable style={styles.addSpellButton}>
+								<MaterialCommunityIcons name="book-plus" size={24} color="#ffff" />
+								<Text style={styles.addSpellText}>Add spells</Text>
+							</Pressable>
+						</View>
+					)}
 				</ScrollView>
 			</ImageBackground>
 		</View>

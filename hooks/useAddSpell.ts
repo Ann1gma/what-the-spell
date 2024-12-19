@@ -41,28 +41,28 @@ const useAddSpell = () => {
 			school: spellData.school.name,
 		};
 
-		if (!character.known_spells || character.known_spells.length === 0) {
-			try {
-				await updateDoc(docRef, { ...character, known_spells: [newSpell] });
-			} catch (err) {
-				setError(true);
-			}
-		} else {
-			const characterKnowledge = character.known_spells.find((spell) => spell.index === spellIndex);
-			if (characterKnowledge) {
-				return;
-			} else {
-				try {
-					const knownSpells = [...character.known_spells];
-					knownSpells.push(newSpell);
-					await updateDoc(docRef, { ...character, known_spells: knownSpells });
-				} catch (err) {
-					setError(true);
-				}
-			}
-		}
+		try {
+			let updatedSpells: CharacterSpell[] = [];
 
-		setLoading(false);
+			if (!character.known_spells || character.known_spells.length === 0) {
+				updatedSpells = [newSpell];
+			} else {
+				const characterKnowledge = character.known_spells.find((spell) => spell.index === spellIndex);
+				if (characterKnowledge) {
+					setLoading(false);
+					return;
+				}
+				updatedSpells = [...character.known_spells, newSpell].sort((a, b) => a.name.localeCompare(b.name));
+			}
+
+			await updateDoc(docRef, { known_spells: updatedSpells });
+			setError(false);
+		} catch (err) {
+			console.error("Failed to add spell:", err);
+			setError(true);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return {
