@@ -33,7 +33,7 @@ const CharacterListComponent: React.FC<AccordionComponentProps> = ({ data }) => 
 								<View>
 									<Text style={styles.characterName}>{item.character_name}</Text>
 									<View style={{ flexDirection: "row" }}>
-										<Text style={styles.text}>{item.class_name}, </Text>
+										<Text style={styles.text}>{item.class.name}, </Text>
 										<Text style={styles.text}>lvl {item.character_level}</Text>
 									</View>
 								</View>

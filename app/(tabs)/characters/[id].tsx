@@ -23,6 +23,18 @@ const CharacterProfile = () => {
 	const [showSpellslots, setShowSpellslots] = useState(false);
 	const [showPreparedSpells, setShowPreparedSpells] = useState(false);
 
+	const handleEditCharacter = () => {
+		if (!character) {
+			return;
+		} else {
+			const id = character._id;
+			router.push({
+				pathname: "/(tabs)/UpdateCharacter",
+				params: { id },
+			});
+		}
+	};
+
 	if (!character) {
 		return (
 			<View>
@@ -50,11 +62,16 @@ const CharacterProfile = () => {
 							<Feather name="arrow-left" size={24} color="#2b2b2b" />
 						</Pressable>
 					</View>
+					<View style={styles.editIconContainer}>
+						<Pressable onPress={handleEditCharacter}>
+							<MaterialCommunityIcons name="pencil" size={24} color="#2b2b2b" />
+						</Pressable>
+					</View>
 				</View>
 				<ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 					<View style={styles.characterInfoContainer}>
 						<View style={styles.rowContainer}>
-							<Text style={styles.classText}>{character.class_name}</Text>
+							<Text style={styles.classText}>{character.class.name}</Text>
 							<Text style={styles.text}> - lvl {character.character_level}</Text>
 						</View>
 						<View style={styles.rowWrapContainer}>
@@ -187,12 +204,18 @@ const styles = StyleSheet.create({
 		left: "3%",
 		zIndex: 1,
 	},
+	editIconContainer: {
+		position: "absolute",
+		left: "90%",
+		zIndex: 1,
+	},
 	addButtonContainer: {
 		alignSelf: "center",
 		justifyContent: "center",
 		alignItems: "center",
 		width: "100%",
 		marginTop: 30,
+		marginBottom: 30,
 	},
 	addSpellButton: {
 		paddingVertical: 10,

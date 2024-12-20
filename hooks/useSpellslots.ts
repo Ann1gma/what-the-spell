@@ -34,8 +34,23 @@ const useSpellslots = (characterId: string) => {
 		setLoading(false);
 	};
 
+	const resetSpellslots = async () => {
+		if (!character) {
+			return;
+		}
+
+		const docRef = doc(characterCol, characterId);
+
+		try {
+			await updateDoc(docRef, { ...character, spellslots: null });
+		} catch (err) {
+			setError(true);
+		}
+	};
+
 	return {
 		useSpellslotsFunc,
+		resetSpellslots,
 		error,
 		loading,
 	};

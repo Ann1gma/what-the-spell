@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -13,23 +13,29 @@ import {
 } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import { NewCharacter } from "@/types/Character.types";
+import { NewCharacter, UpdateCharacterData } from "@/types/Character.types";
 import { ClassObject } from "@/types/DnD5e_API.types";
 import DropdownComponent from "@/components/DropdownComponent";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { doc, setDoc } from "firebase/firestore";
-import { newCharacterCol } from "@/services/firebaseConfig";
+import { doc, updateDoc } from "firebase/firestore";
+import { characterCol } from "@/services/firebaseConfig";
 import useCreateSpellslots from "@/hooks/useCreateSpellslots";
 import Feather from "@expo/vector-icons/Feather";
-import { useRouter } from "expo-router";
-import SpellslotInputComponent from "@/components/SpellslotInputComponent";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import useGetCharacter from "@/hooks/useGetCharacter";
+import UpdateSpellslotInputComponent from "@/components/UpdateSpellslotInputComponent";
+import ConfirmationComponent from "@/components/ConfirmationComponent";
 
 //@CodeScene(disable:"Complex Method")
 //@CodeScene(disable:"Large Method")
-const AddCharacter = () => {
+const UpdateCharacter = () => {
+	const { id } = useLocalSearchParams();
+
+	const { getCharacterDoc, characterDoc, error: characterError, loading: characterLoading } = useGetCharacter(id.toString());
+
 	const { currentUser } = useAuth();
 	const [className, setClassName] = useState<ClassObject | null>(null);
 	const [classError, setClassError] = useState<string | null>(null);
@@ -37,7 +43,11 @@ const AddCharacter = () => {
 	const [submitError, setSubmitError] = useState<string | null>(null);
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
+
+	const [openConfirmation, setOpenConfirmation] = useState(false);
+
 	const { options, loading, error } = useGetAllClasses([]);
+
 	const { spellslots, updateSpellslots, resetSepllslots } = useCreateSpellslots();
 
 	const router = useRouter();
@@ -53,7 +63,23 @@ const AddCharacter = () => {
 		setClassName(item);
 	};
 
-	const onCreateCharacter: SubmitHandler<NewCharacter> = async (data) => {
+	const handleNavigateBack = () => {
+		if (typeof id === "string") {
+			router.push({
+				pathname: "/(tabs)/characters/[id]",
+				params: { id },
+			});
+		} else {
+			const paramId = id[0];
+
+			router.push({
+				pathname: "/(tabs)/characters/[id]",
+				params: { id: paramId },
+			});
+		}
+	};
+
+	const onUpdateCharacter: SubmitHandler<UpdateCharacterData> = async (data) => {
 		setSubmitting(true);
 		setSubmitError(null);
 		setClassError(null);
@@ -61,11 +87,11 @@ const AddCharacter = () => {
 		if (!className) {
 			setClassError("You must choose a class");
 		} else {
-			const docRef = doc(newCharacterCol);
+			const docRef = doc(characterCol, id.toString());
+
 			try {
-				await setDoc(docRef, {
+				await updateDoc(docRef, {
 					...data,
-					uid: currentUser?.uid,
 					character_level: data.character_level,
 					character_name: data.character_name,
 					class: className,
@@ -76,19 +102,41 @@ const AddCharacter = () => {
 					spellslots: enableSpellslots ? spellslots : null,
 				});
 
+				/* if (!enableSpellslots) {
+					resetSepllslots();
+				} */
+
 				reset();
 				resetSepllslots();
 				setClassName(null);
 				setEnablePreparedSpells(false);
 				setEnableSpellslots(false);
 
-				router.push("/Characters");
+				handleNavigateBack();
 			} catch (err) {
 				setSubmitError("Failed to create character. Please check your inputs.");
 			}
 			setSubmitting(false);
 		}
 	};
+
+	useEffect(() => {
+		if (!id) {
+			return;
+		} else if (typeof id === "string") {
+			getCharacterDoc(id);
+		} else {
+			getCharacterDoc(id[0]);
+		}
+	}, [id]);
+
+	useEffect(() => {
+		if (characterDoc) {
+			setClassName(characterDoc.class);
+			setEnablePreparedSpells(characterDoc.show_prepared_spells);
+			setEnableSpellslots(characterDoc.show_spellslots);
+		}
+	}, [characterDoc, reset]);
 
 	if (!currentUser) {
 		return (
@@ -97,7 +145,7 @@ const AddCharacter = () => {
 					{loading && <LoadingComponent />}
 					{error && <ErrorComponent />}
 					<View style={styles.titleContainer}>
-						<Text style={styles.title}>Character creation</Text>
+						<Text style={styles.title}>Edit character</Text>
 					</View>
 
 					<View>
@@ -108,17 +156,22 @@ const AddCharacter = () => {
 		);
 	}
 
+	if (!characterDoc || characterLoading) {
+		return <LoadingComponent />;
+	}
+
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
+				{openConfirmation && <ConfirmationComponent handlePress={() => setOpenConfirmation(false)} characterId={id.toString()} />}
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 						<View style={styles.titleContainer}>
 							<View>
-								<Text style={styles.title}>Character creation</Text>
+								<Text style={styles.title}>Edit character</Text>
 							</View>
 							<View style={styles.iconContainer}>
-								<Pressable onPress={() => router.push("/(tabs)/Characters")}>
+								<Pressable onPress={handleNavigateBack}>
 									<Feather name="arrow-left" size={24} color="#2b2b2b" />
 								</Pressable>
 							</View>
@@ -134,14 +187,15 @@ const AddCharacter = () => {
 								<Text style={styles.text}>Character name*</Text>
 								<Controller
 									control={control}
-									rules={{ required: "Character name is required" }}
-									render={({ field: { onChange, onBlur, value } }) => (
+									rules={{ required: "Character name is required", maxLength: 50 }}
+									defaultValue={characterDoc.character_name}
+									render={({ field: { onChange, onBlur } }) => (
 										<TextInput
 											style={styles.input}
-											placeholder="Baldric the Bold"
+											placeholder={"Baldric the Bold"}
 											onBlur={onBlur}
 											onChangeText={onChange}
-											value={value}
+											defaultValue={characterDoc.character_name}
 										/>
 									)}
 									name="character_name"
@@ -152,7 +206,7 @@ const AddCharacter = () => {
 								<DropdownComponent
 									options={options}
 									onChange={(e) => onFiltration(e)}
-									placeholder={!className ? "Class" : className.name}
+									placeholder={!characterDoc.class ? "Class" : characterDoc.class.name}
 								/>
 								{classError && <Text style={styles.error}>{classError}</Text>}
 
@@ -165,7 +219,8 @@ const AddCharacter = () => {
 											max: 20,
 											validate: (value) => !isNaN(value) || "Value must be a number",
 										}}
-										render={({ field: { onChange, onBlur, value } }) => (
+										defaultValue={characterDoc.character_level}
+										render={({ field: { onChange, onBlur } }) => (
 											<TextInput
 												style={styles.inputNumber}
 												placeholder="0-20"
@@ -175,7 +230,7 @@ const AddCharacter = () => {
 												onChangeText={(text) => {
 													onChange(Number(text));
 												}}
-												value={!value ? "" : value.toString()}
+												defaultValue={characterDoc.character_level.toString()}
 											/>
 										)}
 										name="character_level"
@@ -191,7 +246,8 @@ const AddCharacter = () => {
 											required: false,
 											validate: (value) => (value !== null && !isNaN(value)) || "Spell attack modifier must be a number",
 										}}
-										render={({ field: { onChange, onBlur, value } }) => (
+										defaultValue={characterDoc.spell_attack_modifier}
+										render={({ field: { onChange, onBlur } }) => (
 											<TextInput
 												style={styles.inputNumber}
 												placeholder="0-30"
@@ -201,7 +257,7 @@ const AddCharacter = () => {
 												onChangeText={(text) => {
 													onChange(Number(text));
 												}}
-												value={!value ? "" : value.toString()}
+												defaultValue={characterDoc.spell_attack_modifier ? characterDoc.spell_attack_modifier.toString() : ""}
 											/>
 										)}
 										name="spell_attack_modifier"
@@ -218,7 +274,8 @@ const AddCharacter = () => {
 											required: false,
 											validate: (value) => (value !== null && !isNaN(value)) || "Spell save dc must be a number",
 										}}
-										render={({ field: { onChange, onBlur, value } }) => (
+										defaultValue={characterDoc.spell_save_dc}
+										render={({ field: { onChange, onBlur } }) => (
 											<TextInput
 												style={styles.inputNumber}
 												placeholder="15"
@@ -228,7 +285,7 @@ const AddCharacter = () => {
 												onChangeText={(text) => {
 													onChange(Number(text));
 												}}
-												value={!value ? "" : value.toString()}
+												defaultValue={characterDoc.spell_save_dc ? characterDoc.spell_save_dc.toString() : ""}
 											/>
 										)}
 										name="spell_save_dc"
@@ -270,24 +327,64 @@ const AddCharacter = () => {
 								{enableSpellslots && (
 									<View style={{ flexDirection: "row" }}>
 										<View style={{ flexDirection: "column" }}>
-											<SpellslotInputComponent level={1} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={2} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={3} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={4} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={5} onChange={updateSpellslots} />
+											<UpdateSpellslotInputComponent
+												level={1}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
+											<UpdateSpellslotInputComponent
+												level={2}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
+											<UpdateSpellslotInputComponent
+												level={3}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
+											<UpdateSpellslotInputComponent
+												level={4}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
+											<UpdateSpellslotInputComponent
+												level={5}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
 										</View>
 
 										<View style={{ flexDirection: "column" }}>
-											<SpellslotInputComponent level={6} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={7} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={8} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={9} onChange={updateSpellslots} />
+											<UpdateSpellslotInputComponent
+												level={6}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
+											<UpdateSpellslotInputComponent
+												level={7}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
+											<UpdateSpellslotInputComponent
+												level={8}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
+											<UpdateSpellslotInputComponent
+												level={9}
+												onChange={updateSpellslots}
+												spellSlots={characterDoc?.spellslots}
+											/>
 										</View>
 									</View>
 								)}
 
-								<Pressable style={styles.button} onPress={handleSubmit(onCreateCharacter)} disabled={submitting}>
-									<Text style={styles.buttonText}>{submitting ? "Creating character..." : "Create character"}</Text>
+								<Pressable style={styles.button} onPress={handleSubmit(onUpdateCharacter)} disabled={submitting}>
+									<Text style={styles.buttonText}>{submitting ? "Updating character..." : "Update character"}</Text>
+								</Pressable>
+
+								<Pressable style={styles.deleteButton} onPress={() => setOpenConfirmation(true)} disabled={submitting}>
+									<Text style={styles.buttonText}>DELETE CHARACTER</Text>
 								</Pressable>
 							</View>
 						</ScrollView>
@@ -298,7 +395,7 @@ const AddCharacter = () => {
 	);
 };
 
-export default AddCharacter;
+export default UpdateCharacter;
 
 const styles = StyleSheet.create({
 	container: {
@@ -385,8 +482,17 @@ const styles = StyleSheet.create({
 		width: "100%",
 		marginTop: 30,
 	},
+	deleteButton: {
+		backgroundColor: "#615151",
+		paddingVertical: 12,
+		borderRadius: 5,
+		alignItems: "center",
+		width: "100%",
+		marginTop: 50,
+		marginBottom: 10,
+	},
 	buttonText: {
-		color: "#ffff",
+		color: "#ffffff",
 		fontSize: 18,
 		fontFamily: "NunitoSemiBold",
 	},

@@ -77,12 +77,14 @@ const Characters = () => {
 							</View>
 						</View>
 					)}
-					<TouchableOpacity activeOpacity={0.8} onPress={handleAddCharacter}>
-						<View style={styles.addCharacterContainer}>
-							<Ionicons name="person-add" size={26} color="#ffff" style={{ marginRight: 10 }} />
-							<Text style={styles.characterName}>Add character</Text>
-						</View>
-					</TouchableOpacity>
+					{data && data.length < 5 && (
+						<TouchableOpacity activeOpacity={0.8} onPress={handleAddCharacter}>
+							<View style={styles.addCharacterContainer}>
+								<Ionicons name="person-add" size={26} color="#ffff" style={{ marginRight: 10 }} />
+								<Text style={styles.characterName}>Add character</Text>
+							</View>
+						</TouchableOpacity>
+					)}
 				</SafeAreaView>
 			</ImageBackground>
 		</View>

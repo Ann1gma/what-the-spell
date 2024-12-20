@@ -98,6 +98,14 @@ export default function TabLayout() {
 					href: null,
 				}}
 			/>
+
+			<Tabs.Screen
+				name="UpdateCharacter"
+				options={{
+					headerShown: false,
+					href: null,
+				}}
+			/>
 		</Tabs>
 	);
 }

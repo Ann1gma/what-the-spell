@@ -20,7 +20,7 @@ export default LoadingComponent;
 
 const styles = StyleSheet.create({
 	container: {
-		zIndex: 1,
+		zIndex: 10,
 		justifyContent: "center",
 		alignItems: "center",
 		height: "100%",

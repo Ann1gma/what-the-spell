@@ -16,7 +16,7 @@ const CharacterInfoComponent: React.FC<CharacterInfoComponentProps> = ({ charact
 	return (
 		<View style={styles.characterInfoContainer}>
 			<View style={styles.rowContainer}>
-				<Text style={styles.classText}>{character.class_name}</Text>
+				<Text style={styles.classText}>{character.class.name}</Text>
 				<Text style={styles.text}> - lvl {character.character_level}</Text>
 			</View>
 			<View style={styles.rowWrapContainer}>

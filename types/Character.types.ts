@@ -1,3 +1,5 @@
+import { ClassObject } from "./DnD5e_API.types";
+
 export interface Spellslot {
 	_id: string;
 	level: number;
@@ -21,7 +23,7 @@ export interface Character {
 	uid: string;
 	character_level: number;
 	character_name: string;
-	class_name: string;
+	class: ClassObject;
 	spell_attack_modifier: number | null;
 	spell_save_dc: number | null;
 	show_prepared_spells: boolean;
@@ -35,7 +37,18 @@ export interface NewCharacter {
 	uid: string;
 	character_level: number;
 	character_name: string;
-	class_name: string;
+	class: ClassObject;
+	spell_attack_modifier: number | null;
+	spell_save_dc: number | null;
+	show_prepared_spells: boolean;
+	show_spellslots: boolean;
+	spellslots: Spellslot[] | null;
+}
+
+export interface UpdateCharacterData {
+	character_level: number;
+	character_name: string;
+	class: ClassObject;
 	spell_attack_modifier: number | null;
 	spell_save_dc: number | null;
 	show_prepared_spells: boolean;
