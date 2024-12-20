@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
 		flexWrap: "wrap",
 	},
 	text: {
-		fontFamily: "NunitoSemiBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		fontSize: 16,
 		color: "#2b2b2b",
 		marginRight: 10,

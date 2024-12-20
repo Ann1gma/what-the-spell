@@ -66,14 +66,15 @@ const styles = StyleSheet.create({
 		borderRadius: 15,
 	},
 	textBold: {
-		fontFamily: "NunitoBlack",
+		fontFamily: "Inter",
+		fontWeight: "900",
 		fontSize: 26,
 		color: "#990000",
 		textAlign: "center",
 		marginTop: 40,
 	},
 	text: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 16,
 		color: "#2b2b2b",
 		textAlign: "center",
@@ -106,7 +107,8 @@ const styles = StyleSheet.create({
 	},
 	buttonText: {
 		color: "#FFFFFF",
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		fontSize: 18,
 		textAlign: "center",
 	},

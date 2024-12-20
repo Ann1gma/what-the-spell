@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AccordionComponent from "@/components/AccordionComponents";
@@ -85,6 +85,13 @@ const Index = () => {
 							initialNumToRender={9}
 							maxToRenderPerBatch={9}
 							windowSize={2}
+							style={{ height: "100%" }}
+							ListFooterComponent={
+								<View style={styles.footerContainer}>
+									<Text style={styles.footerText}>All spell data is from</Text>
+									<Text style={styles.footerTextItalic}>D&D 5e SRD API</Text>
+								</View>
+							}
 						/>
 					</View>
 				</SafeAreaView>
@@ -123,7 +130,7 @@ const styles = StyleSheet.create({
 	},
 	subTitle: {
 		fontSize: 18,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 		textAlign: "center",
 	},
@@ -134,6 +141,24 @@ const styles = StyleSheet.create({
 	},
 	accordionContainer: {
 		marginHorizontal: 15,
-		marginVertical: 15,
+		marginTop: 15,
+	},
+	footerContainer: {
+		flexDirection: "row",
+		padding: 40,
+		justifyContent: "center",
+	},
+	footerText: {
+		fontFamily: "Inter",
+		fontSize: 16,
+		color: "#2b2b2b",
+		marginRight: 5,
+	},
+	footerTextItalic: {
+		fontFamily: "Inter",
+		fontSize: 16,
+		color: "#990000",
+		fontStyle: "italic",
+		fontWeight: "700",
 	},
 });

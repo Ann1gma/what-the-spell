@@ -149,7 +149,8 @@ const styles = StyleSheet.create({
 		padding: 20,
 	},
 	textBold: {
-		fontFamily: "NunitoBlack",
+		fontFamily: "Inter",
+		fontWeight: "900",
 		fontSize: 26,
 		color: "#990000",
 		textAlign: "center",
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	text: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 16,
 		color: "#2b2b2b",
 		textAlign: "center",
@@ -171,7 +172,8 @@ const styles = StyleSheet.create({
 	},
 	linkText: {
 		fontSize: 20,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#990000",
 		marginBottom: 10,
 		textDecorationLine: "underline",
@@ -183,7 +185,8 @@ const styles = StyleSheet.create({
 		marginHorizontal: 20,
 	},
 	characterText: {
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		fontSize: 18,
 		color: "#2b2b2b",
 		textAlign: "center",

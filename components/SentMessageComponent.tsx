@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 	},
 	textBold: {
 		fontFamily: "NunitoBlack",
-		fontSize: 20,
+		fontSize: 22,
 		color: "#990000",
 		textAlign: "center",
 		marginTop: 40,

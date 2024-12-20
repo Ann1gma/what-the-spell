@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
 	},
 	label: {
 		fontSize: 16,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		marginBottom: 5,
 	},
 	input: {
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 		borderRadius: 5,
 		marginBottom: 15,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 	},
 	button: {
 		backgroundColor: "#990000",
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: "#fff",
 		fontSize: 18,
-		fontFamily: "NunitoSemiBold",
+		fontFamily: "Inter",
+		fontWeight: "500",
 	},
 });

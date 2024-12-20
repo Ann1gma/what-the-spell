@@ -159,19 +159,21 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	itemTitle: {
-		fontFamily: "NunitoBlack",
+		fontFamily: "Inter",
+		fontWeight: "900",
 		fontSize: 18,
 		color: "#2b2b2b",
 		marginRight: 5,
 		marginBottom: 5,
 	},
 	itemText: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 16,
 		color: "#2b2b2b",
 	},
 	itemTextBold: {
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		fontSize: 16,
 		color: "#2b2b2b",
 	},
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
 		marginHorizontal: 5,
 	},
 	iconText: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 8,
 		color: "#2b2b2b",
 	},
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 	},
 	prepareText: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 12,
 		color: "#ffffff",
 	},

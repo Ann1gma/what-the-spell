@@ -32,11 +32,11 @@ const LogOutComponent: React.FC<LogOutComponentProps> = ({ characterData, userEm
 	return (
 		<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>
 			{error && <ErrorComponent />}
-			<Text style={[styles.text, { marginBottom: 20, textAlign: "center", fontSize: 24 }]}>Welcome to your profile!</Text>
-			<Text style={[styles.text, styles.textBold]}>User:</Text>
-			<Text style={styles.text}>{userEmail}</Text>
+			<View>
+				<Text style={[styles.text, { marginTop: 30, textAlign: "center", fontSize: 26, fontWeight: "600" }]}>Welcome to your profile!</Text>
+				<Text style={[styles.text, styles.textBold]}>User:</Text>
+				<Text style={styles.text}>{userEmail}</Text>
 
-			{!characterData && (
 				<View>
 					<Text style={[styles.text, { marginBottom: 10, marginTop: 40, textAlign: "center" }]}>
 						Have you had a look at creating your own personal characters?
@@ -48,9 +48,9 @@ const LogOutComponent: React.FC<LogOutComponentProps> = ({ characterData, userEm
 						<Text style={styles.linkText}>Characters</Text>
 					</Pressable>
 				</View>
-			)}
+			</View>
 
-			<View style={styles.profileWrapper}>
+			<View style={{ marginBottom: 20 }}>
 				<Text style={styles.text}>Logout:</Text>
 				<Pressable style={styles.button} onPress={onLogout}>
 					<Text style={styles.buttonText}>Log out</Text>
@@ -67,22 +67,27 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginHorizontal: 20,
 		padding: 20,
+		height: "80%",
+		flexDirection: "column",
+		justifyContent: "space-between",
 	},
 	text: {
 		fontSize: 18,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 		marginBottom: 10,
 	},
 	textBold: {
 		fontSize: 18,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#2b2b2b",
 		marginBottom: 10,
 	},
 	linkText: {
 		fontSize: 20,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#990000",
 		marginBottom: 10,
 		textDecorationLine: "underline",
@@ -98,6 +103,7 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: "#fff",
 		fontSize: 18,
-		fontFamily: "NunitoSemiBold",
+		fontFamily: "Inter",
+		fontWeight: "500",
 	},
 });

@@ -14,10 +14,7 @@ export default function RootLayout() {
 		CinzelSemiBold: require("../assets/fonts/Cinzel-SemiBold.ttf"),
 		CinzelBold: require("../assets/fonts/Cinzel-Bold.ttf"),
 		CinzelBlack: require("../assets/fonts/Cinzel-Black.ttf"),
-		NunitoRegular: require("../assets/fonts/Nunito-Regular.ttf"),
-		NunitoSemiBold: require("../assets/fonts/Nunito-SemiBold.ttf"),
-		NunitoBold: require("../assets/fonts/Nunito-Bold.ttf"),
-		NunitoBlack: require("../assets/fonts/Nunito-Black.ttf"),
+		Inter: require("../assets/fonts/Inter-VariableFont.ttf"),
 	});
 
 	useEffect(() => {

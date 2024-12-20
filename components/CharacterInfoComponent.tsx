@@ -56,12 +56,13 @@ const styles = StyleSheet.create({
 		alignItems: "baseline",
 	},
 	classText: {
-		fontFamily: "NunitoBlack",
+		fontFamily: "Inter",
+		fontWeight: "900",
 		fontSize: 22,
 		color: "#990000",
 	},
 	text: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 16,
 		color: "#2b2b2b",
 	},
@@ -87,7 +88,8 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 	},
 	textBold: {
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		fontSize: 20,
 		color: "#ffff",
 		marginRight: 10,

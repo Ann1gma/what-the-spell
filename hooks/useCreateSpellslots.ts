@@ -10,7 +10,8 @@ const useCreateSpellslots = () => {
 		const newSlots = [];
 
 		for (let i = 0; i < numOf; i++) {
-			newSlots.push({ _id: Date.now().toString(), level: level, used: false });
+			const newId = Math.floor(Math.random() * 10000 * Date.now());
+			newSlots.push({ _id: newId.toString(), level: level, used: false });
 		}
 
 		if (!newSlots) {

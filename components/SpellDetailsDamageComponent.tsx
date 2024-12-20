@@ -44,14 +44,15 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	text: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 16,
 		color: "#2b2b2b",
 		marginRight: 5,
 	},
 	boldText: {
-		fontFamily: "NunitoBlack",
-		fontSize: 16,
+		fontFamily: "Inter",
+		fontSize: 18,
+		fontWeight: "900",
 		color: "#2b2b2b",
 		marginRight: 5,
 	},

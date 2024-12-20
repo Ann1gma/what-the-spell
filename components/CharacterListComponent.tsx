@@ -54,7 +54,7 @@ export default CharacterListComponent;
 const styles = StyleSheet.create({
 	text: {
 		fontSize: 16,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 		marginBottom: 5,
 		marginRight: 5,

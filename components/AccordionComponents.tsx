@@ -46,7 +46,7 @@ const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) 
 		<Pressable style={styles.itemContainer} key={item.index} onPress={() => handlePress(item.index)}>
 			<View>
 				<View style={styles.titleContainer}>
-					<Text style={styles.itemTitle}>{item.name}</Text>
+					<Text style={[styles.itemTitle, { maxWidth: "70%" }]}>{item.name}</Text>
 					<Text style={styles.itemText}>{item.level === 0 ? `- cantrip` : `- level ${item.level}`}</Text>
 				</View>
 				<View style={{ flexDirection: "row" }}>
@@ -172,22 +172,24 @@ const styles = StyleSheet.create({
 	},
 	titleContainer: {
 		flexDirection: "row",
-		alignItems: "center",
+		alignItems: "baseline",
 	},
 	itemTitle: {
-		fontFamily: "NunitoBlack",
-		fontSize: 18,
+		fontFamily: "Inter",
+		fontWeight: "900",
+		fontSize: 20,
 		color: "#2b2b2b",
 		marginRight: 5,
-		marginBottom: 5,
+		marginBottom: 10,
 	},
 	itemText: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 16,
 		color: "#2b2b2b",
 	},
 	itemTextBold: {
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		fontSize: 16,
 		color: "#2b2b2b",
 	},
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
 		marginHorizontal: 5,
 	},
 	iconText: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 8,
 		color: "#2b2b2b",
 	},
@@ -212,6 +214,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "flex-end",
 		marginBottom: 5,
+		marginTop: 10,
 	},
 	classContainer: {
 		flexDirection: "row",

@@ -79,8 +79,9 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	text: {
-		fontFamily: "NunitoSemiBold",
+		fontFamily: "Inter",
 		fontSize: 20,
+		fontWeight: "500",
 		color: "#2b2b2b",
 		textAlign: "center",
 		marginTop: 10,

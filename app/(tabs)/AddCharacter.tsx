@@ -341,14 +341,15 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 16,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 		marginBottom: 5,
 		marginTop: 10,
 	},
 	textBold: {
 		fontSize: 18,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#2b2b2b",
 		marginBottom: 10,
 	},
@@ -358,7 +359,8 @@ const styles = StyleSheet.create({
 	},
 	label: {
 		fontSize: 16,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		marginBottom: 5,
 	},
 	input: {
@@ -366,7 +368,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		paddingHorizontal: 15,
 		borderRadius: 5,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 	},
 	inputNumber: {
 		backgroundColor: "#F0E4D1",
@@ -374,7 +376,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		borderRadius: 5,
 		textAlign: "center",
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		width: "20%",
 	},
 	button: {
@@ -388,7 +390,8 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: "#ffff",
 		fontSize: 18,
-		fontFamily: "NunitoSemiBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 	},
 	iconContainer: {
 		position: "absolute",

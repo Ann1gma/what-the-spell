@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 14,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 		marginBottom: 5,
 		marginRight: 12,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		borderRadius: 5,
 		textAlign: "center",
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		width: "35%",
 	},
 });

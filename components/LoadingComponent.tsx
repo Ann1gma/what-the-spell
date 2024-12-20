@@ -33,8 +33,9 @@ const styles = StyleSheet.create({
 		height: 150,
 	},
 	text: {
-		fontFamily: "NunitoBlack",
-		fontSize: 20,
+		fontFamily: "Inter",
+		fontWeight: "900",
+		fontSize: 22,
 		color: "#990000",
 		textAlign: "center",
 	},

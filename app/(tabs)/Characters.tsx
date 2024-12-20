@@ -67,11 +67,11 @@ const Characters = () => {
 					{data && data.length > 0 && <CharacterListComponent data={data} />}
 					{data && data.length <= 0 && (
 						<View style={styles.noCharacterContainer}>
-							<Text style={styles.textBold}>No charachters registrered!</Text>
+							<Text style={styles.textBold}>No characters registrered!</Text>
 							<View style={{ flexDirection: "row", alignItems: "baseline" }}>
 								<Text style={styles.text}>Why not add a</Text>
 								<TouchableOpacity activeOpacity={0.8} onPress={handleAddCharacter}>
-									<Text style={[styles.textBold, { color: "#990000" }]}>character</Text>
+									<Text style={styles.linkText}>character</Text>
 								</TouchableOpacity>
 								<Text style={styles.text}>?</Text>
 							</View>
@@ -117,17 +117,27 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 16,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 		marginBottom: 5,
 		marginRight: 5,
 	},
 	textBold: {
 		fontSize: 18,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#2b2b2b",
 		marginBottom: 5,
 		marginRight: 5,
+	},
+	linkText: {
+		fontSize: 18,
+		fontFamily: "Inter",
+		fontWeight: "700",
+		color: "#990000",
+		marginBottom: 5,
+		marginRight: 5,
+		textDecorationLine: "underline",
 	},
 	iconContainer: {
 		position: "absolute",

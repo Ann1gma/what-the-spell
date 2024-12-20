@@ -76,19 +76,21 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 18,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 		marginBottom: 10,
 	},
 	textBold: {
 		fontSize: 18,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#2b2b2b",
 		marginBottom: 10,
 	},
 	linkText: {
 		fontSize: 20,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#990000",
 		marginBottom: 10,
 		textDecorationLine: "underline",
@@ -100,7 +102,8 @@ const styles = StyleSheet.create({
 	},
 	label: {
 		fontSize: 16,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		marginBottom: 5,
 	},
 	input: {
@@ -109,7 +112,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 		borderRadius: 5,
 		marginBottom: 15,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 	},
 	button: {
 		backgroundColor: "#990000",
@@ -121,6 +124,7 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: "#fff",
 		fontSize: 18,
-		fontFamily: "NunitoSemiBold",
+		fontFamily: "Inter",
+		fontWeight: "500",
 	},
 });

@@ -79,7 +79,8 @@ const styles = StyleSheet.create({
 	},
 	selectedTextStyle: {
 		fontSize: 16,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#990000",
 	},
 	optionsContainer: {
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
 	},
 	optionText: {
 		fontSize: 16,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 	},
 });

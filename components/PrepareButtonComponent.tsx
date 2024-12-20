@@ -50,12 +50,12 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 	},
 	prepareText: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 12,
 		color: "#ffffff",
 	},
 	preparedText: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 12,
 		color: "#E0E0E0",
 	},

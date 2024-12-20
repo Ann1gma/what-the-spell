@@ -42,14 +42,15 @@ const styles = StyleSheet.create({
 		borderRadius: 15,
 	},
 	textBold: {
-		fontFamily: "NunitoBlack",
-		fontSize: 20,
+		fontFamily: "Inter",
+		fontSize: 26,
+		fontWeight: "900",
 		color: "#990000",
 		textAlign: "center",
 		marginTop: 40,
 	},
 	text: {
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		fontSize: 16,
 		color: "#2b2b2b",
 		textAlign: "center",

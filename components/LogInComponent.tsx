@@ -5,8 +5,15 @@ import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import ErrorComponent from "./ErrorComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/app/store";
+import { changeIsError } from "@/features/error/errorSlice";
 
 const LogInComponent = () => {
+	const errorState = useSelector((state: RootState) => state.error.isError);
+
+	const dispatch = useDispatch();
+
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState(false);
 
@@ -27,13 +34,14 @@ const LogInComponent = () => {
 			await login(data.email, data.password);
 		} catch (err) {
 			setError(true);
+			dispatch(changeIsError(true));
 		}
 		setSubmitting(false);
 	};
 
 	return (
 		<View style={styles.formWrapper}>
-			{error && <ErrorComponent />}
+			{errorState && <ErrorComponent />}
 			<View style={styles.subtitleWrapper}>
 				<Text style={[styles.text, { textAlign: "center" }]}>Please log in to access your</Text>
 				<View style={{ flexDirection: "row", justifyContent: "center" }}>
@@ -129,6 +137,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginHorizontal: 20,
 		padding: 20,
+		minHeight: "80%",
 	},
 	formWrapper: {
 		justifyContent: "center",
@@ -142,19 +151,21 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 18,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 		color: "#2b2b2b",
 		marginBottom: 10,
 	},
 	textBold: {
 		fontSize: 18,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#2b2b2b",
 		marginBottom: 10,
 	},
 	linkText: {
 		fontSize: 20,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		color: "#990000",
 		marginBottom: 10,
 		textDecorationLine: "underline",
@@ -166,7 +177,8 @@ const styles = StyleSheet.create({
 	},
 	label: {
 		fontSize: 16,
-		fontFamily: "NunitoBold",
+		fontFamily: "Inter",
+		fontWeight: "700",
 		marginBottom: 5,
 	},
 	input: {
@@ -175,7 +187,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 		borderRadius: 5,
 		marginBottom: 15,
-		fontFamily: "NunitoRegular",
+		fontFamily: "Inter",
 	},
 	button: {
 		backgroundColor: "#990000",
@@ -187,6 +199,7 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: "#fff",
 		fontSize: 18,
-		fontFamily: "NunitoSemiBold",
+		fontFamily: "Inter",
+		fontWeight: "500",
 	},
 });
