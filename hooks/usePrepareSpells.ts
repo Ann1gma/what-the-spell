@@ -2,14 +2,20 @@ import { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
 import { Character, CharacterSpell } from "@/types/Character.types";
+import { useDispatch } from "react-redux";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { FirebaseError } from "firebase/app";
 
 const usePrepareSpells = () => {
-	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(false);
+
+	const dispatch = useDispatch();
 
 	//@CodeScene(disable:"Complex Method")
 	const prepareSpell = async (spellData: CharacterSpell, character: Character) => {
-		setError(false);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
+
 		setLoading(true);
 
 		const docRef = doc(characterCol, character._id);
@@ -49,14 +55,24 @@ const usePrepareSpells = () => {
 				await updateDoc(docRef, { prepared_spells: updatedSpells });
 			}
 		} catch (err) {
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Failed when trying to prepare spells"));
+			dispatch(changeIsError(true));
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	const unPrepareSpell = async (spellId: string, character: Character) => {
-		setError(false);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 		setLoading(true);
 
 		const docRef = doc(characterCol, character._id);
@@ -70,7 +86,16 @@ const usePrepareSpells = () => {
 			try {
 				await updateDoc(docRef, { prepared_spells: updatedSpells });
 			} catch (err) {
-				setError(true);
+				if (err instanceof FirebaseError) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				} else if (err instanceof Error) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				}
+
+				dispatch(changeErrorMessage("Failed when trying to remove a prepared spells"));
+				dispatch(changeIsError(true));
 			} finally {
 				setLoading(false);
 			}
@@ -78,7 +103,6 @@ const usePrepareSpells = () => {
 	};
 
 	return {
-		error,
 		loading,
 		prepareSpell,
 		unPrepareSpell,

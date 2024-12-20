@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { changeIsError } from "@/features/error/errorSlice";
+import { RootState } from "@/app/store";
 
 const { width, height } = Dimensions.get("window");
 
 const ErrorComponent = () => {
-	const errorMessage = "An error occurred.";
+	const errorMessage = useSelector((state: RootState) => state.error.errorMessage);
 
 	const dispatch = useDispatch();
 
@@ -18,7 +19,7 @@ const ErrorComponent = () => {
 				</Pressable>
 
 				<Text style={styles.textBold}>ERROR</Text>
-				<Text style={styles.text}>{errorMessage}</Text>
+				<Text style={styles.text}>{errorMessage ? errorMessage : "Unknown Error!"}</Text>
 			</View>
 		</View>
 	);

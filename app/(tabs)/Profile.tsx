@@ -6,12 +6,16 @@ import useGetCharacters from "@/hooks/useGetCharacters";
 import LogOutComponent from "@/components/LogOutComponent";
 import LogInComponent from "@/components/LogInComponent";
 import LoadingComponent from "@/components/LoadingComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 //@CodeScene(disable:"Complex Method")
 //@CodeScene(disable:"Large Method")
 const Profile = () => {
 	const { currentUser, isLoading } = useAuth();
 	const { data } = useGetCharacters(currentUser?.uid);
+
+	const isError = useSelector((state: RootState) => state.error.isError);
 
 	if (isLoading) {
 		return <LoadingComponent />;
@@ -25,6 +29,7 @@ const Profile = () => {
 						<View style={styles.titleContainer}>
 							<Text style={styles.title}>Profile</Text>
 						</View>
+						{isError && <ErrorComponent />}
 
 						{currentUser && <LogOutComponent characterData={data} userEmail={currentUser.email} />}
 						{!currentUser && <LogInComponent />}

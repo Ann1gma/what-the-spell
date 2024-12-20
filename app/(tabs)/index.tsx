@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { FlatList, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useRef, useState } from "react";
+import { ScrollView, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AccordionComponent from "@/components/AccordionComponents";
 import { Link } from "expo-router";
@@ -11,12 +10,15 @@ import ErrorComponent from "@/components/ErrorComponent";
 import useGetSpellOverview from "@/hooks/useGetSpellOverview";
 import AddSpellComponent from "@/components/AddSpellComponent";
 
-//@CodeScene(disable:"Complex Method")
 const Index = () => {
 	const showAddSpells = useSelector((state: RootState) => state.addSpell.showAddSpells);
 	const filtrationOption = useSelector((state: RootState) => state.filter.selection);
 
+	const isError = useSelector((state: RootState) => state.error.isError);
+
 	const [subTitle, setSubtitle] = useState(filtrationOption);
+
+	const scrollViewRef = useRef<ScrollView>(null);
 
 	const {
 		cantripsData,
@@ -32,7 +34,6 @@ const Index = () => {
 		fetchAllSpells,
 		getAllSpellsByClass,
 		loading: loadingSpells,
-		error: spellError,
 	} = useGetSpellOverview();
 
 	useEffect(() => {
@@ -43,6 +44,29 @@ const Index = () => {
 			fetchAllSpells();
 		}
 	}, [filtrationOption]);
+
+	const scrollToSection = (sectionIndex: number) => {
+		const scrollPosition = sectionIndex * 30;
+
+		scrollViewRef.current &&
+			scrollViewRef.current.scrollTo({
+				y: scrollPosition,
+				animated: true,
+			});
+	};
+
+	const spellData = [
+		{ title: "Cantrips", data: cantripsData },
+		{ title: "Level 1", data: lvlOneData },
+		{ title: "Level 2", data: lvlTwoData },
+		{ title: "Level 3", data: lvlThreeData },
+		{ title: "Level 4", data: lvlFourData },
+		{ title: "Level 5", data: lvlFiveData },
+		{ title: "Level 6", data: lvlSixData },
+		{ title: "Level 7", data: lvlSevenData },
+		{ title: "Level 8", data: lvlEightData },
+		{ title: "Level 9", data: lvlNineData },
+	];
 
 	return (
 		<View style={styles.container}>
@@ -61,40 +85,23 @@ const Index = () => {
 					</View>
 				</View>
 
-				{spellError && <ErrorComponent />}
+				{isError && <ErrorComponent />}
 				{loadingSpells && <LoadingComponent />}
 				{showAddSpells && <AddSpellComponent />}
 
-				<SafeAreaView style={styles.scrollContainer}>
-					<View style={styles.accordionContainer}>
-						<FlatList
-							data={[
-								{ title: "Cantrips", data: cantripsData },
-								{ title: "Level 1", data: lvlOneData },
-								{ title: "Level 2", data: lvlTwoData },
-								{ title: "Level 3", data: lvlThreeData },
-								{ title: "Level 4", data: lvlFourData },
-								{ title: "Level 5", data: lvlFiveData },
-								{ title: "Level 6", data: lvlSixData },
-								{ title: "Level 7", data: lvlSevenData },
-								{ title: "Level 8", data: lvlEightData },
-								{ title: "Level 9", data: lvlNineData },
-							]}
-							renderItem={({ item }) => item.data && <AccordionComponent title={item.title} data={item.data} />}
-							keyExtractor={(item) => item.title}
-							initialNumToRender={9}
-							maxToRenderPerBatch={9}
-							windowSize={2}
-							style={{ height: "100%" }}
-							ListFooterComponent={
-								<View style={styles.footerContainer}>
-									<Text style={styles.footerText}>All spell data is from</Text>
-									<Text style={styles.footerTextItalic}>D&D 5e SRD API</Text>
-								</View>
-							}
-						/>
+				<ScrollView ref={scrollViewRef} style={styles.scrollContainer}>
+					{spellData &&
+						spellData.map((item, index) => (
+							<View key={item.title} style={styles.accordionContainer}>
+								<AccordionComponent title={item.title} data={item.data} onHeaderPress={() => scrollToSection(index)} />
+							</View>
+						))}
+
+					<View style={styles.footerContainer}>
+						<Text style={styles.footerText}>All spell data is from</Text>
+						<Text style={styles.footerTextItalic}>D&D 5e SRD API</Text>
 					</View>
-				</SafeAreaView>
+				</ScrollView>
 			</ImageBackground>
 		</View>
 	);
@@ -141,7 +148,6 @@ const styles = StyleSheet.create({
 	},
 	accordionContainer: {
 		marginHorizontal: 15,
-		marginTop: 15,
 	},
 	footerContainer: {
 		flexDirection: "row",

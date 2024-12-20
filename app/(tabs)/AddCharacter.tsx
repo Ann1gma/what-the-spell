@@ -26,6 +26,8 @@ import { useRouter } from "expo-router";
 import SpellslotInputComponent from "@/components/SpellslotInputComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 //@CodeScene(disable:"Complex Method")
 //@CodeScene(disable:"Large Method")
@@ -37,8 +39,10 @@ const AddCharacter = () => {
 	const [submitError, setSubmitError] = useState<string | null>(null);
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
-	const { options, loading, error } = useGetAllClasses([]);
+	const { options, loading } = useGetAllClasses([]);
 	const { spellslots, updateSpellslots, resetSepllslots } = useCreateSpellslots();
+
+	const isError = useSelector((state: RootState) => state.error.isError);
 
 	const router = useRouter();
 
@@ -95,7 +99,7 @@ const AddCharacter = () => {
 			<View style={styles.container}>
 				<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 					{loading && <LoadingComponent />}
-					{error && <ErrorComponent />}
+					{isError && <ErrorComponent />}
 					<View style={styles.titleContainer}>
 						<Text style={styles.title}>Character creation</Text>
 					</View>
@@ -125,7 +129,7 @@ const AddCharacter = () => {
 						</View>
 
 						{loading && <LoadingComponent />}
-						{error && <ErrorComponent />}
+						{isError && <ErrorComponent />}
 
 						<ScrollView>
 							<View style={styles.formWrapper}>

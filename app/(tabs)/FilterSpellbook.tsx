@@ -3,18 +3,21 @@ import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "
 import Feather from "@expo/vector-icons/Feather";
 import DropdownComponent from "@/components/DropdownComponent";
 import { ClassObject } from "@/types/DnD5e_API.types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeFilter } from "@/features/filtration/filtrationSlice";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import { RootState } from "../store";
 
 const FilterSpellbook = () => {
 	const dispatch = useDispatch();
 
+	const isError = useSelector((state: RootState) => state.error.isError);
+
 	const router = useRouter();
 
-	const { options, loading, error } = useGetAllClasses([{ index: "none", name: "All spells" }]);
+	const { options, loading } = useGetAllClasses([{ index: "none", name: "All spells" }]);
 
 	const onFiltration = (item: ClassObject) => {
 		dispatch(changeFilter(item));
@@ -35,7 +38,7 @@ const FilterSpellbook = () => {
 					</View>
 				</View>
 
-				{error && <ErrorComponent />}
+				{isError && <ErrorComponent />}
 				{loading && <LoadingComponent />}
 
 				<ScrollView>

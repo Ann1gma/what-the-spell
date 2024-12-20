@@ -2,17 +2,23 @@ import { useCallback, useEffect, useState } from "react";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { characterCol } from "../services/firebaseConfig";
 import { Character } from "../types/Character.types";
+import { useDispatch } from "react-redux";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { FirebaseError } from "firebase/app";
 
 const useGetCharacter = (characterId: string | undefined) => {
 	const [data, setData] = useState<Character | null>(null);
 	const [characterDoc, setCharacterDoc] = useState<Character | null>(null);
-	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(true);
+
+	const dispatch = useDispatch();
 
 	const getCharacterDoc = useCallback(
 		async (characterId: string) => {
 			setLoading(true);
-			setError(false);
+
+			dispatch(changeErrorMessage(""));
+			dispatch(changeIsError(false));
 
 			try {
 				const docRef = doc(characterCol, characterId);
@@ -20,7 +26,8 @@ const useGetCharacter = (characterId: string | undefined) => {
 
 				if (!snapshot.exists()) {
 					setCharacterDoc(null);
-					setError(true);
+					dispatch(changeErrorMessage("Could not find the dokument"));
+					dispatch(changeIsError(true));
 				} else {
 					const data = {
 						...snapshot.data(),
@@ -30,8 +37,16 @@ const useGetCharacter = (characterId: string | undefined) => {
 					setCharacterDoc(data);
 				}
 			} catch (err) {
-				console.error("Error fetching character:", err);
-				setError(true);
+				if (err instanceof FirebaseError) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				} else if (err instanceof Error) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				}
+
+				dispatch(changeErrorMessage("Failed to get character"));
+				dispatch(changeIsError(true));
 			} finally {
 				setLoading(false);
 			}
@@ -45,7 +60,8 @@ const useGetCharacter = (characterId: string | undefined) => {
 		const unsubscribe = onSnapshot(docRef, (snapshot) => {
 			if (!snapshot.exists()) {
 				setData(null);
-				setError(true);
+				dispatch(changeErrorMessage("Could not find the dokument"));
+				dispatch(changeIsError(true));
 				setLoading(false);
 				return;
 			}
@@ -64,7 +80,6 @@ const useGetCharacter = (characterId: string | undefined) => {
 
 	return {
 		data,
-		error,
 		loading,
 		characterDoc,
 		getCharacterDoc,

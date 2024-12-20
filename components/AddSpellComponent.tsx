@@ -14,7 +14,8 @@ import useAddAndRemoveSpell from "@/hooks/useAddAndRemoveSpell";
 import LoadingComponent from "./LoadingComponent";
 import { doc, getDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
-import ErrorComponent from "./ErrorComponent";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { FirebaseError } from "firebase/app";
 
 const { width, height } = Dimensions.get("window");
 
@@ -22,9 +23,7 @@ const { width, height } = Dimensions.get("window");
 const AddSpellComponent = () => {
 	const { currentUser } = useAuth();
 	const { data } = useGetCharacters(currentUser?.uid);
-	const { addSpell, error: spellError, loading: spellLoading } = useAddAndRemoveSpell();
-
-	const [error, setError] = useState(false);
+	const { addSpell, loading: spellLoading } = useAddAndRemoveSpell();
 	const [loading, setLoading] = useState(false);
 
 	const router = useRouter();
@@ -36,14 +35,16 @@ const AddSpellComponent = () => {
 
 	const getCharacterDoc = async (characterId: string) => {
 		setLoading(true);
-		setError(false);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 
 		try {
 			const docRef = doc(characterCol, characterId);
 			const snapshot = await getDoc(docRef);
 
 			if (!snapshot.exists()) {
-				setError(true);
+				dispatch(changeErrorMessage("Failed to get character"));
+				dispatch(changeIsError(true));
 			} else {
 				const data = {
 					...snapshot.data(),
@@ -53,8 +54,16 @@ const AddSpellComponent = () => {
 				return data;
 			}
 		} catch (err) {
-			console.error("Error fetching character:", err);
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Failed to get character"));
+			dispatch(changeIsError(true));
 		} finally {
 			setLoading(false);
 		}
@@ -117,7 +126,6 @@ const AddSpellComponent = () => {
 	return (
 		<View style={styles.container}>
 			{loading || (spellLoading && <LoadingComponent />)}
-			{error || (spellError && <ErrorComponent />)}
 			<View style={styles.addContainer}>
 				<Pressable style={styles.iconContainer} onPress={() => dispatch(setShowAddSpells(false))}>
 					<AntDesign name="close" size={24} color="#990000" />

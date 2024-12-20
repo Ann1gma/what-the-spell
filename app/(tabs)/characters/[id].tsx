@@ -11,12 +11,16 @@ import Entypo from "@expo/vector-icons/Entypo";
 import CharacterSpellComponent from "@/components/CharacterSpellComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
 
 //@CodeScene(disable:"Complex Method") //@CodeScene(disable:"Large Method")
 const CharacterProfile = () => {
 	const { id } = useLocalSearchParams();
-	const { data: character, loading, error } = useGetCharacter(id.toString());
+	const { data: character, loading } = useGetCharacter(id.toString());
 	const { currentUser, isLoading } = useAuth();
+
+	const isError = useSelector((state: RootState) => state.error.isError);
 
 	const router = useRouter();
 
@@ -51,7 +55,7 @@ const CharacterProfile = () => {
 		<View style={styles.container}>
 			<ImageBackground source={require("../../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				{loading && <LoadingComponent />}
-				{error && <ErrorComponent />}
+				{isError && <ErrorComponent />}
 
 				<View style={styles.titleContainer}>
 					<View>

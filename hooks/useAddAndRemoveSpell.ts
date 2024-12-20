@@ -3,17 +3,22 @@ import { doc, updateDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
 import useGetSpellByIndex from "./useGetSpellByIndex";
 import { Character, CharacterSpell } from "@/types/Character.types";
+import { useDispatch } from "react-redux";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { FirebaseError } from "firebase/app";
 
 const useAddAndRemoveSpell = () => {
 	const { getSpell } = useGetSpellByIndex();
-
-	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(false);
+
+	const dispatch = useDispatch();
 
 	//@CodeScene(disable:"Complex Method")
 	const addSpell = async (spellIndex: string, character: Character) => {
-		setError(false);
 		setLoading(true);
+
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 
 		const docRef = doc(characterCol, character._id);
 		const spellData = await getSpell(spellIndex);
@@ -50,18 +55,26 @@ const useAddAndRemoveSpell = () => {
 			}
 
 			await updateDoc(docRef, { known_spells: updatedSpells });
-			setError(false);
 		} catch (err) {
-			console.error("Failed to add spell:", err);
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Failed to add spell"));
+			dispatch(changeIsError(true));
 		} finally {
 			setLoading(false);
 		}
 	};
 
+	//@CodeScene(disable:"Complex Method") @CodeScene(disable:"Bumpy Road Ahead")
 	const deleteSpell = async (spellId: string, character: Character) => {
-		setError(false);
-		setLoading(true);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 
 		const docRef = doc(characterCol, character._id);
 
@@ -74,7 +87,16 @@ const useAddAndRemoveSpell = () => {
 			try {
 				await updateDoc(docRef, { known_spells: updatedSpells });
 			} catch (err) {
-				setError(true);
+				if (err instanceof FirebaseError) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				} else if (err instanceof Error) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				}
+
+				dispatch(changeErrorMessage("Failed to remove spell"));
+				dispatch(changeIsError(true));
 			}
 		}
 
@@ -87,7 +109,16 @@ const useAddAndRemoveSpell = () => {
 			try {
 				await updateDoc(docRef, { prepared_spells: updatedSpells });
 			} catch (err) {
-				setError(true);
+				if (err instanceof FirebaseError) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				} else if (err instanceof Error) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				}
+
+				dispatch(changeErrorMessage("Failed to remove spellslots"));
+				dispatch(changeIsError(true));
 			}
 		}
 
@@ -95,7 +126,6 @@ const useAddAndRemoveSpell = () => {
 	};
 
 	return {
-		error,
 		loading,
 		addSpell,
 		deleteSpell,

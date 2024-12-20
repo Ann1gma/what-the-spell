@@ -1,13 +1,20 @@
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 import { getAllClasses } from "@/services/DnD5e_API";
 import { ClassObject } from "@/types/DnD5e_API.types";
+import { FirebaseError } from "firebase/app";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 const useGetAllClasses = (initialOptions: ClassObject[]) => {
-	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [options, setOptions] = useState<ClassObject[]>(initialOptions);
 
+	const dispatch = useDispatch();
+
 	const getClasses = async () => {
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
+
 		try {
 			const data = await getAllClasses();
 
@@ -20,7 +27,16 @@ const useGetAllClasses = (initialOptions: ClassObject[]) => {
 				setOptions(data);
 			}
 		} catch (err) {
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Failed to get classes"));
+			dispatch(changeIsError(true));
 		} finally {
 			setLoading(false);
 		}
@@ -32,7 +48,6 @@ const useGetAllClasses = (initialOptions: ClassObject[]) => {
 
 	return {
 		options,
-		error,
 		loading,
 	};
 };

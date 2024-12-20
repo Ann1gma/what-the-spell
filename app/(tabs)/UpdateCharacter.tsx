@@ -28,13 +28,15 @@ import ErrorComponent from "@/components/ErrorComponent";
 import useGetCharacter from "@/hooks/useGetCharacter";
 import UpdateSpellslotInputComponent from "@/components/UpdateSpellslotInputComponent";
 import ConfirmationComponent from "@/components/ConfirmationComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 //@CodeScene(disable:"Complex Method")
 //@CodeScene(disable:"Large Method")
 const UpdateCharacter = () => {
 	const { id } = useLocalSearchParams();
 
-	const { getCharacterDoc, characterDoc, error: characterError, loading: characterLoading } = useGetCharacter(id.toString());
+	const { getCharacterDoc, characterDoc, loading: characterLoading } = useGetCharacter(id.toString());
 
 	const { currentUser } = useAuth();
 	const [className, setClassName] = useState<ClassObject | null>(null);
@@ -46,9 +48,11 @@ const UpdateCharacter = () => {
 
 	const [openConfirmation, setOpenConfirmation] = useState(false);
 
-	const { options, loading, error } = useGetAllClasses([]);
+	const { options, loading } = useGetAllClasses([]);
 
 	const { spellslots, updateSpellslots, resetSepllslots } = useCreateSpellslots();
+
+	const isError = useSelector((state: RootState) => state.error.isError);
 
 	const router = useRouter();
 
@@ -143,7 +147,7 @@ const UpdateCharacter = () => {
 			<View style={styles.container}>
 				<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 					{loading && <LoadingComponent />}
-					{error && <ErrorComponent />}
+					{isError && <ErrorComponent />}
 					<View style={styles.titleContainer}>
 						<Text style={styles.title}>Edit character</Text>
 					</View>
@@ -178,7 +182,7 @@ const UpdateCharacter = () => {
 						</View>
 
 						{loading && <LoadingComponent />}
-						{error && <ErrorComponent />}
+						{isError && <ErrorComponent />}
 
 						<ScrollView>
 							<View style={styles.formWrapper}>

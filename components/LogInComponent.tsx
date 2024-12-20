@@ -7,15 +7,16 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import ErrorComponent from "./ErrorComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store";
-import { changeIsError } from "@/features/error/errorSlice";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { FirebaseError } from "firebase/app";
 
+//@CodeScene(disable:"Complex Method")
 const LogInComponent = () => {
 	const errorState = useSelector((state: RootState) => state.error.isError);
 
 	const dispatch = useDispatch();
 
 	const [submitting, setSubmitting] = useState(false);
-	const [error, setError] = useState(false);
 
 	const router = useRouter();
 
@@ -29,11 +30,20 @@ const LogInComponent = () => {
 
 	const onLogin: SubmitHandler<LoginData> = async (data) => {
 		setSubmitting(true);
-		setError(false);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 		try {
 			await login(data.email, data.password);
 		} catch (err) {
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Error on login"));
 			dispatch(changeIsError(true));
 		}
 		setSubmitting(false);

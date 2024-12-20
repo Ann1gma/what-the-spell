@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, Pressable, SafeAreaView, FlatList } from "react-native";
+import { View, Text, StyleSheet, Pressable, SafeAreaView, ScrollView } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
-import React, { memo, useState } from "react";
+import React, { memo, useRef, useState } from "react";
 import { SpellsOverview } from "@/types/DnD5e_API.types";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -13,13 +13,16 @@ import { setShowAddSpells, setSpellToAdd } from "@/features/addSpell/addSpellSli
 
 interface AccordionComponentProps {
 	title: string;
-	data: SpellsOverview[];
+	data: SpellsOverview[] | null;
+	onHeaderPress: () => void;
 }
 
-//@CodeScene(disable:"Complex Method")
-const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) => {
+//@CodeScene(disable:"Complex Method") @CodeScene(disable:"Large Method")
+const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data, onHeaderPress }) => {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
+
+	const ref = useRef<View>(null);
 
 	const { currentUser } = useAuth();
 
@@ -27,6 +30,7 @@ const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) 
 
 	const handleOpen = () => {
 		setOpen(!open);
+		onHeaderPress();
 	};
 
 	const handlePress = (id: string) => {
@@ -41,89 +45,9 @@ const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) 
 		dispatch(setShowAddSpells(true));
 	};
 
-	//@CodeScene(disable:"Complex Method")
-	const renderItem = ({ item }: { item: SpellsOverview }) => (
-		<Pressable style={styles.itemContainer} key={item.index} onPress={() => handlePress(item.index)}>
-			<View>
-				<View style={styles.titleContainer}>
-					<Text style={[styles.itemTitle, { maxWidth: "70%" }]}>{item.name}</Text>
-					<Text style={styles.itemText}>{item.level === 0 ? `- cantrip` : `- level ${item.level}`}</Text>
-				</View>
-				<View style={{ flexDirection: "row" }}>
-					<Text style={styles.itemTextBold}>School of magic:</Text>
-					<Text style={[styles.itemText, { marginLeft: 5 }]}> {item.school.name}</Text>
-				</View>
-				{item.classes && item.classes.length > 0 && (
-					<View style={styles.classContainer}>
-						<Text style={styles.itemTextBold}>Classes:</Text>
-						{item.classes.map((classItem) => (
-							<Text key={classItem.name} style={[styles.itemText, { marginLeft: 5 }]}>
-								{classItem.name},
-							</Text>
-						))}
-					</View>
-				)}
-			</View>
-			<View style={styles.iconWrapper}>
-				<View>
-					{currentUser && (
-						<Pressable style={{ marginLeft: 10 }} onPress={() => onAddSpell(item.index, item.level)}>
-							<MaterialCommunityIcons name="book-plus" size={26} color="#990000" />
-						</Pressable>
-					)}
-				</View>
-
-				<View style={styles.iconContainer}>
-					{!item.heal_at_slot_level && !item.damage && !item.attack_type && (
-						<View style={styles.iconTextContainer}>
-							<Ionicons name="sparkles" size={24} color="#2b2b2b" style={styles.icons} />
-							<Text>utility</Text>
-						</View>
-					)}
-					{item.heal_at_slot_level && (
-						<View style={styles.iconTextContainer}>
-							<MaterialIcons name="healing" size={24} color="#2b2b2b" style={styles.icons} />
-							<Text>healing</Text>
-						</View>
-					)}
-					{item.damage && (
-						<View style={styles.iconTextContainer}>
-							<MaterialCommunityIcons name="sword" size={24} color="#2b2b2b" style={styles.icons} />
-							<Text>damage</Text>
-						</View>
-					)}
-					{item.attack_type === "RANGED" && (
-						<View style={styles.iconTextContainer}>
-							<MaterialCommunityIcons name="bow-arrow" size={24} color="#2b2b2b" style={styles.icons} />
-							<Text>ranged</Text>
-						</View>
-					)}
-					{item.attack_type === "MELEE" && (
-						<View style={styles.iconTextContainer}>
-							<MaterialCommunityIcons name="sword-cross" size={24} color="#2b2b2b" style={styles.icons} />
-							<Text>melee</Text>
-						</View>
-					)}
-					{item.ritual && (
-						<View style={styles.iconTextContainer}>
-							<MaterialCommunityIcons name="pentagram" size={24} color="#2b2b2b" style={styles.icons} />
-							<Text>ritual</Text>
-						</View>
-					)}
-					{item.concentration && (
-						<View style={styles.iconTextContainer}>
-							<FontAwesome name="eye" size={24} color="#2b2b2b" style={styles.icons} />
-							<Text>conc.</Text>
-						</View>
-					)}
-				</View>
-			</View>
-		</Pressable>
-	);
-
 	return (
 		<View>
-			<View>
+			<View ref={ref}>
 				<Pressable style={styles.headerContainer} onPress={handleOpen}>
 					<Text style={styles.header}>{title}</Text>
 					<Entypo name={!open ? "chevron-down" : "chevron-up"} size={24} color={!open ? "#990000" : "#2b2b2b"} />
@@ -131,14 +55,87 @@ const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) 
 			</View>
 			{open && (
 				<SafeAreaView>
-					<FlatList
-						data={data}
-						renderItem={renderItem}
-						keyExtractor={(item) => item.index}
-						initialNumToRender={5}
-						maxToRenderPerBatch={5}
-						windowSize={3}
-					/>
+					<ScrollView>
+						{data &&
+							data.map((item) => (
+								<Pressable style={styles.itemContainer} key={item.index} onPress={() => handlePress(item.index)}>
+									<View>
+										<View style={styles.titleContainer}>
+											<Text style={[styles.itemTitle, { maxWidth: "70%" }]}>{item.name}</Text>
+											<Text style={styles.itemText}>{item.level === 0 ? `- cantrip` : `- level ${item.level}`}</Text>
+										</View>
+										<View style={{ flexDirection: "row" }}>
+											<Text style={styles.itemTextBold}>School of magic:</Text>
+											<Text style={[styles.itemText, { marginLeft: 5 }]}> {item.school.name}</Text>
+										</View>
+										{item.classes && item.classes.length > 0 && (
+											<View style={styles.classContainer}>
+												<Text style={styles.itemTextBold}>Classes:</Text>
+												{item.classes.map((classItem) => (
+													<Text key={classItem.name} style={[styles.itemText, { marginLeft: 5 }]}>
+														{classItem.name},
+													</Text>
+												))}
+											</View>
+										)}
+									</View>
+									<View style={styles.iconWrapper}>
+										<View>
+											{currentUser && (
+												<Pressable style={{ marginLeft: 10 }} onPress={() => onAddSpell(item.index, item.level)}>
+													<MaterialCommunityIcons name="book-plus" size={26} color="#990000" />
+												</Pressable>
+											)}
+										</View>
+
+										<View style={styles.iconContainer}>
+											{!item.heal_at_slot_level && !item.damage && !item.attack_type && (
+												<View style={styles.iconTextContainer}>
+													<Ionicons name="sparkles" size={24} color="#2b2b2b" style={styles.icons} />
+													<Text>utility</Text>
+												</View>
+											)}
+											{item.heal_at_slot_level && (
+												<View style={styles.iconTextContainer}>
+													<MaterialIcons name="healing" size={24} color="#2b2b2b" style={styles.icons} />
+													<Text>healing</Text>
+												</View>
+											)}
+											{item.damage && (
+												<View style={styles.iconTextContainer}>
+													<MaterialCommunityIcons name="sword" size={24} color="#2b2b2b" style={styles.icons} />
+													<Text>damage</Text>
+												</View>
+											)}
+											{item.attack_type === "RANGED" && (
+												<View style={styles.iconTextContainer}>
+													<MaterialCommunityIcons name="bow-arrow" size={24} color="#2b2b2b" style={styles.icons} />
+													<Text>ranged</Text>
+												</View>
+											)}
+											{item.attack_type === "MELEE" && (
+												<View style={styles.iconTextContainer}>
+													<MaterialCommunityIcons name="sword-cross" size={24} color="#2b2b2b" style={styles.icons} />
+													<Text>melee</Text>
+												</View>
+											)}
+											{item.ritual && (
+												<View style={styles.iconTextContainer}>
+													<MaterialCommunityIcons name="pentagram" size={24} color="#2b2b2b" style={styles.icons} />
+													<Text>ritual</Text>
+												</View>
+											)}
+											{item.concentration && (
+												<View style={styles.iconTextContainer}>
+													<FontAwesome name="eye" size={24} color="#2b2b2b" style={styles.icons} />
+													<Text>conc.</Text>
+												</View>
+											)}
+										</View>
+									</View>
+								</Pressable>
+							))}
+					</ScrollView>
 				</SafeAreaView>
 			)}
 		</View>

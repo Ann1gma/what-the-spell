@@ -10,27 +10,28 @@ import { Character, CharacterSpell } from "@/types/Character.types";
 import usePrepareSpells from "@/hooks/usePrepareSpells";
 import PrepareButtonComponent from "./PrepareButtonComponent";
 import useAddAndRemoveSpell from "@/hooks/useAddAndRemoveSpell";
-import ErrorComponent from "./ErrorComponent";
 import LoadingComponent from "./LoadingComponent";
 
 interface CharacterAccordionComponentProps {
 	title: string;
 	data: CharacterSpell[];
 	character: Character;
+	onHeaderPress: () => void;
 }
 
 //@CodeScene(disable:"Complex Method")
-const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = ({ title, data, character }) => {
+const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = ({ title, data, character, onHeaderPress }) => {
 	const [open, setOpen] = useState(false);
 
 	const router = useRouter();
 
-	const { prepareSpell, error: preppError, loading: preppLoading } = usePrepareSpells();
+	const { prepareSpell, loading: preppLoading } = usePrepareSpells();
 
-	const { deleteSpell, error: deleteError, loading: deleteLoading } = useAddAndRemoveSpell();
+	const { deleteSpell, loading: deleteLoading } = useAddAndRemoveSpell();
 
 	const handleOpen = () => {
 		setOpen(!open);
+		onHeaderPress();
 	};
 
 	const handlePress = (id: string) => {
@@ -50,7 +51,6 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 
 	return (
 		<View>
-			{deleteError || (preppError && <ErrorComponent />)}
 			{deleteLoading || (preppLoading && <LoadingComponent />)}
 			<View>
 				<Pressable style={styles.headerContainer} onPress={handleOpen}>

@@ -2,21 +2,27 @@ import { doc, updateDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
 import useGetCharacter from "./useGetCharacter";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { FirebaseError } from "firebase/app";
 
 const useSpellslots = (characterId: string) => {
 	const { data: character } = useGetCharacter(characterId.toString());
-	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(true);
+
+	const dispatch = useDispatch();
 
 	const useSpellslotsFunc = async (spellslotId: string, newState: boolean) => {
 		if (!character || !character.spellslots) {
 			return;
 		}
 
-		const updatedSpellslots = character.spellslots.map((slot) => {
-			setError(false);
-			setLoading(true);
+		setLoading(true);
 
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
+
+		const updatedSpellslots = character.spellslots.map((slot) => {
 			if (slot._id === spellslotId) {
 				return { ...slot, used: newState };
 			}
@@ -28,7 +34,16 @@ const useSpellslots = (characterId: string) => {
 		try {
 			await updateDoc(docRef, { ...character, spellslots: updatedSpellslots });
 		} catch (err) {
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Failed when trying to use spell slot"));
+			dispatch(changeIsError(true));
 		}
 
 		setLoading(false);
@@ -44,14 +59,22 @@ const useSpellslots = (characterId: string) => {
 		try {
 			await updateDoc(docRef, { ...character, spellslots: null });
 		} catch (err) {
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Failed when trying to reset spell slots"));
+			dispatch(changeIsError(true));
 		}
 	};
 
 	return {
 		useSpellslotsFunc,
 		resetSpellslots,
-		error,
 		loading,
 	};
 };

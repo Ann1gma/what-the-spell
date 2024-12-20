@@ -18,10 +18,11 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function SpellDetailScreen() {
 	const { currentUser } = useAuth();
-	const { spellData, getSpellData, loading, error } = useGetSpellByIndex();
+	const { spellData, getSpellData, loading } = useGetSpellByIndex();
 
 	const dispatch = useDispatch();
 
+	const isError = useSelector((state: RootState) => state.error.isError);
 	const showAddSpells = useSelector((state: RootState) => state.addSpell.showAddSpells);
 
 	const { id, returnCharacterId } = useLocalSearchParams();
@@ -64,7 +65,7 @@ export default function SpellDetailScreen() {
 					</View>
 				</View>
 				{loading && <LoadingComponent />}
-				{error && <ErrorComponent />}
+				{isError && <ErrorComponent />}
 				{showAddSpells && <AddSpellComponent />}
 
 				{spellData && (

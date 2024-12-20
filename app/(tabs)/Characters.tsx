@@ -6,11 +6,16 @@ import { useRouter } from "expo-router";
 import { ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Pressable } from "react-native";
 import LoadingComponent from "@/components/LoadingComponent";
 import CharacterListComponent from "@/components/CharacterListComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
+import ErrorComponent from "@/components/ErrorComponent";
 
 //@CodeScene(disable:"Complex Method")
 const Characters = () => {
 	const { currentUser, isLoading } = useAuth();
 	const { data, loading } = useGetCharacters(currentUser?.uid);
+
+	const isError = useSelector((state: RootState) => state.error.isError);
 
 	const router = useRouter();
 
@@ -38,6 +43,7 @@ const Characters = () => {
 							</Pressable>
 						</View>
 						{loading && <LoadingComponent />}
+						{isError && <ErrorComponent />}
 						<View>
 							<Text>You have to login to see and use Characters</Text>
 						</View>

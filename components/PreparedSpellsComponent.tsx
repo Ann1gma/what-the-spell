@@ -15,19 +15,21 @@ interface PreparedSpellsComponentProps {
 	title: string;
 	data: CharacterSpell[];
 	character: Character;
+	onHeaderPress: () => void;
 }
 
 //@CodeScene(disable:"Complex Method")
-const PreparedSpellsComponent: React.FC<PreparedSpellsComponentProps> = ({ title, data, character }) => {
+const PreparedSpellsComponent: React.FC<PreparedSpellsComponentProps> = ({ title, data, character, onHeaderPress }) => {
 	const [open, setOpen] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 
 	const router = useRouter();
 
-	const { unPrepareSpell, loading, error } = usePrepareSpells();
+	const { unPrepareSpell, loading } = usePrepareSpells();
 
 	const handleOpen = () => {
 		setOpen(!open);
+		onHeaderPress();
 	};
 
 	const handlePress = (id: string) => {
@@ -45,7 +47,6 @@ const PreparedSpellsComponent: React.FC<PreparedSpellsComponentProps> = ({ title
 
 	return (
 		<View>
-			{error && <ErrorComponent />}
 			{loading && <LoadingComponent />}
 
 			<View>

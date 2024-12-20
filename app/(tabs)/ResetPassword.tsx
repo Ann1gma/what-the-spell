@@ -9,12 +9,16 @@ import { View, ImageBackground, TouchableWithoutFeedback, Keyboard, Text, Pressa
 import { useState } from "react";
 import { ResetPasswordData } from "@/types/User.types";
 import SentMessageComponent from "@/components/SentMessageComponent";
+import { FirebaseError } from "firebase/app";
 
 const ResetPassword = () => {
 	const { resetPassword } = useAuth();
 	const [submitting, setSubmitting] = useState(false);
 	const [showMessage, setShowMessage] = useState(false);
-	const [error, setError] = useState(false);
+
+	const dispatch = useDispatch();
+
+	const isError = useSelector((state: RootState) => state.error.isError);
 
 	const router = useRouter();
 
@@ -27,14 +31,24 @@ const ResetPassword = () => {
 
 	const onResetPassword: SubmitHandler<ResetPasswordData> = async (data) => {
 		setSubmitting(true);
-		setError(false);
+		dispatch(changeErrorMessage(""));
+		dispatch(changeIsError(false));
 
 		try {
 			await resetPassword(data.email);
 			reset();
 			setShowMessage(true);
 		} catch (err) {
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Error when trying to reset password"));
+			dispatch(changeIsError(true));
 		}
 		setSubmitting(false);
 	};
@@ -48,7 +62,7 @@ const ResetPassword = () => {
 							<Text style={styles.title}>Reset password</Text>
 						</View>
 
-						{error && <ErrorComponent />}
+						{isError && <ErrorComponent />}
 
 						{showMessage && <SentMessageComponent />}
 

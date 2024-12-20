@@ -1,10 +1,13 @@
 import useAuth from "@/hooks/useAuth";
 import { Character } from "@/types/Character.types";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Pressable, Text, View } from "react-native";
 import ErrorComponent from "./ErrorComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { FirebaseError } from "firebase/app";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
+import { RootState } from "@/app/store";
 
 interface LogOutComponentProps {
 	characterData: Character[] | null;
@@ -12,7 +15,9 @@ interface LogOutComponentProps {
 }
 
 const LogOutComponent: React.FC<LogOutComponentProps> = ({ characterData, userEmail }) => {
-	const [error, setError] = useState(false);
+	const dispatch = useDispatch();
+
+	const errorState = useSelector((state: RootState) => state.error.isError);
 
 	const { logout } = useAuth();
 
@@ -22,16 +27,25 @@ const LogOutComponent: React.FC<LogOutComponentProps> = ({ characterData, userEm
 		try {
 			await logout();
 			setTimeout(() => {
-				router.replace("/"); // Navigera när currentUser har uppdaterats
-			}, 100); // Kort delay för att låta state uppdateras
+				router.replace("/");
+			}, 100);
 		} catch (err) {
-			setError(true);
+			if (err instanceof FirebaseError) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			} else if (err instanceof Error) {
+				dispatch(changeErrorMessage(err.message));
+				dispatch(changeIsError(true));
+			}
+
+			dispatch(changeErrorMessage("Error on log out"));
+			dispatch(changeIsError(true));
 		}
 	};
 
 	return (
 		<View style={[styles.profileWrapper, { backgroundColor: "rgba(240, 228, 209, 0.5)", borderRadius: 10 }]}>
-			{error && <ErrorComponent />}
+			{errorState && <ErrorComponent />}
 			<View>
 				<Text style={[styles.text, { marginTop: 30, textAlign: "center", fontSize: 26, fontWeight: "600" }]}>Welcome to your profile!</Text>
 				<Text style={[styles.text, styles.textBold]}>User:</Text>
