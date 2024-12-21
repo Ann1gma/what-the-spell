@@ -3,6 +3,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { characterCol } from "@/services/firebaseConfig";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useRouter } from "expo-router";
+import { useDispatch } from "react-redux";
+import { FirebaseError } from "firebase/app";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 
 const { width, height } = Dimensions.get("window");
 
@@ -17,12 +20,8 @@ const ConfirmationComponent: React.FC<ConfirmationComponentProps> = ({ handlePre
 	const onDelete = async () => {
 		const docRef = doc(characterCol, characterId);
 
-		try {
-			await deleteDoc(docRef);
-			router.push("/(tabs)/Characters");
-		} catch (err) {
-			console.log(err);
-		}
+		await deleteDoc(docRef);
+		router.push("/(tabs)/Characters");
 	};
 
 	return (

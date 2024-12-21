@@ -14,11 +14,10 @@ import { setShowAddSpells, setSpellToAdd } from "@/features/addSpell/addSpellSli
 interface AccordionComponentProps {
 	title: string;
 	data: SpellsOverview[] | null;
-	onHeaderPress: () => void;
 }
 
 //@CodeScene(disable:"Complex Method") @CodeScene(disable:"Large Method")
-const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data, onHeaderPress }) => {
+const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data }) => {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
 
@@ -30,7 +29,6 @@ const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data, on
 
 	const handleOpen = () => {
 		setOpen(!open);
-		onHeaderPress();
 	};
 
 	const handlePress = (id: string) => {
@@ -82,8 +80,12 @@ const AccordionComponent: React.FC<AccordionComponentProps> = ({ title, data, on
 									<View style={styles.iconWrapper}>
 										<View>
 											{currentUser && (
-												<Pressable style={{ marginLeft: 10 }} onPress={() => onAddSpell(item.index, item.level)}>
+												<Pressable
+													style={{ marginLeft: 10, alignItems: "center" }}
+													onPress={() => onAddSpell(item.index, item.level)}
+												>
 													<MaterialCommunityIcons name="book-plus" size={26} color="#990000" />
+													<Text style={{ color: "#990000" }}>add spell</Text>
 												</Pressable>
 											)}
 										</View>

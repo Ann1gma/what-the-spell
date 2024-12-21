@@ -1,24 +1,31 @@
 import { Spellslot } from "@/types/Character.types";
 import { useState } from "react";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 const useCreateSpellslots = () => {
 	const [spellslots, setSpellslots] = useState<Spellslot[]>([]);
 
-	const updateSpellslots = (level: number, numOf: number) => {
+	const createSpellslots = (level: number, numOf: number) => {
 		const spellslotsToKeep = spellslots.filter((slot) => slot.level !== level);
 
 		const newSlots = [];
 
 		for (let i = 0; i < numOf; i++) {
-			const newId = Math.floor(Math.random() * 10000 * Date.now());
-			newSlots.push({ _id: newId.toString(), level: level, used: false });
+			const uniqueId = uuidv4();
+
+			newSlots.push({ _id: uniqueId, level: level, used: false });
 		}
 
-		if (!newSlots) {
-			setSpellslots([...spellslotsToKeep]);
+		if (newSlots.length <= 0) {
+			return;
 		} else {
 			setSpellslots([...spellslotsToKeep, ...newSlots]);
 		}
+	};
+
+	const setInitialSpellslots = (initialSpellslots: Spellslot[]) => {
+		setSpellslots([...initialSpellslots]);
 	};
 
 	const resetSepllslots = () => {
@@ -26,8 +33,9 @@ const useCreateSpellslots = () => {
 	};
 
 	return {
-		updateSpellslots,
+		createSpellslots,
 		resetSepllslots,
+		setInitialSpellslots,
 		spellslots,
 	};
 };

@@ -49,6 +49,14 @@ export default function SpellDetailScreen() {
 		}
 	}, [id]);
 
+	useEffect(() => {
+		if (typeof id === "string") {
+			getSpellData(id);
+		} else {
+			getSpellData(id[0]);
+		}
+	}, []);
+
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={require("../../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
@@ -71,19 +79,22 @@ export default function SpellDetailScreen() {
 				{spellData && (
 					<SafeAreaView style={styles.scrollContainer}>
 						<ScrollView>
-							<View style={styles.contentWrapper}>
-								<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+							<View style={{ flexDirection: "row", justifyContent: "space-between", width: "80%" }}>
+								<View style={styles.contentWrapper}>
 									<SpellDetailsInfoComponent spellData={spellData} />
-									{currentUser && (
-										<Pressable style={{ marginRight: 10 }} onPress={() => onAddSpell(spellData.index, spellData.level)}>
-											<MaterialCommunityIcons name="book-plus" size={26} color="#990000" />
-										</Pressable>
-									)}
+
+									<SpellDetailsDamageComponent spellData={spellData} />
+
+									<SpellDetailsHealingComponent spellData={spellData} />
 								</View>
-
-								<SpellDetailsDamageComponent spellData={spellData} />
-
-								<SpellDetailsHealingComponent spellData={spellData} />
+								{currentUser && (
+									<View style={styles.addIconContainer}>
+										<Pressable onPress={() => onAddSpell(spellData.index, spellData.level)} style={{ alignItems: "center" }}>
+											<MaterialCommunityIcons name="book-plus" size={26} color="#990000" />
+											<Text style={{ color: "#990000" }}>add spell</Text>
+										</Pressable>
+									</View>
+								)}
 							</View>
 
 							<View style={styles.contentWrapper}>
@@ -170,4 +181,5 @@ const styles = StyleSheet.create({
 		color: "#2b2b2b",
 		marginRight: 5,
 	},
+	addIconContainer: {},
 });

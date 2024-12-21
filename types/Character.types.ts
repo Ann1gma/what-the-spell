@@ -56,6 +56,19 @@ export interface UpdateCharacterData {
 	spellslots: Spellslot[] | null;
 }
 
+export interface EditCharacterData {
+	_id: string | null;
+	uid: string | null;
+	character_level: number | null;
+	character_name: string | null;
+	class: ClassObject | null;
+	spell_attack_modifier: number | null;
+	spell_save_dc: number | null;
+	show_prepared_spells: boolean | null;
+	show_spellslots: boolean | null;
+	spellslots: Spellslot[] | null;
+}
+
 export interface AddSpellType {
 	index: string;
 	level: number | null;

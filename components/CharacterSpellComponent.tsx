@@ -24,99 +24,39 @@ const CharacterSpellComponent: React.FC<CharacterSpellComponentProps> = ({ data,
 	const lvlEightData = data.filter((spell) => spell.level === 8);
 	const lvlNineData = data.filter((spell) => spell.level === 9);
 
-	const scrollToSection = (sectionIndex: number) => {
-		const scrollPosition = sectionIndex * 30;
-
-		scrollViewRef.current &&
-			scrollViewRef.current.scrollTo({
-				y: scrollPosition,
-				animated: true,
-			});
-	};
-
 	if (!showPreparedSPells) {
 		return (
 			<ScrollView ref={scrollViewRef}>
 				<View style={styles.accordionContainer}>
 					{cantripsData && cantripsData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Cantrips"
-							data={cantripsData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(0)}
-						/>
+						<CharacterAccordionComponent title="Cantrips" data={cantripsData} character={characterData} />
 					)}
 					{lvlOneData && lvlOneData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 1"
-							data={lvlOneData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(1)}
-						/>
+						<CharacterAccordionComponent title="Level 1" data={lvlOneData} character={characterData} />
 					)}
 					{lvlTwoData && lvlTwoData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 2"
-							data={lvlTwoData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(2)}
-						/>
+						<CharacterAccordionComponent title="Level 2" data={lvlTwoData} character={characterData} />
 					)}
 					{lvlThreeData && lvlThreeData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 3"
-							data={lvlThreeData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(3)}
-						/>
+						<CharacterAccordionComponent title="Level 3" data={lvlThreeData} character={characterData} />
 					)}
 					{lvlFourData && lvlFourData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 4"
-							data={lvlFourData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(4)}
-						/>
+						<CharacterAccordionComponent title="Level 4" data={lvlFourData} character={characterData} />
 					)}
 					{lvlFiveData && lvlFiveData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 5"
-							data={lvlFiveData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(5)}
-						/>
+						<CharacterAccordionComponent title="Level 5" data={lvlFiveData} character={characterData} />
 					)}
 					{lvlSixData && lvlSixData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 6"
-							data={lvlSixData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(6)}
-						/>
+						<CharacterAccordionComponent title="Level 6" data={lvlSixData} character={characterData} />
 					)}
 					{lvlSevenData && lvlSevenData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 7"
-							data={lvlSevenData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(7)}
-						/>
+						<CharacterAccordionComponent title="Level 7" data={lvlSevenData} character={characterData} />
 					)}
 					{lvlEightData && lvlEightData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 8"
-							data={lvlEightData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(8)}
-						/>
+						<CharacterAccordionComponent title="Level 8" data={lvlEightData} character={characterData} />
 					)}
 					{lvlNineData && lvlNineData.length > 0 && (
-						<CharacterAccordionComponent
-							title="Level 9"
-							data={lvlNineData}
-							character={characterData}
-							onHeaderPress={() => scrollToSection(9)}
-						/>
+						<CharacterAccordionComponent title="Level 9" data={lvlNineData} character={characterData} />
 					)}
 				</View>
 			</ScrollView>
@@ -127,40 +67,17 @@ const CharacterSpellComponent: React.FC<CharacterSpellComponentProps> = ({ data,
 		<ScrollView ref={scrollViewRef}>
 			<View style={styles.accordionContainer}>
 				{cantripsData && cantripsData.length > 0 && (
-					<PreparedSpellsComponent
-						title="Cantrips"
-						data={cantripsData}
-						character={characterData}
-						onHeaderPress={() => scrollToSection(0)}
-					/>
+					<PreparedSpellsComponent title="Cantrips" data={cantripsData} character={characterData} />
 				)}
-				{lvlOneData && lvlOneData.length > 0 && (
-					<PreparedSpellsComponent title="Level 1" data={lvlOneData} character={characterData} onHeaderPress={() => scrollToSection(1)} />
-				)}
-				{lvlTwoData && lvlTwoData.length > 0 && (
-					<PreparedSpellsComponent title="Level 2" data={lvlTwoData} character={characterData} onHeaderPress={() => scrollToSection(2)} />
-				)}
-				{lvlThreeData && lvlThreeData.length > 0 && (
-					<PreparedSpellsComponent title="Level 3" data={lvlThreeData} character={characterData} onHeaderPress={() => scrollToSection(3)} />
-				)}
-				{lvlFourData && lvlFourData.length > 0 && (
-					<PreparedSpellsComponent title="Level 4" data={lvlFourData} character={characterData} onHeaderPress={() => scrollToSection(4)} />
-				)}
-				{lvlFiveData && lvlFiveData.length > 0 && (
-					<PreparedSpellsComponent title="Level 5" data={lvlFiveData} character={characterData} onHeaderPress={() => scrollToSection(5)} />
-				)}
-				{lvlSixData && lvlSixData.length > 0 && (
-					<PreparedSpellsComponent title="Level 6" data={lvlSixData} character={characterData} onHeaderPress={() => scrollToSection(6)} />
-				)}
-				{lvlSevenData && lvlSevenData.length > 0 && (
-					<PreparedSpellsComponent title="Level 7" data={lvlSevenData} character={characterData} onHeaderPress={() => scrollToSection(7)} />
-				)}
-				{lvlEightData && lvlEightData.length > 0 && (
-					<PreparedSpellsComponent title="Level 8" data={lvlEightData} character={characterData} onHeaderPress={() => scrollToSection(8)} />
-				)}
-				{lvlNineData && lvlNineData.length > 0 && (
-					<PreparedSpellsComponent title="Level 9" data={lvlNineData} character={characterData} onHeaderPress={() => scrollToSection(9)} />
-				)}
+				{lvlOneData && lvlOneData.length > 0 && <PreparedSpellsComponent title="Level 1" data={lvlOneData} character={characterData} />}
+				{lvlTwoData && lvlTwoData.length > 0 && <PreparedSpellsComponent title="Level 2" data={lvlTwoData} character={characterData} />}
+				{lvlThreeData && lvlThreeData.length > 0 && <PreparedSpellsComponent title="Level 3" data={lvlThreeData} character={characterData} />}
+				{lvlFourData && lvlFourData.length > 0 && <PreparedSpellsComponent title="Level 4" data={lvlFourData} character={characterData} />}
+				{lvlFiveData && lvlFiveData.length > 0 && <PreparedSpellsComponent title="Level 5" data={lvlFiveData} character={characterData} />}
+				{lvlSixData && lvlSixData.length > 0 && <PreparedSpellsComponent title="Level 6" data={lvlSixData} character={characterData} />}
+				{lvlSevenData && lvlSevenData.length > 0 && <PreparedSpellsComponent title="Level 7" data={lvlSevenData} character={characterData} />}
+				{lvlEightData && lvlEightData.length > 0 && <PreparedSpellsComponent title="Level 8" data={lvlEightData} character={characterData} />}
+				{lvlNineData && lvlNineData.length > 0 && <PreparedSpellsComponent title="Level 9" data={lvlNineData} character={characterData} />}
 			</View>
 		</ScrollView>
 	);

@@ -1,7 +1,8 @@
 import { Spellslot } from "@/types/Character.types";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import useSpellslots from "@/hooks/useSpellslots";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface CharacterSpellslotComponentProps {
 	spellslots: Spellslot[];
@@ -24,96 +25,100 @@ const CharacterSpellslotComponent: React.FC<CharacterSpellslotComponentProps> = 
 
 	return (
 		<View>
-			{lvlOne.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 1</Text>
-					{lvlOne.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
-			{lvlTwo.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 2</Text>
-					{lvlTwo.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
-			{lvlThree.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 3</Text>
-					{lvlThree.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
-			{lvlFour.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 4</Text>
-					{lvlFour.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
-			{lvlFive.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 5</Text>
-					{lvlFive.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
-			{lvlSix.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 6</Text>
-					{lvlSix.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
-			{lvlSeven.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 7</Text>
-					{lvlSeven.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
-			{lvlEight.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 8</Text>
-					{lvlEight.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
-			{lvlNine.length > 0 && (
-				<View style={styles.container}>
-					<Text style={styles.text}>Level 9</Text>
-					{lvlNine.map((slot) => (
-						<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
-							<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
-						</Pressable>
-					))}
-				</View>
-			)}
+			<SafeAreaView>
+				<ScrollView>
+					{lvlOne.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 1</Text>
+							{lvlOne.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+					{lvlTwo.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 2</Text>
+							{lvlTwo.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+					{lvlThree.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 3</Text>
+							{lvlThree.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+					{lvlFour.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 4</Text>
+							{lvlFour.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+					{lvlFive.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 5</Text>
+							{lvlFive.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+					{lvlSix.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 6</Text>
+							{lvlSix.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+					{lvlSeven.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 7</Text>
+							{lvlSeven.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+					{lvlEight.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 8</Text>
+							{lvlEight.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+					{lvlNine.length > 0 && (
+						<View style={styles.container}>
+							<Text style={styles.text}>Level 9</Text>
+							{lvlNine.map((slot) => (
+								<Pressable key={slot._id} style={styles.slot} onPress={() => useSpellslotsFunc(slot._id, !slot.used)}>
+									<Ionicons name={slot.used ? "radio-button-on" : "radio-button-off"} size={28} color="#990000" />
+								</Pressable>
+							))}
+						</View>
+					)}
+				</ScrollView>
+			</SafeAreaView>
 		</View>
 	);
 };

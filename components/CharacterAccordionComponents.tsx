@@ -16,11 +16,10 @@ interface CharacterAccordionComponentProps {
 	title: string;
 	data: CharacterSpell[];
 	character: Character;
-	onHeaderPress: () => void;
 }
 
 //@CodeScene(disable:"Complex Method")
-const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = ({ title, data, character, onHeaderPress }) => {
+const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = ({ title, data, character }) => {
 	const [open, setOpen] = useState(false);
 
 	const router = useRouter();
@@ -31,7 +30,6 @@ const CharacterAccordionComponent: React.FC<CharacterAccordionComponentProps> = 
 
 	const handleOpen = () => {
 		setOpen(!open);
-		onHeaderPress();
 	};
 
 	const handlePress = (id: string) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
 	View,
 	Text,
@@ -22,12 +22,14 @@ import { doc, setDoc } from "firebase/firestore";
 import { newCharacterCol } from "@/services/firebaseConfig";
 import useCreateSpellslots from "@/hooks/useCreateSpellslots";
 import Feather from "@expo/vector-icons/Feather";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import SpellslotInputComponent from "@/components/SpellslotInputComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
+import { FirebaseError } from "firebase/app";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 
 //@CodeScene(disable:"Complex Method")
 //@CodeScene(disable:"Large Method")
@@ -39,13 +41,16 @@ const AddCharacter = () => {
 	const [submitError, setSubmitError] = useState<string | null>(null);
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
+	const [formKey, setFormKey] = useState(0);
 	const { options, loading } = useGetAllClasses([]);
-	const { spellslots, updateSpellslots, resetSepllslots } = useCreateSpellslots();
+	const { spellslots, createSpellslots, resetSepllslots } = useCreateSpellslots();
 
 	const [infoPrepare, setInfoPrepare] = useState(false);
 	const [infoSlots, setInfoSlots] = useState(false);
 
 	const isError = useSelector((state: RootState) => state.error.isError);
+
+	const dispatch = useDispatch();
 
 	const router = useRouter();
 
@@ -67,6 +72,7 @@ const AddCharacter = () => {
 
 		if (!className) {
 			setClassError("You must choose a class");
+			setSubmitting(false);
 		} else {
 			const docRef = doc(newCharacterCol);
 			try {
@@ -84,6 +90,7 @@ const AddCharacter = () => {
 				});
 
 				reset();
+				setFormKey((prev) => prev + 1);
 				resetSepllslots();
 				setClassName(null);
 				setEnablePreparedSpells(false);
@@ -91,11 +98,33 @@ const AddCharacter = () => {
 
 				router.push("/Characters");
 			} catch (err) {
-				setSubmitError("Failed to create character. Please check your inputs.");
+				if (err instanceof FirebaseError) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				} else if (err instanceof Error) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				}
+
+				dispatch(changeErrorMessage("Error when creating character"));
+				dispatch(changeIsError(true));
 			}
 			setSubmitting(false);
 		}
 	};
+
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				setClassName(null);
+				setClassError(null);
+				setSubmitting(false);
+				setSubmitError(null);
+				setEnablePreparedSpells(false);
+				setEnableSpellslots(false);
+			};
+		}, [])
+	);
 
 	if (!currentUser) {
 		return (
@@ -141,7 +170,10 @@ const AddCharacter = () => {
 								<Text style={styles.text}>Character name*</Text>
 								<Controller
 									control={control}
-									rules={{ required: "Character name is required" }}
+									rules={{
+										required: "Character name is required",
+										maxLength: { value: 30, message: "Character name must not exceed 30 characters" },
+									}}
 									render={({ field: { onChange, onBlur, value } }) => (
 										<TextInput
 											style={styles.input}
@@ -157,6 +189,7 @@ const AddCharacter = () => {
 
 								<Text style={styles.text}>Class*</Text>
 								<DropdownComponent
+									key={formKey}
 									options={options}
 									onChange={(e) => onFiltration(e)}
 									placeholder={!className ? "Class" : className.name}
@@ -169,7 +202,7 @@ const AddCharacter = () => {
 										control={control}
 										rules={{
 											required: "Character level is required",
-											max: 20,
+											max: { value: 20, message: "Character level must not exceed 20" },
 											validate: (value) => !isNaN(value) || "Value must be a number",
 										}}
 										render={({ field: { onChange, onBlur, value } }) => (
@@ -195,7 +228,8 @@ const AddCharacter = () => {
 									<Controller
 										control={control}
 										rules={{
-											required: false,
+											min: { value: 1, message: "Spell attack modifier dc must be atleast 1" },
+											max: { value: 30, message: "Spell attack modifier must not exceed 30" },
 											validate: (value) => (value !== null && !isNaN(value)) || "Spell attack modifier must be a number",
 										}}
 										render={({ field: { onChange, onBlur, value } }) => (
@@ -222,13 +256,14 @@ const AddCharacter = () => {
 									<Controller
 										control={control}
 										rules={{
-											required: false,
+											min: { value: 1, message: "Spell save dc must be atleast 1" },
+											max: { value: 30, message: "Spell save dc must not exceed 30" },
 											validate: (value) => (value !== null && !isNaN(value)) || "Spell save dc must be a number",
 										}}
 										render={({ field: { onChange, onBlur, value } }) => (
 											<TextInput
 												style={styles.inputNumber}
-												placeholder="15"
+												placeholder="30"
 												keyboardType="number-pad"
 												inputMode="numeric"
 												onBlur={onBlur}
@@ -306,18 +341,18 @@ const AddCharacter = () => {
 								{enableSpellslots && (
 									<View style={{ flexDirection: "row" }}>
 										<View style={{ flexDirection: "column" }}>
-											<SpellslotInputComponent level={1} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={2} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={3} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={4} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={5} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={1} onChange={createSpellslots} />
+											<SpellslotInputComponent level={2} onChange={createSpellslots} />
+											<SpellslotInputComponent level={3} onChange={createSpellslots} />
+											<SpellslotInputComponent level={4} onChange={createSpellslots} />
+											<SpellslotInputComponent level={5} onChange={createSpellslots} />
 										</View>
 
 										<View style={{ flexDirection: "column" }}>
-											<SpellslotInputComponent level={6} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={7} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={8} onChange={updateSpellslots} />
-											<SpellslotInputComponent level={9} onChange={updateSpellslots} />
+											<SpellslotInputComponent level={6} onChange={createSpellslots} />
+											<SpellslotInputComponent level={7} onChange={createSpellslots} />
+											<SpellslotInputComponent level={8} onChange={createSpellslots} />
+											<SpellslotInputComponent level={9} onChange={createSpellslots} />
 										</View>
 									</View>
 								)}

@@ -1,6 +1,6 @@
-import { useLocalSearchParams } from "expo-router";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { View, Text, Pressable, StyleSheet, ImageBackground, ScrollView } from "react-native";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
@@ -13,6 +13,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import ErrorComponent from "@/components/ErrorComponent";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
+import UpdateCharacterComponent from "@/components/UpdateCharacterComponent";
 
 //@CodeScene(disable:"Complex Method") //@CodeScene(disable:"Large Method")
 const CharacterProfile = () => {
@@ -26,25 +27,22 @@ const CharacterProfile = () => {
 
 	const [showSpellslots, setShowSpellslots] = useState(false);
 	const [showPreparedSpells, setShowPreparedSpells] = useState(false);
+	const [showUpdateCharacter, setUpdateCharacter] = useState(false);
 
 	const handleEditCharacter = () => {
-		if (!character) {
-			return;
-		} else {
-			const id = character._id;
-			router.push({
-				pathname: "/(tabs)/UpdateCharacter",
-				params: { id },
-			});
-		}
+		setUpdateCharacter(true);
 	};
 
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				setUpdateCharacter(false);
+			};
+		}, [])
+	);
+
 	if (!character) {
-		return (
-			<View>
-				<Text>Could not find the character!</Text>
-			</View>
-		);
+		return <LoadingComponent />;
 	}
 
 	if (isLoading || !currentUser) {
@@ -56,6 +54,7 @@ const CharacterProfile = () => {
 			<ImageBackground source={require("../../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				{loading && <LoadingComponent />}
 				{isError && <ErrorComponent />}
+				{showUpdateCharacter && <UpdateCharacterComponent data={character} onNavBack={() => setUpdateCharacter(false)} />}
 
 				<View style={styles.titleContainer}>
 					<View>
@@ -82,7 +81,7 @@ const CharacterProfile = () => {
 							{character.spell_attack_modifier && <Text style={styles.text}>Attack mod: {character.spell_attack_modifier}</Text>}
 							{character.spell_save_dc && <Text style={styles.text}>Save dc: {character.spell_save_dc}</Text>}
 						</View>
-						{character.spellslots && (
+						{character.show_spellslots && character.spellslots && (
 							<View>
 								<Pressable onPress={() => setShowSpellslots(!showSpellslots)} style={styles.spellslotButtonContainer}>
 									<Text style={styles.textBold}>Spellslots</Text>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import useAuth from "@/hooks/useAuth";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import { NewCharacter, UpdateCharacterData } from "@/types/Character.types";
+import { Character, NewCharacter, UpdateCharacterData } from "@/types/Character.types";
 import { ClassObject } from "@/types/DnD5e_API.types";
 import DropdownComponent from "@/components/DropdownComponent";
 import useGetAllClasses from "@/hooks/useGetAllClasses";
@@ -22,42 +22,45 @@ import { doc, updateDoc } from "firebase/firestore";
 import { characterCol } from "@/services/firebaseConfig";
 import useCreateSpellslots from "@/hooks/useCreateSpellslots";
 import Feather from "@expo/vector-icons/Feather";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import LoadingComponent from "@/components/LoadingComponent";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import ErrorComponent from "@/components/ErrorComponent";
-import useGetCharacter from "@/hooks/useGetCharacter";
 import UpdateSpellslotInputComponent from "@/components/UpdateSpellslotInputComponent";
 import ConfirmationComponent from "@/components/ConfirmationComponent";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import { FirebaseError } from "firebase/app";
+import { changeErrorMessage, changeIsError } from "@/features/error/errorSlice";
 
+interface UpdateCharacterComponentProps {
+	data: Character;
+	onNavBack: () => void;
+}
+
+//@CodeScene(disable:"Bumpy Road Ahead")
 //@CodeScene(disable:"Complex Method")
 //@CodeScene(disable:"Large Method")
-const UpdateCharacter = () => {
+const UpdateCharacterComponent: React.FC<UpdateCharacterComponentProps> = ({ data, onNavBack }) => {
 	const { id } = useLocalSearchParams();
-
-	const { getCharacterDoc, characterDoc, loading: characterLoading } = useGetCharacter(id.toString());
-
 	const { currentUser } = useAuth();
-	const [className, setClassName] = useState<ClassObject | null>(null);
+
+	const [className, setClassName] = useState<ClassObject | null>(data.class);
 	const [classError, setClassError] = useState<string | null>(null);
 	const [submitting, setSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState<string | null>(null);
-	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
-	const [enableSpellslots, setEnableSpellslots] = useState(false);
-
+	const [enablePreparedSpells, setEnablePreparedSpells] = useState(data.show_prepared_spells);
+	const [enableSpellslots, setEnableSpellslots] = useState(data.show_spellslots);
 	const [infoPrepare, setInfoPrepare] = useState(false);
 	const [infoSlots, setInfoSlots] = useState(false);
-
 	const [openConfirmation, setOpenConfirmation] = useState(false);
+	const [formKey, setFormKey] = useState(0);
 
-	const { options, loading } = useGetAllClasses([]);
+	const { options } = useGetAllClasses([]);
 
-	const { spellslots, updateSpellslots, resetSepllslots } = useCreateSpellslots();
+	const { spellslots, createSpellslots, resetSepllslots, setInitialSpellslots } = useCreateSpellslots();
 
 	const isError = useSelector((state: RootState) => state.error.isError);
 
-	const router = useRouter();
+	const dispatch = useDispatch();
 
 	const {
 		control,
@@ -70,22 +73,6 @@ const UpdateCharacter = () => {
 		setClassName(item);
 	};
 
-	const handleNavigateBack = () => {
-		if (typeof id === "string") {
-			router.push({
-				pathname: "/(tabs)/characters/[id]",
-				params: { id },
-			});
-		} else {
-			const paramId = id[0];
-
-			router.push({
-				pathname: "/(tabs)/characters/[id]",
-				params: { id: paramId },
-			});
-		}
-	};
-
 	const onUpdateCharacter: SubmitHandler<UpdateCharacterData> = async (data) => {
 		setSubmitting(true);
 		setSubmitError(null);
@@ -93,6 +80,7 @@ const UpdateCharacter = () => {
 
 		if (!className) {
 			setClassError("You must choose a class");
+			setSubmitting(false);
 		} else {
 			const docRef = doc(characterCol, id.toString());
 
@@ -106,50 +94,56 @@ const UpdateCharacter = () => {
 					spell_save_dc: data.spell_save_dc ? data.spell_save_dc : null,
 					show_prepared_spells: enablePreparedSpells,
 					show_spellslots: enableSpellslots,
-					spellslots: enableSpellslots ? spellslots : null,
+					spellslots: spellslots,
 				});
 
-				/* if (!enableSpellslots) {
-					resetSepllslots();
-				} */
-
-				reset();
 				resetSepllslots();
+				setFormKey((prev) => prev + 1);
 				setClassName(null);
 				setEnablePreparedSpells(false);
 				setEnableSpellslots(false);
 
-				handleNavigateBack();
+				onNavBack();
 			} catch (err) {
-				setSubmitError("Failed to create character. Please check your inputs.");
+				if (err instanceof FirebaseError) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				} else if (err instanceof Error) {
+					dispatch(changeErrorMessage(err.message));
+					dispatch(changeIsError(true));
+				}
+
+				dispatch(changeErrorMessage("Error when creating character"));
+				dispatch(changeIsError(true));
+			} finally {
+				setSubmitting(false);
 			}
-			setSubmitting(false);
 		}
 	};
 
 	useEffect(() => {
-		if (!id) {
-			return;
-		} else if (typeof id === "string") {
-			getCharacterDoc(id);
-		} else {
-			getCharacterDoc(id[0]);
+		if (data.spellslots) {
+			setInitialSpellslots(data.spellslots);
 		}
-	}, [id]);
+	}, []);
 
-	useEffect(() => {
-		if (characterDoc) {
-			setClassName(characterDoc.class);
-			setEnablePreparedSpells(characterDoc.show_prepared_spells);
-			setEnableSpellslots(characterDoc.show_spellslots);
-		}
-	}, [characterDoc, reset]);
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				setClassName(null);
+				setClassError(null);
+				setSubmitting(false);
+				setSubmitError(null);
+				setEnablePreparedSpells(false);
+				setEnableSpellslots(false);
+			};
+		}, [])
+	);
 
 	if (!currentUser) {
 		return (
 			<View style={styles.container}>
-				<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
-					{loading && <LoadingComponent />}
+				<ImageBackground source={require("../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 					{isError && <ErrorComponent />}
 					<View style={styles.titleContainer}>
 						<Text style={styles.title}>Edit character</Text>
@@ -163,13 +157,9 @@ const UpdateCharacter = () => {
 		);
 	}
 
-	if (!characterDoc || characterLoading) {
-		return <LoadingComponent />;
-	}
-
 	return (
 		<View style={styles.container}>
-			<ImageBackground source={require("../../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
+			<ImageBackground source={require("../assets/images/background-image.jpg")} resizeMode="cover" style={styles.image}>
 				{openConfirmation && <ConfirmationComponent handlePress={() => setOpenConfirmation(false)} characterId={id.toString()} />}
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -178,13 +168,12 @@ const UpdateCharacter = () => {
 								<Text style={styles.title}>Edit character</Text>
 							</View>
 							<View style={styles.iconContainer}>
-								<Pressable onPress={handleNavigateBack}>
+								<Pressable onPress={onNavBack} disabled={submitting}>
 									<Feather name="arrow-left" size={30} color="#2b2b2b" />
 								</Pressable>
 							</View>
 						</View>
 
-						{loading && <LoadingComponent />}
 						{isError && <ErrorComponent />}
 
 						<ScrollView>
@@ -194,15 +183,18 @@ const UpdateCharacter = () => {
 								<Text style={styles.text}>Character name*</Text>
 								<Controller
 									control={control}
-									rules={{ required: "Character name is required", maxLength: 50 }}
-									defaultValue={characterDoc.character_name}
+									rules={{
+										required: "Character name is required",
+										maxLength: { value: 30, message: "Character name must not exceed 30 characters" },
+									}}
+									defaultValue={data.character_name}
 									render={({ field: { onChange, onBlur } }) => (
 										<TextInput
 											style={styles.input}
 											placeholder="E.g. 'Baldric the Bold'"
 											onBlur={onBlur}
 											onChangeText={onChange}
-											defaultValue={characterDoc.character_name}
+											defaultValue={data.character_name}
 										/>
 									)}
 									name="character_name"
@@ -211,9 +203,10 @@ const UpdateCharacter = () => {
 
 								<Text style={styles.text}>Class*</Text>
 								<DropdownComponent
+									key={formKey}
 									options={options}
 									onChange={(e) => onFiltration(e)}
-									placeholder={!characterDoc.class ? "Class" : characterDoc.class.name}
+									placeholder={!className ? "Class" : className.name}
 								/>
 								{classError && <Text style={styles.error}>{classError}</Text>}
 
@@ -223,10 +216,10 @@ const UpdateCharacter = () => {
 										control={control}
 										rules={{
 											required: "Character level is required",
-											max: 20,
+											max: { value: 20, message: "Character level must not exceed 20" },
 											validate: (value) => !isNaN(value) || "Value must be a number",
 										}}
-										defaultValue={characterDoc.character_level}
+										defaultValue={data.character_level}
 										render={({ field: { onChange, onBlur } }) => (
 											<TextInput
 												style={styles.inputNumber}
@@ -237,7 +230,7 @@ const UpdateCharacter = () => {
 												onChangeText={(text) => {
 													onChange(Number(text));
 												}}
-												defaultValue={characterDoc.character_level.toString()}
+												defaultValue={data.character_level.toString()}
 											/>
 										)}
 										name="character_level"
@@ -250,10 +243,11 @@ const UpdateCharacter = () => {
 									<Controller
 										control={control}
 										rules={{
-											required: false,
+											min: { value: 1, message: "Spell attack modifier dc must be atleast 1" },
+											max: { value: 30, message: "Spell attack modifier must not exceed 30" },
 											validate: (value) => (value !== null && !isNaN(value)) || "Spell attack modifier must be a number",
 										}}
-										defaultValue={characterDoc.spell_attack_modifier}
+										defaultValue={data.spell_attack_modifier ? data.spell_attack_modifier : undefined}
 										render={({ field: { onChange, onBlur } }) => (
 											<TextInput
 												style={styles.inputNumber}
@@ -264,7 +258,7 @@ const UpdateCharacter = () => {
 												onChangeText={(text) => {
 													onChange(Number(text));
 												}}
-												defaultValue={characterDoc.spell_attack_modifier ? characterDoc.spell_attack_modifier.toString() : ""}
+												defaultValue={data.spell_attack_modifier ? data.spell_attack_modifier.toString() : undefined}
 											/>
 										)}
 										name="spell_attack_modifier"
@@ -278,21 +272,22 @@ const UpdateCharacter = () => {
 									<Controller
 										control={control}
 										rules={{
-											required: false,
+											min: { value: 1, message: "Spell save dc must be atleast 1" },
+											max: { value: 30, message: "Spell save dc must not exceed 30" },
 											validate: (value) => (value !== null && !isNaN(value)) || "Spell save dc must be a number",
 										}}
-										defaultValue={characterDoc.spell_save_dc}
+										defaultValue={data.spell_save_dc}
 										render={({ field: { onChange, onBlur } }) => (
 											<TextInput
 												style={styles.inputNumber}
-												placeholder="15"
+												placeholder="30"
 												keyboardType="number-pad"
 												inputMode="numeric"
 												onBlur={onBlur}
 												onChangeText={(text) => {
 													onChange(Number(text));
 												}}
-												defaultValue={characterDoc.spell_save_dc ? characterDoc.spell_save_dc.toString() : ""}
+												defaultValue={data.spell_save_dc ? data.spell_save_dc.toString() : undefined}
 											/>
 										)}
 										name="spell_save_dc"
@@ -365,51 +360,51 @@ const UpdateCharacter = () => {
 										<View style={{ flexDirection: "column" }}>
 											<UpdateSpellslotInputComponent
 												level={1}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 											<UpdateSpellslotInputComponent
 												level={2}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 											<UpdateSpellslotInputComponent
 												level={3}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 											<UpdateSpellslotInputComponent
 												level={4}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 											<UpdateSpellslotInputComponent
 												level={5}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 										</View>
 
 										<View style={{ flexDirection: "column" }}>
 											<UpdateSpellslotInputComponent
 												level={6}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 											<UpdateSpellslotInputComponent
 												level={7}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 											<UpdateSpellslotInputComponent
 												level={8}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 											<UpdateSpellslotInputComponent
 												level={9}
-												onChange={updateSpellslots}
-												spellSlots={characterDoc?.spellslots}
+												onChange={createSpellslots}
+												initialSpellslots={data.spellslots}
 											/>
 										</View>
 									</View>
@@ -431,11 +426,18 @@ const UpdateCharacter = () => {
 	);
 };
 
-export default UpdateCharacter;
+export default UpdateCharacterComponent;
 
+//@CodeScene(disable:"Large Method")
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		zIndex: 3,
+		justifyContent: "center",
+		alignItems: "center",
+		width: "100%",
+		height: "100%",
+		position: "absolute",
+		marginBottom: "10%",
 	},
 	image: {
 		width: "100%",

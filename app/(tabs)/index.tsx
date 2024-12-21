@@ -18,8 +18,6 @@ const Index = () => {
 
 	const [subTitle, setSubtitle] = useState(filtrationOption);
 
-	const scrollViewRef = useRef<ScrollView>(null);
-
 	const {
 		cantripsData,
 		lvlOneData,
@@ -44,16 +42,6 @@ const Index = () => {
 			fetchAllSpells();
 		}
 	}, [filtrationOption]);
-
-	const scrollToSection = (sectionIndex: number) => {
-		const scrollPosition = sectionIndex * 30;
-
-		scrollViewRef.current &&
-			scrollViewRef.current.scrollTo({
-				y: scrollPosition,
-				animated: true,
-			});
-	};
 
 	const spellData = [
 		{ title: "Cantrips", data: cantripsData },
@@ -89,11 +77,11 @@ const Index = () => {
 				{loadingSpells && <LoadingComponent />}
 				{showAddSpells && <AddSpellComponent />}
 
-				<ScrollView ref={scrollViewRef} style={styles.scrollContainer}>
+				<ScrollView style={styles.scrollContainer}>
 					{spellData &&
 						spellData.map((item, index) => (
 							<View key={item.title} style={styles.accordionContainer}>
-								<AccordionComponent title={item.title} data={item.data} onHeaderPress={() => scrollToSection(index)} />
+								{item.data && item.data.length > 0 && <AccordionComponent title={item.title} data={item.data} />}
 							</View>
 						))}
 

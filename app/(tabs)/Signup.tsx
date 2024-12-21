@@ -3,10 +3,15 @@ import { View, Text, Pressable, StyleSheet, ImageBackground, TouchableWithoutFee
 import useAuth from "@/hooks/useAuth";
 import { Link, useRouter } from "expo-router";
 import SignupFormComponent from "@/components/SignupFormComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
+import ErrorComponent from "@/components/ErrorComponent";
 
 const Signup = () => {
 	const { currentUser } = useAuth();
 	const router = useRouter();
+
+	const isError = useSelector((state: RootState) => state.error.isError);
 
 	useEffect(() => {
 		const userLoggedIn = async () => {
@@ -42,7 +47,7 @@ const Signup = () => {
 					<View style={styles.titleContainer}>
 						<Text style={styles.title}>Sign up</Text>
 					</View>
-
+					{isError && <ErrorComponent />}
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						{!currentUser && (
 							<View style={styles.formWrapper}>

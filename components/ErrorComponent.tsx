@@ -29,7 +29,7 @@ export default ErrorComponent;
 
 const styles = StyleSheet.create({
 	container: {
-		zIndex: 1,
+		zIndex: 5,
 		justifyContent: "center",
 		alignItems: "center",
 		height: height,
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#F0E4D1",
 		width: "80%",
 		borderRadius: 15,
+		padding: 20,
 	},
 	textBold: {
 		fontFamily: "Inter",

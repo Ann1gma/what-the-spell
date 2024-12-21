@@ -26,7 +26,7 @@ const useGetCharacter = (characterId: string | undefined) => {
 
 				if (!snapshot.exists()) {
 					setCharacterDoc(null);
-					dispatch(changeErrorMessage("Could not find the dokument"));
+					dispatch(changeErrorMessage("Could not find the document"));
 					dispatch(changeIsError(true));
 				} else {
 					const data = {
@@ -60,8 +60,6 @@ const useGetCharacter = (characterId: string | undefined) => {
 		const unsubscribe = onSnapshot(docRef, (snapshot) => {
 			if (!snapshot.exists()) {
 				setData(null);
-				dispatch(changeErrorMessage("Could not find the dokument"));
-				dispatch(changeIsError(true));
 				setLoading(false);
 				return;
 			}

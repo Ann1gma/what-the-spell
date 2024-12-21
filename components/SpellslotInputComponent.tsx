@@ -11,7 +11,8 @@ const SpellslotInputComponent: React.FC<SpellslotInputProps> = ({ level, onChang
 			<Text style={styles.text}>Level {level}</Text>
 			<TextInput
 				style={styles.input}
-				placeholder="0-30"
+				placeholder="0-15"
+				maxLength={15}
 				keyboardType="number-pad"
 				inputMode="numeric"
 				onChangeText={(text) => {
@@ -36,6 +37,7 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 		marginRight: 12,
 		marginTop: 10,
+		width: 50,
 	},
 	input: {
 		backgroundColor: "#F0E4D1",
