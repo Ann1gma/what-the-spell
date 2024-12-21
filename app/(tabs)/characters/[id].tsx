@@ -63,7 +63,7 @@ const CharacterProfile = () => {
 					</View>
 					<View style={styles.iconContainer}>
 						<Pressable onPress={() => router.replace("/(tabs)/Characters")}>
-							<Feather name="arrow-left" size={24} color="#2b2b2b" />
+							<Feather name="arrow-left" size={30} color="#2b2b2b" />
 						</Pressable>
 					</View>
 					<View style={styles.editIconContainer}>

@@ -60,7 +60,7 @@ export default function SpellDetailScreen() {
 					)}
 					<View style={styles.iconContainer}>
 						<Pressable onPress={goBack}>
-							<Feather name="arrow-left" size={24} color="#2b2b2b" />
+							<Feather name="arrow-left" size={30} color="#2b2b2b" />
 						</Pressable>
 					</View>
 				</View>

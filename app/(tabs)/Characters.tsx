@@ -39,7 +39,7 @@ const Characters = () => {
 						</View>
 						<View style={styles.iconContainer}>
 							<Pressable onPress={() => router.back()}>
-								<Feather name="arrow-left" size={24} color="#2b2b2b" />
+								<Feather name="arrow-left" size={30} color="#2b2b2b" />
 							</Pressable>
 						</View>
 						{loading && <LoadingComponent />}
@@ -62,7 +62,7 @@ const Characters = () => {
 					</View>
 					<View style={styles.iconContainer}>
 						<Pressable onPress={() => router.back()}>
-							<Feather name="arrow-left" size={24} color="#2b2b2b" />
+							<Feather name="arrow-left" size={30} color="#2b2b2b" />
 						</Pressable>
 					</View>
 				</View>

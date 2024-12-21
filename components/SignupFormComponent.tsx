@@ -58,6 +58,7 @@ const SignupFormComponent = () => {
 			{errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
 			<Text style={styles.label}>Password*</Text>
+			<Text style={styles.infoText}>At least 8 characters. At least one number or a special character.</Text>
 			<Controller
 				control={control}
 				rules={{
@@ -121,10 +122,11 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	label: {
-		fontSize: 16,
+		fontSize: 18,
 		fontFamily: "Inter",
 		fontWeight: "700",
 		marginBottom: 5,
+		marginTop: 10,
 	},
 	input: {
 		backgroundColor: "#F0E4D1",
@@ -146,5 +148,12 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		fontFamily: "Inter",
 		fontWeight: "500",
+	},
+	infoText: {
+		fontFamily: "Inter",
+		fontSize: 16,
+		color: "#454545",
+		textAlign: "center",
+		marginBottom: 5,
 	},
 });

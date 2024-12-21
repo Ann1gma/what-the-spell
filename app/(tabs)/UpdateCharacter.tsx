@@ -46,6 +46,9 @@ const UpdateCharacter = () => {
 	const [enablePreparedSpells, setEnablePreparedSpells] = useState(false);
 	const [enableSpellslots, setEnableSpellslots] = useState(false);
 
+	const [infoPrepare, setInfoPrepare] = useState(false);
+	const [infoSlots, setInfoSlots] = useState(false);
+
 	const [openConfirmation, setOpenConfirmation] = useState(false);
 
 	const { options, loading } = useGetAllClasses([]);
@@ -176,7 +179,7 @@ const UpdateCharacter = () => {
 							</View>
 							<View style={styles.iconContainer}>
 								<Pressable onPress={handleNavigateBack}>
-									<Feather name="arrow-left" size={24} color="#2b2b2b" />
+									<Feather name="arrow-left" size={30} color="#2b2b2b" />
 								</Pressable>
 							</View>
 						</View>
@@ -196,7 +199,7 @@ const UpdateCharacter = () => {
 									render={({ field: { onChange, onBlur } }) => (
 										<TextInput
 											style={styles.input}
-											placeholder={"Baldric the Bold"}
+											placeholder="E.g. 'Baldric the Bold'"
 											onBlur={onBlur}
 											onChangeText={onChange}
 											defaultValue={characterDoc.character_name}
@@ -299,7 +302,15 @@ const UpdateCharacter = () => {
 								{errors.spell_save_dc && <Text style={styles.error}>{errors.spell_save_dc.message}</Text>}
 
 								<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 30 }}>
-									<Text style={[styles.text, { marginRight: 15 }]}>Enabel Prepare spells</Text>
+									<TouchableOpacity onPress={() => setInfoPrepare(!infoPrepare)}>
+										<MaterialCommunityIcons
+											name={infoPrepare ? "information-off-outline" : "information-outline"}
+											size={22}
+											color="#2b2b2b"
+											style={styles.infoIcon}
+										/>
+									</TouchableOpacity>
+									<Text style={[styles.text, { marginRight: 15 }]}>Enable Prepare spells</Text>
 									<TouchableOpacity
 										style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
 										activeOpacity={0.8}
@@ -313,8 +324,22 @@ const UpdateCharacter = () => {
 									</TouchableOpacity>
 								</View>
 
+								{infoPrepare && (
+									<Text style={styles.infoText}>
+										This allows you to prepare spells for your character on the characters page. You can change this later.
+									</Text>
+								)}
+
 								<View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 10 }}>
-									<Text style={[styles.text, { marginRight: 15, marginBottom: 25 }]}>Enabel Spellslots</Text>
+									<TouchableOpacity onPress={() => setInfoSlots(!infoSlots)}>
+										<MaterialCommunityIcons
+											name={infoSlots ? "information-off-outline" : "information-outline"}
+											size={22}
+											color="#2b2b2b"
+											style={styles.infoIcon}
+										/>
+									</TouchableOpacity>
+									<Text style={[styles.text, { marginRight: 15, marginBottom: 25 }]}>Enable Spellslots</Text>
 									<TouchableOpacity
 										style={{ height: "100%", flexDirection: "row", alignItems: "center" }}
 										activeOpacity={0.8}
@@ -327,6 +352,13 @@ const UpdateCharacter = () => {
 										/>
 									</TouchableOpacity>
 								</View>
+
+								{infoSlots && (
+									<Text style={styles.infoText}>
+										This allows you to prepare and track your character's spell slots on the characters page. You can change this
+										later.
+									</Text>
+								)}
 
 								{enableSpellslots && (
 									<View style={{ flexDirection: "row" }}>
@@ -441,7 +473,7 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 	},
 	text: {
-		fontSize: 16,
+		fontSize: 18,
 		fontFamily: "Inter",
 		color: "#2b2b2b",
 		marginBottom: 5,
@@ -507,5 +539,12 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		left: "3%",
 		zIndex: 1,
+	},
+	infoText: {
+		fontSize: 16,
+		color: "#2b2b2b",
+	},
+	infoIcon: {
+		marginRight: 5,
 	},
 });

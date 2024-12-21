@@ -53,6 +53,7 @@ const LogInComponent = () => {
 		<View style={styles.formWrapper}>
 			{errorState && <ErrorComponent />}
 			<View style={styles.subtitleWrapper}>
+				<Text style={styles.titleText}>Log in</Text>
 				<Text style={[styles.text, { textAlign: "center" }]}>Please log in to access your</Text>
 				<View style={{ flexDirection: "row", justifyContent: "center" }}>
 					<Text style={styles.textBold}>profile </Text>
@@ -159,18 +160,25 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		borderRadius: 10,
 	},
+	titleText: {
+		fontSize: 24,
+		fontFamily: "CinzelBlack",
+		color: "#990000",
+		textAlign: "center",
+		marginBottom: 10,
+	},
 	text: {
 		fontSize: 18,
 		fontFamily: "Inter",
 		color: "#2b2b2b",
-		marginBottom: 10,
+		marginBottom: 5,
 	},
 	textBold: {
 		fontSize: 18,
 		fontFamily: "Inter",
 		fontWeight: "700",
 		color: "#2b2b2b",
-		marginBottom: 10,
+		marginBottom: 5,
 	},
 	linkText: {
 		fontSize: 20,
